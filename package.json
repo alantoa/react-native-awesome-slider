@@ -1,6 +1,6 @@
 {
   "name": "react-native-awesome-slider",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Slider component written using Reanimated v2, high performance/fps, also be used for video/audio scrubber.  ",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
