@@ -124,7 +124,7 @@ export type AwesomeSliderProps = {
   /**
    * disable slide
    */
-  disable?: boolean;
+  disable?: Animated.SharedValue<boolean>;
   /**
    * disable slide color, default is minimumTrackTintColor
    */
@@ -322,7 +322,7 @@ export const Slider = ({
     GestureEvent<PanGestureHandlerEventPayload>
   >({
     onStart: () => {
-      if (disable) return;
+      if (disable?.value) return;
       bubbleOpacity.value = withSpring(1);
       isScrubbing.value = true;
       if (onSlidingStart) {
@@ -330,12 +330,12 @@ export const Slider = ({
       }
     },
     onActive: ({ x }) => {
-      if (disable) return;
+      if (disable?.value) return;
       onActiveSlider(x);
     },
 
     onEnd: () => {
-      if (disable) return;
+      if (disable?.value) return;
       bubbleOpacity.value = withSpring(0);
       isScrubbing.value = false;
       if (onSlidingComplete) {
@@ -348,11 +348,11 @@ export const Slider = ({
     GestureEvent<TapGestureHandlerEventPayload>
   >({
     onActive: ({ x }) => {
-      if (disable || disableTapEvent) return;
+      if (disable?.value || disableTapEvent) return;
       onActiveSlider(x);
     },
     onEnd: () => {
-      if (disable || disableTapEvent) return;
+      if (disable?.value || disableTapEvent) return;
 
       bubbleOpacity.value = withSpring(0);
       isScrubbing.value = true;
@@ -424,7 +424,7 @@ export const Slider = ({
                     maxWidth: '100%',
                     left: 0,
                     position: 'absolute',
-                    backgroundColor: disable
+                    backgroundColor: disable?.value
                       ? disableMinTrackTintColor
                       : minimumTrackTintColor,
                   },
