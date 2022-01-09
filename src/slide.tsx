@@ -189,16 +189,15 @@ export const Slider = ({
   const bubbleOpacity = useSharedValue(0);
   const isScrubbing = useSharedValue(false);
 
+  const totalValue = () => {
+    'worklet';
+    return minimumValue.value + maximumValue.value || 1;
+  };
   const animatedSeekStyle = useAnimatedStyle(() => {
-    const currentValue = clamp(
-      (progress.value / (minimumValue.value + maximumValue.value)) *
-        width.value,
-      0,
-      width.value - thumbWidth,
-    );
+    const currentValue = (progress.value / totalValue()) * width.value;
     return {
       width: withTiming(
-        currentValue,
+        clamp(currentValue, 0, width.value - thumbWidth),
         isScrubbing.value
           ? {
               duration: 0,
@@ -212,13 +211,7 @@ export const Slider = ({
   }, [progress.value, isScrubbing.value]);
 
   const animatedThumbStyle = useAnimatedStyle(() => {
-    const currentValue = clamp(
-      (progress.value / (minimumValue.value + maximumValue.value)) *
-        width.value,
-      0,
-      width.value - thumbWidth,
-    );
-
+    const currentValue = (progress.value / totalValue()) * width.value;
     return {
       transform: [
         {

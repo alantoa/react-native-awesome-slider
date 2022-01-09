@@ -16,7 +16,7 @@ module.exports = {
   resolver: {
     blacklistRE: exclusionList(
       modules.map(
-        new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`),
+        m => new RegExp(`^${escape(path.join(root, 'node_modules', m))}\\/.*$`),
       ),
     ),
 
