@@ -286,7 +286,7 @@ export const Slider = ({
    */
   const shareValueToSeconds = () => {
     'worklet';
-    return ((thumbValue.value + thumbWidth) / width.value) * maximumValue.value;
+    return (seekValue.value / width.value) * sliderTotalValue();
   };
   /**
    * convert [x] position to progress
@@ -295,9 +295,9 @@ export const Slider = ({
   const xToProgress = (x: number) => {
     'worklet';
     return clamp(
-      Math.round((x / width.value) * maximumValue.value),
+      Math.round((x / width.value) * sliderTotalValue()),
       minimumValue.value,
-      maximumValue.value,
+      sliderTotalValue(),
     );
   };
 
@@ -308,7 +308,7 @@ export const Slider = ({
     'worklet';
     isScrubbing.value = true;
     thumbValue.value = clamp(x, 0, width.value - thumbWidth);
-    seekValue.value = clamp(x, 0, width.value - thumbWidth);
+    seekValue.value = clamp(x, 0, width.value);
     const currentValue = xToProgress(x);
     progress.value = clamp(
       currentValue,
@@ -368,11 +368,12 @@ export const Slider = ({
       (progress.value / (minimumValue.value + maximumValue.value)) *
       nativeEvent.layout.width;
 
-    thumbValue.value = seekValue.value = clamp(
+    thumbValue.value = clamp(
       currentValue,
       0,
       nativeEvent.layout.width - thumbWidth,
     );
+    seekValue.value = clamp(currentValue, 0, nativeEvent.layout.width);
   };
 
   return (

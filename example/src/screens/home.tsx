@@ -10,7 +10,7 @@ export const Home = () => {
   const navigate = useNavigation<NativeStackNavigationProp<RootParamList>>();
   const progress = useSharedValue(30);
   const min = useSharedValue(0);
-  const max = useSharedValue(120);
+  const max = useSharedValue(132);
   const cache = useSharedValue(80);
   const isScrubbing = useRef(false);
 
@@ -22,7 +22,7 @@ export const Home = () => {
     // return () => clearTimeout(timer);
   }, [isScrubbing.current]);
   const onSlidingComplete = (e: number) => {
-    console.log('onSlidingComplete');
+    // console.log('onSlidingComplete', e);
     isScrubbing.current = false;
   };
   const onSlidingStart = () => {
@@ -35,14 +35,14 @@ export const Home = () => {
         <ScrollView style={{ paddingHorizontal: 20, paddingVertical: 40 }}>
           <StatusBar barStyle={'dark-content'} />
           <Text tx="simple example" h2 />
-          <Slider
+          {/* <Slider
             style={styles.container}
             progress={progress}
             onSlidingComplete={onSlidingComplete}
             onSlidingStart={onSlidingStart}
             minimumValue={min}
             maximumValue={max}
-          />
+          /> */}
           <Text tx="video controls example" h2 style={{ marginTop: 20 }} />
           <View style={[styles.bottomControlGroup]}>
             <View
