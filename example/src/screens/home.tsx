@@ -8,19 +8,18 @@ import type { RootParamList } from '../../App';
 import { Text } from '../components';
 export const Home = () => {
   const navigate = useNavigation<NativeStackNavigationProp<RootParamList>>();
-  const progress = useSharedValue(0);
+  const progress = useSharedValue(30);
   const min = useSharedValue(0);
-  const max = useSharedValue(10);
+  const max = useSharedValue(120);
   const cache = useSharedValue(80);
-  const disable = useSharedValue(false);
   const isScrubbing = useRef(false);
 
   useEffect(() => {
-    // const timer = setInterval(() => {
-    //   progress.value++;
-    //   cache.value = cache.value + 1.5;
-    // }, 1000);
-    // return () => clearTimeout(timer);
+    const timer = setInterval(() => {
+      progress.value++;
+      cache.value = cache.value + 1.5;
+    }, 1000);
+    return () => clearTimeout(timer);
   }, [isScrubbing.current]);
   const onSlidingComplete = (e: number) => {
     console.log('onSlidingComplete');
@@ -44,7 +43,8 @@ export const Home = () => {
             onSlidingStart={onSlidingStart}
             minimumValue={min}
             maximumValue={max}
-            disable={disable}
+            disable={false}
+            cache={cache}
           />
         </ScrollView>
       </View>

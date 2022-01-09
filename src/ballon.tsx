@@ -35,7 +35,7 @@ export type BubbleRef = {
 };
 export const Bubble = forwardRef<BubbleRef, BubbleProps>(
   (
-    { containerStyle, color = palette.Main(1), textStyle, bubbleMaxWidth },
+    { containerStyle, color = palette.Main, textStyle, bubbleMaxWidth },
     ref,
   ) => {
     const textRef = useRef<TextInput>(null);
@@ -55,7 +55,7 @@ export const Bubble = forwardRef<BubbleRef, BubbleProps>(
           }}>
           <TextInput
             ref={textRef}
-            style={[{ color: palette.W(1), fontSize: 12 }, textStyle]}
+            style={[{ color: palette.W, fontSize: 12 }, textStyle]}
           />
         </Animated.View>
         <View

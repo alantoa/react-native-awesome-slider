@@ -124,7 +124,7 @@ export type AwesomeSliderProps = {
   /**
    * disable slide
    */
-  disable?: Animated.SharedValue<boolean>;
+  disable?: boolean;
   /**
    * disable slide color, default is minimumTrackTintColor
    */
@@ -153,9 +153,9 @@ export const Slider = ({
   renderBubble,
   renderThumbImage,
   style,
-  minimumTrackTintColor = palette.Main(1),
-  maximumTrackTintColor = palette.G3(1),
-  cacheTrackTintColor = palette.G6(1),
+  minimumTrackTintColor = palette.Main,
+  maximumTrackTintColor = palette.G3,
+  cacheTrackTintColor = palette.G6,
   borderColor = palette.transparent,
   bubbleTranslateY = -25,
   progress,
@@ -172,8 +172,8 @@ export const Slider = ({
   bubble,
   bubbleMaxWidth = 100,
   timingConfig = defaultTimingConfig,
-  disableMinTrackTintColor = palette.G4(1),
-  bubbleBackgroundColor = palette.Main(1),
+  disableMinTrackTintColor = palette.Main,
+  bubbleBackgroundColor = palette.Main,
   bubbleTextStyle,
   bubbleContainerStyle,
 }: AwesomeSliderProps) => {
@@ -189,12 +189,19 @@ export const Slider = ({
   const bubbleOpacity = useSharedValue(0);
   const isScrubbing = useSharedValue(false);
 
-  const totalValue = () => {
+  const sliderTotalValue = () => {
     'worklet';
-    return minimumValue.value + maximumValue.value || 1;
+    return minimumValue.value + maximumValue.value;
   };
+  const valueToWidth = (value: number) => {
+    'worklet';
+    return (value / sliderTotalValue()) * width.value;
+  };
+
   const animatedSeekStyle = useAnimatedStyle(() => {
-    const currentValue = (progress.value / totalValue()) * width.value;
+    const currentValue =
+      sliderTotalValue() === 0 ? 0 : valueToWidth(progress.value);
+
     return {
       width: withTiming(
         clamp(currentValue, 0, width.value - thumbWidth),
@@ -204,14 +211,18 @@ export const Slider = ({
             }
           : timingConfig,
       ),
-      backgroundColor: disable?.value
-        ? disableMinTrackTintColor
-        : minimumTrackTintColor,
     };
-  }, [progress.value, isScrubbing.value]);
+  }, [
+    progress.value,
+    isScrubbing.value,
+    minimumValue.value,
+    maximumValue.value,
+  ]);
 
   const animatedThumbStyle = useAnimatedStyle(() => {
-    const currentValue = (progress.value / totalValue()) * width.value;
+    const currentValue =
+      sliderTotalValue() === 0 ? 0 : valueToWidth(progress.value);
+
     return {
       transform: [
         {
@@ -226,7 +237,12 @@ export const Slider = ({
         },
       ],
     };
-  }, [progress.value, isScrubbing.value]);
+  }, [
+    progress.value,
+    isScrubbing.value,
+    minimumValue.value,
+    maximumValue.value,
+  ]);
 
   const animatedBubbleStyle = useAnimatedStyle(() => {
     return {
@@ -246,8 +262,12 @@ export const Slider = ({
   });
 
   const animatedCacheXStyle = useAnimatedStyle(() => {
+    const cacheX = cache?.value
+      ? (cache?.value / sliderTotalValue()) * width.value
+      : 0;
+
     return {
-      width: cache?.value || 0,
+      width: cacheX,
     };
   });
 
@@ -280,6 +300,7 @@ export const Slider = ({
       maximumValue.value,
     );
   };
+
   /**
    * change slide value
    */
@@ -301,8 +322,7 @@ export const Slider = ({
     GestureEvent<PanGestureHandlerEventPayload>
   >({
     onStart: () => {
-      if (disable?.value) return;
-
+      if (disable) return;
       bubbleOpacity.value = withSpring(1);
       isScrubbing.value = true;
       if (onSlidingStart) {
@@ -310,12 +330,12 @@ export const Slider = ({
       }
     },
     onActive: ({ x }) => {
-      if (disable?.value) return;
+      if (disable) return;
       onActiveSlider(x);
     },
 
     onEnd: () => {
-      if (disable?.value) return;
+      if (disable) return;
       bubbleOpacity.value = withSpring(0);
       isScrubbing.value = false;
       if (onSlidingComplete) {
@@ -328,11 +348,11 @@ export const Slider = ({
     GestureEvent<TapGestureHandlerEventPayload>
   >({
     onActive: ({ x }) => {
-      if (disable?.value || disableTapEvent) return;
+      if (disable || disableTapEvent) return;
       onActiveSlider(x);
     },
     onEnd: () => {
-      if (disable?.value || disableTapEvent) return;
+      if (disable || disableTapEvent) return;
 
       bubbleOpacity.value = withSpring(0);
       isScrubbing.value = true;
@@ -367,7 +387,6 @@ export const Slider = ({
                 overflow: 'visible',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#3330',
               },
               style,
             ]}
@@ -400,6 +419,9 @@ export const Slider = ({
                     maxWidth: '100%',
                     left: 0,
                     position: 'absolute',
+                    backgroundColor: disable
+                      ? disableMinTrackTintColor
+                      : minimumTrackTintColor,
                   },
                   animatedSeekStyle,
                 ]}
