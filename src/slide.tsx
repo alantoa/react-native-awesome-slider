@@ -190,13 +190,15 @@ export const Slider = ({
   const isScrubbing = useSharedValue(false);
 
   const animatedSeekStyle = useAnimatedStyle(() => {
-    const currentValue =
+    const currentValue = clamp(
       (progress.value / (minimumValue.value + maximumValue.value)) *
-      width.value;
-
+        width.value,
+      0,
+      width.value - thumbWidth,
+    );
     return {
       width: withTiming(
-        clamp(currentValue, 0, width.value - thumbWidth),
+        currentValue,
         isScrubbing.value
           ? {
               duration: 0,
@@ -210,9 +212,12 @@ export const Slider = ({
   }, [progress.value, isScrubbing.value]);
 
   const animatedThumbStyle = useAnimatedStyle(() => {
-    const currentValue =
+    const currentValue = clamp(
       (progress.value / (minimumValue.value + maximumValue.value)) *
-      width.value;
+        width.value,
+      0,
+      width.value - thumbWidth,
+    );
 
     return {
       transform: [

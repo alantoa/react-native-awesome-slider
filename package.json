@@ -27,6 +27,15 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "test": "jest"
   },
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "react-native-reanimted",
+    "react-native-gesture-handle",
+    "slider",
+    "scrubber"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MonsterAnan/react-native-awesome-slider.git"
