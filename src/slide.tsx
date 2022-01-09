@@ -377,20 +377,24 @@ export const Slider = ({
 
   return (
     <PanGestureHandler onGestureEvent={onGestureEvent} minDist={0}>
-      <Animated.View>
+      <Animated.View
+        style={[
+          {
+            flex: 1,
+            height: 30,
+          },
+          style,
+        ]}
+        onLayout={onLayout}>
         <TapGestureHandler onGestureEvent={onSingleTapEvent}>
           <Animated.View
-            style={[
-              {
-                flex: 1,
-                height: 30,
-                overflow: 'visible',
-                alignItems: 'center',
-                justifyContent: 'center',
-              },
-              style,
-            ]}
-            onLayout={onLayout}>
+            style={{
+              width: '100%',
+              height: '100%',
+              overflow: 'visible',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
             <Animated.View
               style={{
                 width: '100%',
