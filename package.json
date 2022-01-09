@@ -22,20 +22,21 @@
     "!**/__mocks__"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "bob build",
-    "release": "release-it"
+    "release": "release-it",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MonsterAnan/react-native-awesome-slider.git"
   },
-  "author": "Toa  <toacncom@gmail.com> (https://github.com/MonsterAnan)",
+  "author": "Toa <toacncom@gmail.com> (https://github.com/MonsterAnan)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/MonsterAnan/react-native-awesome-slider/issues"
   },
-  "homepage": "https://github.com/MonsterAnan/react-native-awesome-slider#readme",
+  "homepage": "https://github.com/MonsterAnan/react-native-awesome-slider",
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -51,11 +52,12 @@
     "eslint": "^7.14.0",
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.66.2",
+    "react-native": "0.66.4",
     "react-native-builder-bob": "^0.18.2",
     "react-native-gesture-handler": "^1.10.1",
     "react-native-reanimated": "2.1.0",
     "react-test-renderer": "17.0.2",
-    "release-it": "^14.11.8",
+    "release-it": "*",
     "typescript": "^4.4.4",
     "@release-it/conventional-changelog": "^2.0.0"
   },

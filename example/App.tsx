@@ -19,7 +19,7 @@ export type RootParamList = {
 };
 const Stack = createNativeStackNavigator<RootParamList>();
 
-const _App = () => {
+const App = gestureHandlerRootHOC(() => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -33,7 +33,5 @@ const _App = () => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
-
-const App = gestureHandlerRootHOC(() => <_App />);
+});
 export default App;
