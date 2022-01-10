@@ -13,11 +13,11 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
 } from 'react-native-reanimated';
 import { Bubble, BubbleRef } from './';
 import { palette } from './theme/palette';
 import { clamp } from './utils';
+const formatSeconds = (second: number) => `${Math.round(second * 100) / 100}`;
 
 export type AwesomeSliderProps = {
   /**
@@ -124,7 +124,7 @@ export type AwesomeSliderProps = {
   /**
    * disable slide
    */
-  disable?: Animated.SharedValue<boolean>;
+  disable?: boolean;
   /**
    * disable slide color, default is minimumTrackTintColor
    */
@@ -138,17 +138,13 @@ export type AwesomeSliderProps = {
    * bubble elements max width, default 100.
    */
   bubbleMaxWidth?: number;
-  /**
-   * with progress sliding timingConfig
-   */
-  timingConfig?: Animated.WithTimingConfig;
   bubbleTextStyle?: TextStyle;
   bubbleContainerStyle?: ViewStyle;
   bubbleBackgroundColor?: string;
+  isScrubbing?: Animated.SharedValue<boolean>;
+  onTap?: () => void;
 };
-const defaultTimingConfig: Animated.WithTimingConfig = {
-  duration: 300,
-};
+
 export const Slider = ({
   renderBubble,
   renderThumbImage,
@@ -171,11 +167,12 @@ export const Slider = ({
   disableTapEvent = false,
   bubble,
   bubbleMaxWidth = 100,
-  timingConfig = defaultTimingConfig,
   disableMinTrackTintColor = palette.Main,
   bubbleBackgroundColor = palette.Main,
   bubbleTextStyle,
   bubbleContainerStyle,
+  isScrubbing,
+  onTap,
 }: AwesomeSliderProps) => {
   const bubbleRef = useRef<BubbleRef>(null);
   /**
@@ -184,65 +181,44 @@ export const Slider = ({
    */
 
   const width = useSharedValue(0);
-  const seekValue = useSharedValue(0);
   const thumbValue = useSharedValue(0);
   const bubbleOpacity = useSharedValue(0);
-  const isScrubbing = useSharedValue(false);
 
   const sliderTotalValue = () => {
     'worklet';
     return minimumValue.value + maximumValue.value;
   };
-  const valueToWidth = (value: number) => {
+  const progressToSeekWidth = (value: number) => {
     'worklet';
+    if (sliderTotalValue() === 0) return 0;
     return (value / sliderTotalValue()) * width.value;
   };
 
   const animatedSeekStyle = useAnimatedStyle(() => {
-    const currentValue =
-      sliderTotalValue() === 0 ? 0 : valueToWidth(progress.value);
+    const currentValue = progressToSeekWidth(progress.value);
 
     return {
-      width: withTiming(
-        clamp(currentValue, 0, width.value - thumbWidth),
-        isScrubbing.value
-          ? {
-              duration: 0,
-            }
-          : timingConfig,
-      ),
+      width: clamp(currentValue, 0, width.value - thumbWidth),
     };
-  }, [
-    progress.value,
-    isScrubbing.value,
-    minimumValue.value,
-    maximumValue.value,
-  ]);
+  }, [progress.value, minimumValue.value, maximumValue.value]);
+
+  const progressToThumbX = (value: number) => {
+    'worklet';
+    if (sliderTotalValue() === 0) return 0;
+    return (value / sliderTotalValue()) * (width.value - thumbWidth);
+  };
 
   const animatedThumbStyle = useAnimatedStyle(() => {
-    const currentValue =
-      sliderTotalValue() === 0 ? 0 : valueToWidth(progress.value);
+    const currentValue = progressToThumbX(progress.value);
 
     return {
       transform: [
         {
-          translateX: withTiming(
-            clamp(currentValue, 0, width.value - thumbWidth),
-            isScrubbing.value
-              ? {
-                  duration: 0,
-                }
-              : timingConfig,
-          ),
+          translateX: clamp(currentValue, 0, width.value - thumbWidth),
         },
       ],
     };
-  }, [
-    progress.value,
-    isScrubbing.value,
-    minimumValue.value,
-    maximumValue.value,
-  ]);
+  }, [progress.value, minimumValue.value, maximumValue.value]);
 
   const animatedBubbleStyle = useAnimatedStyle(() => {
     return {
@@ -271,22 +247,23 @@ export const Slider = ({
     };
   });
 
-  const onSlideAcitve = (second: number) => {
-    const formatSecond = `${Math.round(second * 100) / 100}`;
-    const bubbleText = bubble ? bubble?.(second) : formatSecond;
-    onValueChange?.(second);
+  const onSlideAcitve = (seconds: number) => {
+    const bubbleText = bubble ? bubble?.(seconds) : formatSeconds(seconds);
+    onValueChange?.(seconds);
+
     setBubbleText
       ? setBubbleText(bubbleText)
       : bubbleRef.current?.setText(bubbleText);
   };
 
   /**
-   * convert Sharevalue to seconds
+   * convert Sharevalue to callback seconds
    * @returns number
    */
   const shareValueToSeconds = () => {
     'worklet';
-    return (seekValue.value / width.value) * sliderTotalValue();
+
+    return (thumbValue.value / (width.value - thumbWidth)) * sliderTotalValue();
   };
   /**
    * convert [x] position to progress
@@ -295,7 +272,7 @@ export const Slider = ({
   const xToProgress = (x: number) => {
     'worklet';
     return clamp(
-      Math.round((x / width.value) * sliderTotalValue()),
+      (x / (width.value - thumbWidth)) * sliderTotalValue(),
       minimumValue.value,
       sliderTotalValue(),
     );
@@ -306,12 +283,13 @@ export const Slider = ({
    */
   const onActiveSlider = (x: number) => {
     'worklet';
-    isScrubbing.value = true;
+    if (isScrubbing) {
+      isScrubbing.value = true;
+    }
     thumbValue.value = clamp(x, 0, width.value - thumbWidth);
-    seekValue.value = clamp(x, 0, width.value);
-    const currentValue = xToProgress(x);
+
     progress.value = clamp(
-      currentValue,
+      xToProgress(x),
       minimumValue.value,
       maximumValue.value,
     );
@@ -322,22 +300,29 @@ export const Slider = ({
     GestureEvent<PanGestureHandlerEventPayload>
   >({
     onStart: () => {
-      if (disable?.value) return;
+      if (disable) return;
+      if (isScrubbing) {
+        isScrubbing.value = true;
+      }
       bubbleOpacity.value = withSpring(1);
-      isScrubbing.value = true;
+
       if (onSlidingStart) {
         runOnJS(onSlidingStart)();
       }
     },
     onActive: ({ x }) => {
-      if (disable?.value) return;
+      if (disable) return;
+
       onActiveSlider(x);
     },
 
     onEnd: () => {
-      if (disable?.value) return;
+      if (disable) return;
+      if (isScrubbing) {
+        isScrubbing.value = true;
+      }
       bubbleOpacity.value = withSpring(0);
-      isScrubbing.value = false;
+
       if (onSlidingComplete) {
         runOnJS(onSlidingComplete)(shareValueToSeconds());
       }
@@ -348,14 +333,21 @@ export const Slider = ({
     GestureEvent<TapGestureHandlerEventPayload>
   >({
     onActive: ({ x }) => {
-      if (disable?.value || disableTapEvent) return;
+      if (onTap) {
+        runOnJS(onTap)();
+      }
+      if (disable) return;
+      if (disableTapEvent) return;
+
       onActiveSlider(x);
     },
     onEnd: () => {
-      if (disable?.value || disableTapEvent) return;
-
+      if (disable || disableTapEvent) return;
+      if (isScrubbing) {
+        isScrubbing.value = true;
+      }
       bubbleOpacity.value = withSpring(0);
-      isScrubbing.value = true;
+
       if (onSlidingComplete) {
         runOnJS(onSlidingComplete)(shareValueToSeconds());
       }
@@ -363,17 +355,13 @@ export const Slider = ({
   });
 
   const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
-    width.value = nativeEvent.layout.width;
+    const layoutWidth = nativeEvent.layout.width;
+    width.value = layoutWidth;
     const currentValue =
       (progress.value / (minimumValue.value + maximumValue.value)) *
-      nativeEvent.layout.width;
+      layoutWidth;
 
-    thumbValue.value = clamp(
-      currentValue,
-      0,
-      nativeEvent.layout.width - thumbWidth,
-    );
-    seekValue.value = clamp(currentValue, 0, nativeEvent.layout.width);
+    thumbValue.value = clamp(currentValue, 0, layoutWidth - thumbWidth);
   };
 
   return (
@@ -424,7 +412,7 @@ export const Slider = ({
                     maxWidth: '100%',
                     left: 0,
                     position: 'absolute',
-                    backgroundColor: disable?.value
+                    backgroundColor: disable
                       ? disableMinTrackTintColor
                       : minimumTrackTintColor,
                   },
