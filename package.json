@@ -38,14 +38,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MonsterAnan/react-native-awesome-slider.git"
+    "url": "git+https://github.com/alantoa/react-native-awesome-slider.git"
   },
-  "author": "Toa <toacncom@gmail.com> (https://github.com/MonsterAnan)",
+  "author": "Toa <toacncom@gmail.com> (https://github.com/alantoa)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MonsterAnan/react-native-awesome-slider/issues"
+    "url": "https://github.com/alantoa/react-native-awesome-slider/issues"
   },
-  "homepage": "https://github.com/MonsterAnan/react-native-awesome-slider",
+  "homepage": "https://github.com/alantoa/react-native-awesome-slider",
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.12.9",

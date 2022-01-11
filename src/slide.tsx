@@ -13,6 +13,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
 } from 'react-native-reanimated';
 import { Bubble, BubbleRef } from './';
 import { palette } from './theme/palette';
@@ -124,7 +125,7 @@ export type AwesomeSliderProps = {
   /**
    * disable slide
    */
-  disable?: boolean;
+  disable?: Animated.SharedValue<boolean>;
   /**
    * disable slide color, default is minimumTrackTintColor
    */
@@ -143,6 +144,8 @@ export type AwesomeSliderProps = {
   bubbleBackgroundColor?: string;
   isScrubbing?: Animated.SharedValue<boolean>;
   onTap?: () => void;
+  thumbScaleValue?: Animated.SharedValue<number>;
+  sliderHeight?: number;
 };
 
 export const Slider = ({
@@ -173,6 +176,8 @@ export const Slider = ({
   bubbleContainerStyle,
   isScrubbing,
   onTap,
+  thumbScaleValue,
+  sliderHeight = 30,
 }: AwesomeSliderProps) => {
   const bubbleRef = useRef<BubbleRef>(null);
   /**
@@ -188,33 +193,31 @@ export const Slider = ({
     'worklet';
     return minimumValue.value + maximumValue.value;
   };
-  const progressToSeekWidth = (value: number) => {
-    'worklet';
-    if (sliderTotalValue() === 0) return 0;
-    return (value / sliderTotalValue()) * width.value;
-  };
-
-  const animatedSeekStyle = useAnimatedStyle(() => {
-    const currentValue = progressToSeekWidth(progress.value);
-
-    return {
-      width: clamp(currentValue, 0, width.value - thumbWidth),
-    };
-  }, [progress.value, minimumValue.value, maximumValue.value]);
-
-  const progressToThumbX = (value: number) => {
+  const progressToValue = (value: number) => {
     'worklet';
     if (sliderTotalValue() === 0) return 0;
     return (value / sliderTotalValue()) * (width.value - thumbWidth);
   };
+  const animatedSeekStyle = useAnimatedStyle(() => {
+    const currentValue = progressToValue(progress.value) + thumbWidth / 2;
+
+    return {
+      width: clamp(currentValue, 0, width.value),
+    };
+  }, [progress.value, minimumValue.value, maximumValue.value]);
 
   const animatedThumbStyle = useAnimatedStyle(() => {
-    const currentValue = progressToThumbX(progress.value);
+    const currentValue = progressToValue(progress.value);
 
     return {
       transform: [
         {
           translateX: clamp(currentValue, 0, width.value - thumbWidth),
+        },
+        {
+          scale: withTiming(thumbScaleValue ? thumbScaleValue.value : 1, {
+            duration: 100,
+          }),
         },
       ],
     };
@@ -300,7 +303,7 @@ export const Slider = ({
     GestureEvent<PanGestureHandlerEventPayload>
   >({
     onStart: () => {
-      if (disable) return;
+      if (disable?.value) return;
       if (isScrubbing) {
         isScrubbing.value = true;
       }
@@ -311,13 +314,13 @@ export const Slider = ({
       }
     },
     onActive: ({ x }) => {
-      if (disable) return;
+      if (disable?.value) return;
 
       onActiveSlider(x);
     },
 
     onEnd: () => {
-      if (disable) return;
+      if (disable?.value) return;
       if (isScrubbing) {
         isScrubbing.value = true;
       }
@@ -336,13 +339,13 @@ export const Slider = ({
       if (onTap) {
         runOnJS(onTap)();
       }
-      if (disable) return;
+      if (disable?.value) return;
       if (disableTapEvent) return;
 
       onActiveSlider(x);
     },
     onEnd: () => {
-      if (disable || disableTapEvent) return;
+      if (disable?.value || disableTapEvent) return;
       if (isScrubbing) {
         isScrubbing.value = true;
       }
@@ -370,10 +373,16 @@ export const Slider = ({
         style={[
           {
             flex: 1,
-            height: 30,
+            height: sliderHeight,
           },
           style,
         ]}
+        hitSlop={{
+          top: 8,
+          left: 0,
+          bottom: 8,
+          right: 0,
+        }}
         onLayout={onLayout}>
         <TapGestureHandler onGestureEvent={onSingleTapEvent}>
           <Animated.View
@@ -412,7 +421,7 @@ export const Slider = ({
                     maxWidth: '100%',
                     left: 0,
                     position: 'absolute',
-                    backgroundColor: disable
+                    backgroundColor: disable?.value
                       ? disableMinTrackTintColor
                       : minimumTrackTintColor,
                   },
