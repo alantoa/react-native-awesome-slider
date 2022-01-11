@@ -1,5 +1,11 @@
 import React, { useRef } from 'react';
-import { LayoutChangeEvent, TextStyle, View, ViewStyle } from 'react-native';
+import {
+  LayoutChangeEvent,
+  StyleSheet,
+  TextStyle,
+  View,
+  ViewStyle,
+} from 'react-native';
 import {
   GestureEvent,
   PanGestureHandler,
@@ -146,6 +152,7 @@ export type AwesomeSliderProps = {
   onTap?: () => void;
   thumbScaleValue?: Animated.SharedValue<number>;
   sliderHeight?: number;
+  containerStyle?: ViewStyle;
 };
 
 export const Slider = ({
@@ -178,6 +185,7 @@ export const Slider = ({
   onTap,
   thumbScaleValue,
   sliderHeight = 30,
+  containerStyle,
 }: AwesomeSliderProps) => {
   const bubbleRef = useRef<BubbleRef>(null);
   /**
@@ -394,15 +402,18 @@ export const Slider = ({
               justifyContent: 'center',
             }}>
             <Animated.View
-              style={{
-                width: '100%',
-                height: 5,
-                borderRadius: 2,
-                borderColor: borderColor,
-                overflow: 'hidden',
-                borderWidth: 1,
-                backgroundColor: maximumTrackTintColor,
-              }}>
+              style={StyleSheet.flatten([
+                {
+                  width: '100%',
+                  height: 5,
+                  borderRadius: 2,
+                  borderColor: borderColor,
+                  overflow: 'hidden',
+                  borderWidth: 1,
+                  backgroundColor: maximumTrackTintColor,
+                },
+                containerStyle,
+              ])}>
               <Animated.View
                 style={[
                   {
