@@ -2,7 +2,7 @@
 
 > 🚀 `JSThread's` to `JSThread`, `UIThread’s` to `UIThread`.
 
-The best <Slider /> components in react-native now, Perfectly solved the performance/gusture problem of slider.
+The best <Slider /> components in react-native now, Perfectly solved the performance/gesture problem of slider.
 
 Install via [npm](https://www.npmjs.com/package/react-native-awesome-slider):
 
