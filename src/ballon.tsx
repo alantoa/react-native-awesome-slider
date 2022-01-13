@@ -55,7 +55,13 @@ export const Bubble = forwardRef<BubbleRef, BubbleProps>(
           }}>
           <TextInput
             ref={textRef}
-            style={[{ color: palette.W, fontSize: 12 }, textStyle]}
+            textAlign="center"
+            style={[
+              { color: palette.W, fontSize: 12, paddingVertical: 0 },
+              textStyle,
+            ]}
+            defaultValue=""
+            caretHidden
           />
         </Animated.View>
         <View

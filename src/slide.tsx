@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import {
+  Insets,
   LayoutChangeEvent,
   StyleSheet,
   TextStyle,
@@ -25,7 +26,12 @@ import { Bubble, BubbleRef } from './';
 import { palette } from './theme/palette';
 import { clamp } from './utils';
 const formatSeconds = (second: number) => `${Math.round(second * 100) / 100}`;
-
+const hitSlop = {
+  top: 8,
+  left: 0,
+  bottom: 8,
+  right: 0,
+};
 export type AwesomeSliderProps = {
   /**
    * color to fill the progress in the seekbar
@@ -121,7 +127,7 @@ export type AwesomeSliderProps = {
    * render custom thumb image. if you need to customize thumb,
    * you also need to set the `thumb width`
    */
-  renderThumbImage?: () => React.ReactNode;
+  renderThumb?: () => React.ReactNode;
 
   /**
    * thumb elements width, default 15
@@ -153,11 +159,12 @@ export type AwesomeSliderProps = {
   thumbScaleValue?: Animated.SharedValue<number>;
   sliderHeight?: number;
   containerStyle?: ViewStyle;
+  panHitSlop?: Insets;
 };
 
 export const Slider = ({
   renderBubble,
-  renderThumbImage,
+  renderThumb,
   style,
   minimumTrackTintColor = palette.Main,
   maximumTrackTintColor = palette.G3,
@@ -177,7 +184,7 @@ export const Slider = ({
   disableTapEvent = false,
   bubble,
   bubbleMaxWidth = 100,
-  disableMinTrackTintColor = palette.Main,
+  disableMinTrackTintColor = '#92A9BD',
   bubbleBackgroundColor = palette.Main,
   bubbleTextStyle,
   bubbleContainerStyle,
@@ -186,6 +193,7 @@ export const Slider = ({
   thumbScaleValue,
   sliderHeight = 30,
   containerStyle,
+  panHitSlop = hitSlop,
 }: AwesomeSliderProps) => {
   const bubbleRef = useRef<BubbleRef>(null);
   /**
@@ -201,18 +209,23 @@ export const Slider = ({
     'worklet';
     return minimumValue.value + maximumValue.value;
   };
+
   const progressToValue = (value: number) => {
     'worklet';
     if (sliderTotalValue() === 0) return 0;
     return (value / sliderTotalValue()) * (width.value - thumbWidth);
   };
+
   const animatedSeekStyle = useAnimatedStyle(() => {
     const currentValue = progressToValue(progress.value) + thumbWidth / 2;
 
     return {
       width: clamp(currentValue, 0, width.value),
+      backgroundColor: disable?.value
+        ? disableMinTrackTintColor
+        : minimumTrackTintColor,
     };
-  }, [progress.value, minimumValue.value, maximumValue.value]);
+  }, [progress.value, minimumValue.value, maximumValue.value, disable]);
 
   const animatedThumbStyle = useAnimatedStyle(() => {
     const currentValue = progressToValue(progress.value);
@@ -315,15 +328,13 @@ export const Slider = ({
       if (isScrubbing) {
         isScrubbing.value = true;
       }
-      bubbleOpacity.value = withSpring(1);
-
       if (onSlidingStart) {
         runOnJS(onSlidingStart)();
       }
     },
     onActive: ({ x }) => {
       if (disable?.value) return;
-
+      bubbleOpacity.value = withSpring(1);
       onActiveSlider(x);
     },
 
@@ -376,7 +387,12 @@ export const Slider = ({
   };
 
   return (
-    <PanGestureHandler onGestureEvent={onGestureEvent} minDist={0}>
+    <PanGestureHandler
+      onGestureEvent={onGestureEvent}
+      minDist={10}
+      hitSlop={panHitSlop}
+      minPointers={1}
+      maxPointers={1}>
       <Animated.View
         style={[
           {
@@ -385,12 +401,6 @@ export const Slider = ({
           },
           style,
         ]}
-        hitSlop={{
-          top: 8,
-          left: 0,
-          bottom: 8,
-          right: 0,
-        }}
         onLayout={onLayout}>
         <TapGestureHandler onGestureEvent={onSingleTapEvent}>
           <Animated.View
@@ -432,9 +442,6 @@ export const Slider = ({
                     maxWidth: '100%',
                     left: 0,
                     position: 'absolute',
-                    backgroundColor: disable?.value
-                      ? disableMinTrackTintColor
-                      : minimumTrackTintColor,
                   },
                   animatedSeekStyle,
                 ]}
@@ -448,8 +455,8 @@ export const Slider = ({
                 },
                 animatedThumbStyle,
               ]}>
-              {renderThumbImage ? (
-                renderThumbImage()
+              {renderThumb ? (
+                renderThumb()
               ) : (
                 <View
                   style={{
