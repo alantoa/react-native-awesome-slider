@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ScrollView,
   StatusBar,
@@ -14,7 +14,7 @@ const Title = ({ tx }: { tx: string }) => (
   <Text tx={tx} h2 style={{ marginTop: 20 }} />
 );
 export const Home = () => {
-  const disable = useSharedValue(false);
+  const [disable, setDisable] = useState(false);
   const progress1 = useSharedValue(30);
   const progress2 = useSharedValue(30);
   const progress3 = useSharedValue(30);
@@ -62,7 +62,7 @@ export const Home = () => {
 
             <TouchableOpacity
               onPress={() => {
-                disable.value = disable.value ? false : true;
+                setDisable(!disable);
               }}
               style={{ ...styles.btn, backgroundColor: '#7C99AC' }}>
               <Text tx="disable" color="#D3DEDC" />

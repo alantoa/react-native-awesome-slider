@@ -2,7 +2,11 @@
 
 > 🚀 `JSThread's` to `JSThread`, `UIThread’s` to `UIThread`.
 
-The best <Slider /> components in react-native now, Perfectly solved the performance/gesture problem of slider.
+     
+| GIF | VIDEO | 
+| --- | --- |
+| <img src="./assets/example.gif" /> | https://user-images.githubusercontent.com/37520667/149308695-d4b9fc4c-eb43-4914-87a6-c89c56030eb3.mp4 |
+
 
 Install via [npm](https://www.npmjs.com/package/react-native-awesome-slider):
 
@@ -51,7 +55,7 @@ The `<Slider/>` component has the following properties:
 | bubbleTranslateY | number | Value to pass to the container of the bubble as translateY | ❌ | 7 |
 | renderThumbImage | () => React.ReactNode | Render custom thumb image. if you need to customize thumb, you also need to set the thumb width | ❌ | ReactNode |
 | thumbWidth | number | Thumb elements width | ❌ | 15 |
-| disable | Animated.SharedValue<boolean> | Disable slider | ❌ | false |
+| disable | boolean | Disable slider | ❌ | false |
 | disableMinTrackTintColor | string | Disable slider color, default is minimumTrackTintColor | ❌ | rgba(61, 219, 209, 1) |
 | disableTapEvent | boolean | Enable tap event change value, default true | ❌ | true |
 | bubbleMaxWidth | number | Bubble elements max width | ❌ | 100 |
@@ -63,10 +67,12 @@ The `<Slider/>` component has the following properties:
 | thumbScaleValue | Animated.SharedValue<number> | By this, you can control thumb’s transform-scale animation. | ❌ | undefined |
 | sliderHeight | number | Slider height | ❌ | 30 |
 | containerStyle | ViewStyle | Slider container style | ❌ | { width: '100%', height: 5, borderRadius: 2, borderColor: borderColor, overflow: 'hidden', borderWidth: 1, backgroundColor: maximumTrackTintColor, }, |
+| panHitSlop | { top?: number | undefined;left?: number | undefined;bottom?: number | undefined;right?: number | undefined;}| pan gesture hit slop | ❌ | { top: 8, left: 0, bottom: 8, right: 0,} |
 
 Example Usage:
 
 ```jsx
+import { useSharedValue } from 'react-native-reanimted';
 import { Slider } from 'react-native-awesome-slider';
 
 export const Example = () => {
@@ -84,4 +90,3 @@ export const Example = () => {
 };
 ```
 
-# ⚠ And more, Update soon...

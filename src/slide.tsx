@@ -130,7 +130,7 @@ export type AwesomeSliderProps = {
   /**
    * Disable slider
    */
-  disable?: Animated.SharedValue<boolean>;
+  disable?: boolean;
   /**
    * Disable slider color, default is minimumTrackTintColor
    */
@@ -179,11 +179,11 @@ export const Slider = ({
   setBubbleText,
   onValueChange,
   thumbWidth = 15,
-  disable,
+  disable = false,
   disableTapEvent = false,
   bubble,
   bubbleMaxWidth = 100,
-  disableMinTrackTintColor = '#92A9BD',
+  disableMinTrackTintColor = palette.G3,
   bubbleBackgroundColor = palette.Main,
   bubbleTextStyle,
   bubbleContainerStyle,
@@ -216,11 +216,8 @@ export const Slider = ({
 
     return {
       width: clamp(currentValue, 0, width.value),
-      backgroundColor: disable?.value
-        ? disableMinTrackTintColor
-        : minimumTrackTintColor,
     };
-  }, [progress.value, minimumValue.value, maximumValue.value, disable]);
+  }, [progress.value, minimumValue.value, maximumValue.value]);
 
   const animatedThumbStyle = useAnimatedStyle(() => {
     const currentValue = progressToValue(progress.value);
@@ -319,7 +316,7 @@ export const Slider = ({
     GestureEvent<PanGestureHandlerEventPayload>
   >({
     onStart: () => {
-      if (disable?.value) return;
+      if (disable) return;
       if (isScrubbing) {
         isScrubbing.value = true;
       }
@@ -328,13 +325,13 @@ export const Slider = ({
       }
     },
     onActive: ({ x }) => {
-      if (disable?.value) return;
+      if (disable) return;
       bubbleOpacity.value = withSpring(1);
       onActiveSlider(x);
     },
 
     onEnd: () => {
-      if (disable?.value) return;
+      if (disable) return;
       if (isScrubbing) {
         isScrubbing.value = true;
       }
@@ -353,13 +350,13 @@ export const Slider = ({
       if (onTap) {
         runOnJS(onTap)();
       }
-      if (disable?.value) return;
+      if (disable) return;
       if (disableTapEvent) return;
 
       onActiveSlider(x);
     },
     onEnd: () => {
-      if (disable?.value || disableTapEvent) return;
+      if (disable || disableTapEvent) return;
       if (isScrubbing) {
         isScrubbing.value = true;
       }
@@ -437,6 +434,9 @@ export const Slider = ({
                     maxWidth: '100%',
                     left: 0,
                     position: 'absolute',
+                    backgroundColor: disable
+                      ? disableMinTrackTintColor
+                      : minimumTrackTintColor,
                   },
                   animatedSeekStyle,
                 ]}
