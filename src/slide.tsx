@@ -34,131 +34,130 @@ const hitSlop = {
 };
 export type AwesomeSliderProps = {
   /**
-   * color to fill the progress in the seekbar
+   * Color to fill the progress in the seekbar
    */
   minimumTrackTintColor?: string;
-
   /**
-   * color to fill the background in the seekbar
+   * Color to fill the background in the seekbar
    */
   maximumTrackTintColor?: string;
 
   /**
-   * color to fill the cache in the seekbar
+   * Color to fill the cache in the seekbar
    */
   cacheTrackTintColor?: string;
 
   /**
-   * style for the container view
+   * Style for the container view
    */
   style?: any;
 
   /**
-   * color of the border of the slider
+   * Color of the border of the slider
    */
   borderColor?: string;
-
+  sliderHeight?: number;
+  containerStyle?: ViewStyle;
   /**
-   * a function that gets the current value of the slider as you slide it,
+   * A function that gets the current value of the slider as you slide it,
    * and returns a string to be used inside the bubble. if not provided it will use the
    * current value as integer.
    */
   bubble?: (s: number) => string;
 
   /**
-   * an AnimatedValue from `react-native-reanimated` library which is the
+   * An Animated.SharedValue from `react-native-reanimated` library which is the
    * current value of the slider.
    */
   progress: Animated.SharedValue<number>;
 
   /**
-   * an AnimatedValue from `react-native-reanimated` library which is the
+   * A Animated.SharedValue from `react-native-reanimated` library which is the
    * curren value of the cache. the cache is optional and will be rendered behind
    * the main progress indicator.
    */
   cache?: Animated.SharedValue<number>;
 
   /**
-   * an AnimatedValue from `react-native-reanimated` library which is the
-   * minimum value of the slider.
+   * An  Animated.SharedValue from `react-native-reanimated` library which is the minimum value of the slider.
    */
   minimumValue: Animated.SharedValue<number>;
 
   /**
-   * an AnimatedValue from `react-native-reanimated` library which is the
-   * maximum value of the slider.
+   * An Animated.SharedValue from `react-native-reanimated` library which is themaximum value of the slider.
    */
   maximumValue: Animated.SharedValue<number>;
 
   /**
-   * callback called when the users starts sliding
+   * Callback called when the users starts sliding
    */
   onSlidingStart: () => void;
 
   /**
-   * callback called when slide value change
-   * @reture max/min
+   * Callback called when slide value change
    */
-  onValueChange?: (second: number) => void;
+  onValueChange?: (value: number) => void;
 
   /**
-   * callback called when the users stops sliding. the new value will be passed as
-   * argument
+   * Callback called when the users stops sliding. the new value will be passed as argument
    */
-  onSlidingComplete: (second: number) => void;
+  onSlidingComplete: (value: number) => void;
 
   /**
-   * render custom Bubble to show when sliding.
+   * Render custom Bubble to show when sliding.
    */
   renderBubble?: () => React.ReactNode;
 
   /**
-   * this function will be called while sliding, and should set the text inside your custom
-   * bubble.
+   * This function will be called while sliding, and should set the text inside your custom bubble.
    */
   setBubbleText?: (s: string) => void;
 
   /**
-   * value to pass to the container of the bubble as `translateY`
+   * Value to pass to the container of the bubble as `translateY`
    */
   bubbleTranslateY?: number;
 
   /**
-   * render custom thumb image. if you need to customize thumb,
-   * you also need to set the `thumb width`
+   * Render custom thumb image. if you need to customize thumb, you also need to set the `thumb width`
    */
   renderThumb?: () => React.ReactNode;
 
   /**
-   * thumb elements width, default 15
+   * Thumb elements width, default 15
    */
   thumbWidth?: number;
-
   /**
-   * disable slide
+   * Disable slider
    */
   disable?: Animated.SharedValue<boolean>;
   /**
-   * disable slide color, default is minimumTrackTintColor
+   * Disable slider color, default is minimumTrackTintColor
    */
   disableMinTrackTintColor?: string;
   /**
-   * enable tap event change value, default true
+   * Enable tap event change value, default true
    */
   disableTapEvent?: boolean;
-
   /**
-   * bubble elements max width, default 100.
+   * Bubble elements max width, default 100.
    */
   bubbleMaxWidth?: number;
   bubbleTextStyle?: TextStyle;
   bubbleContainerStyle?: ViewStyle;
   bubbleBackgroundColor?: string;
+  /**
+   * By this, you know the slider status as quickly as possible.(This is useful when you doing video-palyer’s scrubber.)
+   */
   isScrubbing?: Animated.SharedValue<boolean>;
+  /**
+   * On tap slider event.(This is useful when you doing video-palyer’s scrubber.)
+   */
   onTap?: () => void;
+  /**
+   * By this, you can control thumb’s transform-scale animation.
+   */
   thumbScaleValue?: Animated.SharedValue<number>;
-  sliderHeight?: number;
-  containerStyle?: ViewStyle;
   panHitSlop?: Insets;
 };
 
@@ -196,10 +195,6 @@ export const Slider = ({
   panHitSlop = hitSlop,
 }: AwesomeSliderProps) => {
   const bubbleRef = useRef<BubbleRef>(null);
-  /**
-   *  current progress convert to animated value.
-   * @returns number
-   */
 
   const width = useSharedValue(0);
   const thumbValue = useSharedValue(0);
