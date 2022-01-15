@@ -86,9 +86,9 @@ The `<Slider/>` component has the following properties:
 | bubbleTextStyle | TextStyle | Bubble textstyle | ❌ |  |
 | bubbleContainerStyle | ViewStyle | Bubble containe textstyle | ❌ |  |
 | bubbleBackgroundColor | string | Bubble background color | ❌ | rgba(61, 219, 209, 1) |
-| isScrubbing | Animated.SharedValue<boolean> | By this, you know the slider status as quickly as possible.(This is useful when you doing video-palyer’s scrubber.) | ❌ | undefined |
+| isScrubbing | Animated.SharedValue<boolean> | callback slider is scrubbing status | ❌ | undefined |
 | onTap | () => void | On tap slider event.(This is useful when you doing video-palyer’s scrubber.) | ❌ | undefined |
-| thumbScaleValue | Animated.SharedValue<number> | By this, you can control thumb’s transform-scale animation. | ❌ | undefined |
+| thumbScaleValue | Animated.SharedValue<number> | control thumb’s transform-scale animation. | ❌ | undefined |
 | sliderHeight | number | Slider height | ❌ | 30 |
 | containerStyle | ViewStyle | Slider container style | ❌ | { width: '100%', height: 5, borderRadius: 2, borderColor: borderColor, overflow: 'hidden', borderWidth: 1, backgroundColor: maximumTrackTintColor, }, |
 | panHitSlop | { top?: number | undefined;left?: number | undefined;bottom?: number | undefined;right?: number | undefined;}| pan gesture hit slop | ❌ | { top: 8, left: 0, bottom: 8, right: 0,} |
