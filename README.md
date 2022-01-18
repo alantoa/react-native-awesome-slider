@@ -2,7 +2,6 @@
 
 > 🚀 `JSThread's` to `JSThread`, `UIThread’s` to `UIThread`.
 
-     
 | GIF | VIDEO | 
 | --- | --- |
 | <img src="./assets/example.gif" /> | https://user-images.githubusercontent.com/37520667/149308695-d4b9fc4c-eb43-4914-87a6-c89c56030eb3.mp4 |
@@ -16,6 +15,26 @@ or
 yarn add react-native-awesome-slider
 
 ```
+Example Usage:
+
+```jsx
+import { useSharedValue } from 'react-native-reanimted';
+import { Slider } from 'react-native-awesome-slider';
+
+export const Example = () => {
+    const progress = useSharedValue(30);
+    const min = useSharedValue(0);
+    const max = useSharedValue(100);
+    return (
+        <Slider
+            style={styles.container}
+            progress={progress}
+            minimumValue={min}
+            maximumValue={max}
+        />
+    );
+};
+```
 
 ## Why use this library?
 
@@ -24,12 +43,17 @@ yarn add react-native-awesome-slider
 
 So `react-native-awesome-slider` 100% use `reanimated`'s [ShareValue](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/shared-values), is running `UIThread`, is efficient,    and `react-native-gusture-handle` will block your other gesture, let you focus on swiping. ✨
 
-## **Features**
+## Features
 
 - 100% Written in `TypeScript`.
 - 100% Written in `react-native-reanimted` and `react-native-gusture-handle`'.
 - Event support Tap & Pan triggering.
 - and more...
+
+## To do list
+- Support RTL
+- Optimize arrows
+- ... 
 
 ## Usage
 
@@ -62,31 +86,11 @@ The `<Slider/>` component has the following properties:
 | bubbleTextStyle | TextStyle | Bubble textstyle | ❌ |  |
 | bubbleContainerStyle | ViewStyle | Bubble containe textstyle | ❌ |  |
 | bubbleBackgroundColor | string | Bubble background color | ❌ | rgba(61, 219, 209, 1) |
-| isScrubbing | Animated.SharedValue<boolean> | By this, you know the slider status as quickly as possible.(This is useful when you doing video-palyer’s scrubber.) | ❌ | undefined |
+| isScrubbing | Animated.SharedValue<boolean> | callback slider is scrubbing status | ❌ | undefined |
 | onTap | () => void | On tap slider event.(This is useful when you doing video-palyer’s scrubber.) | ❌ | undefined |
-| thumbScaleValue | Animated.SharedValue<number> | By this, you can control thumb’s transform-scale animation. | ❌ | undefined |
+| thumbScaleValue | Animated.SharedValue<number> | control thumb’s transform-scale animation. | ❌ | undefined |
 | sliderHeight | number | Slider height | ❌ | 30 |
 | containerStyle | ViewStyle | Slider container style | ❌ | { width: '100%', height: 5, borderRadius: 2, borderColor: borderColor, overflow: 'hidden', borderWidth: 1, backgroundColor: maximumTrackTintColor, }, |
 | panHitSlop | { top?: number | undefined;left?: number | undefined;bottom?: number | undefined;right?: number | undefined;}| pan gesture hit slop | ❌ | { top: 8, left: 0, bottom: 8, right: 0,} |
 
-Example Usage:
-
-```jsx
-import { useSharedValue } from 'react-native-reanimted';
-import { Slider } from 'react-native-awesome-slider';
-
-export const Example = () => {
-    const progress = useSharedValue(30);
-    const min = useSharedValue(0);
-    const max = useSharedValue(100);
-    return (
-        <Slider
-            style={styles.container}
-            progress={progress}
-            minimumValue={min}
-            maximumValue={max}
-        />
-    );
-};
-```
 
