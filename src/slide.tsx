@@ -27,10 +27,8 @@ import { palette } from './theme/palette';
 import { clamp } from './utils';
 const formatSeconds = (second: number) => `${Math.round(second * 100) / 100}`;
 const hitSlop = {
-  top: 8,
-  left: 0,
-  bottom: 8,
-  right: 0,
+  top: 12,
+  bottom: 12,
 };
 export type AwesomeSliderProps = {
   /**
@@ -52,10 +50,6 @@ export type AwesomeSliderProps = {
    */
   style?: any;
 
-  /**
-   * Color of the border of the slider
-   */
-  borderColor?: string;
   sliderHeight?: number;
   containerStyle?: ViewStyle;
   /**
@@ -168,7 +162,6 @@ export const Slider = ({
   minimumTrackTintColor = palette.Main,
   maximumTrackTintColor = palette.G3,
   cacheTrackTintColor = palette.G6,
-  borderColor = palette.transparent,
   bubbleTranslateY = -25,
   progress,
   minimumValue,
@@ -393,6 +386,7 @@ export const Slider = ({
           },
           style,
         ]}
+        hitSlop={panHitSlop}
         onLayout={onLayout}>
         <TapGestureHandler onGestureEvent={onSingleTapEvent}>
           <Animated.View
@@ -407,11 +401,8 @@ export const Slider = ({
               style={StyleSheet.flatten([
                 {
                   width: '100%',
-                  height: 5,
-                  borderRadius: 2,
-                  borderColor: borderColor,
+                  height: sliderHeight,
                   overflow: 'hidden',
-                  borderWidth: 1,
                   backgroundColor: maximumTrackTintColor,
                 },
                 containerStyle,
