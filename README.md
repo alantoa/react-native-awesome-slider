@@ -18,7 +18,7 @@ yarn add react-native-awesome-slider
 Example Usage:
 
 ```jsx
-import { useSharedValue } from 'react-native-reanimted';
+import { useSharedValue } from 'react-native-reanimated';
 import { Slider } from 'react-native-awesome-slider';
 
 export const Example = () => {
@@ -46,7 +46,7 @@ So `react-native-awesome-slider` 100% use `reanimated`'s [ShareValue](https://do
 ## Features
 
 - 100% Written in `TypeScript`.
-- 100% Written in `react-native-reanimted` and `react-native-gusture-handle`'.
+- 100% Written in `react-native-reanimated` and `react-native-gusture-handle`'.
 - Event support Tap & Pan triggering.
 - and more...
 
