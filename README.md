@@ -1,11 +1,13 @@
 # react-native-awesome-slider
 
-> 🚀 `JSThread's` to `JSThread`, `UIThread’s` to `UIThread`.
+> 🚀 `JSThread` to `JSThread`, `UIThread` to `UIThread`.
 
 | GIF | VIDEO | 
 | --- | --- |
 | <img src="./assets/example.gif" /> | https://user-images.githubusercontent.com/37520667/149308695-d4b9fc4c-eb43-4914-87a6-c89c56030eb3.mp4 |
 
+
+## Installation
 
 Install via [npm](https://www.npmjs.com/package/react-native-awesome-slider):
 
@@ -15,7 +17,7 @@ or
 yarn add react-native-awesome-slider
 
 ```
-Example Usage:
+## Example usage
 
 ```jsx
 import { useSharedValue } from 'react-native-reanimated';
@@ -38,31 +40,31 @@ export const Example = () => {
 
 ## Why use this library?
 
-- Pure js slider generally use `react-native`'s gueture/animtion, so when you pan sliding, may trigger the swiper to back event. ❌
-- Native slider generally use state update view, not efficient. ❌
+- Pure javascript slider implementations usually rely on `react-native`'s gesture events which may inadvertently trigger 'swipe to go back' events as you pan the slider. ❌
+- Native sliders rely on state updates, which can cause performance issues. ❌
 
-So `react-native-awesome-slider` 100% use `reanimated`'s [ShareValue](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/shared-values), is running `UIThread`, is efficient,    and `react-native-gusture-handle` will block your other gesture, let you focus on swiping. ✨
+ `react-native-awesome-slider` relies on `reanimated`'s [ShareValue](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/shared-values) ability to run code directly in the `UIThread` to enhance performance, and `react-native-gesture-handle` won't interfere with your swiping gestures. ✨
 
 ## Features
 
-- 100% Written in `TypeScript`.
-- 100% Written in `react-native-reanimated` and `react-native-gusture-handle`'.
-- Event support Tap & Pan triggering.
+- 100% written in `TypeScript`.
+- 100% built upon `react-native-reanimated` and `react-native-gusture-handle`.
+- Supports Tap & Pan triggering.
 - and more...
 
-## To do list
-- Support RTL
+## TODO list
+- Add RTL support
 - Optimize arrows
 - ... 
 
-## Usage
+## Configuration
 
-The `<Slider/>` component has the following properties:
+The `<Slider/>` component has the following configuration properties:
 
-| Name | Type | Explanation | Required | Default Value |
+| Name | Type | Description | Required | Default Value |
 | --- | --- | --- | --- | --- |
-| minimumTrackTintColor | string | minimum track tint color | ❌ | rgba(61, 219, 209, 1) |
-| maximumTrackTintColor | string | minimum track tint colortrack tint color | ❌ | rgba(195, 197, 199, 1) |
+| minimumTrackTintColor | string | color applied to track from the min position up to the thumb position  | ❌ | rgba(61, 219, 209, 1) |
+| maximumTrackTintColor | string |  color applied to track from the thumb position up to the maximum position | ❌ | rgba(195, 197, 199, 1) |
 | cacheTrackTintColor | string | cache track tint color | ❌ | rgba(39, 41, 46, 1) |
 | style | ViewStyle |  | ❌ |  |
 | borderColor | string | Color of the border of the slider, also you can use containerStyle . | ❌ | transparent |
@@ -71,26 +73,26 @@ The `<Slider/>` component has the following properties:
 | cache | Animated.SharedValue<number> | Cache value of the slider | ❌ | 0 |
 | minimumValue | Animated.SharedValue<number> | An Animated.SharedValue from react-native-reanimated library which is the minimum value of the slider. | ✅ | undefined |
 | maximumValue | Animated.SharedValue<number> | An Animated.SharedValue from react-native-reanimated library which is the maximum value of the slider. | ✅ | undefined |
-| onSlidingStart | () => void | Callback called when the users starts sliding | ❌ | undefined |
-| onValueChange | (number) => void | Callback called when slide value change | ❌ | undefined |
-| onSlidingComplete | (number) => void | Callback called when the users stops sliding. the new value will be passed as argument | ❌ | undefined |
-| renderBubble | () => React.ReactNode | Render custom Bubble to show when sliding. | ❌ | See <Bubble/> components |
-| setBubbleText | (string) => void | This function will be called while sliding, and should set the text inside your custom bubble. | ❌ | current slider value |
+| onSlidingStart | () => void | Callback called when the sliding interaction starts | ❌ | undefined |
+| onValueChange | (number) => void | Callback called when the slider value changes | ❌ | undefined |
+| onSlidingComplete | (number) => void | Callback called when the sliding interaction stops. The updated slider value will be passed as argument | ❌ | undefined |
+| renderBubble | () => React.ReactNode | A custom bubble component that will be rendered while sliding. | ❌ | See the <Bubble/> component |
+| setBubbleText | (string) => void | This function will be called while sliding and can be used to update the text in a custom bubble component. | ❌ | current slider value |
 | bubbleTranslateY | number | Value to pass to the container of the bubble as translateY | ❌ | 7 |
-| renderThumbImage | () => React.ReactNode | Render custom thumb image. if you need to customize thumb, you also need to set the thumb width | ❌ | ReactNode |
+| renderThumbImage | () => React.ReactNode | Render custom thumb image. If you need to customize thumb, you also need to set the thumb width | ❌ | ReactNode |
 | thumbWidth | number | Thumb elements width | ❌ | 15 |
-| disable | boolean | Disable slider | ❌ | false |
-| disableMinTrackTintColor | string | Disable slider color, default is minimumTrackTintColor | ❌ | rgba(61, 219, 209, 1) |
-| disableTapEvent | boolean | Enable tap event change value, default true | ❌ | true |
-| bubbleMaxWidth | number | Bubble elements max width | ❌ | 100 |
-| bubbleTextStyle | TextStyle | Bubble textstyle | ❌ |  |
-| bubbleContainerStyle | ViewStyle | Bubble containe textstyle | ❌ |  |
+| disable | boolean | Disable user interaction with the slider | ❌ | false |
+| disableMinTrackTintColor | string | Disable slider color. Defaults to `minimumTrackTintColor` | ❌ | rgba(61, 219, 209, 1) |
+| disableTapEvent | boolean | Enable tap event change value. Defaults to `true` | ❌ | true |
+| bubbleMaxWidth | number | The maximum width of the bubble component | ❌ | 100 |
+| bubbleTextStyle | TextStyle | Bubble text style | ❌ |  |
+| bubbleContainerStyle | ViewStyle | Bubble container text style | ❌ |  |
 | bubbleBackgroundColor | string | Bubble background color | ❌ | rgba(61, 219, 209, 1) |
 | isScrubbing | Animated.SharedValue<boolean> | callback slider is scrubbing status | ❌ | undefined |
-| onTap | () => void | On tap slider event.(This is useful when you doing video-palyer’s scrubber.) | ❌ | undefined |
-| thumbScaleValue | Animated.SharedValue<number> | control thumb’s transform-scale animation. | ❌ | undefined |
-| sliderHeight | number | Slider height | ❌ | 30 |
-| containerStyle | ViewStyle | Slider container style | ❌ | { width: '100%', height: 5, borderRadius: 2, borderColor: borderColor, overflow: 'hidden', borderWidth: 1, backgroundColor: maximumTrackTintColor, }, |
+| onTap | () => void | A callback for when the slider is tapped.(Useful for video-player scrubbing.) | ❌ | undefined |
+| thumbScaleValue | Animated.SharedValue<number> | Control thumb’s transform-scale animation. | ❌ | undefined |
+| sliderHeight | number | The height of the slider component | ❌ | 30 |
+| containerStyle | ViewStyle | styles to be applied to the slider container component | ❌ | { width: '100%', height: 5, borderRadius: 2, borderColor: borderColor, overflow: 'hidden', borderWidth: 1, backgroundColor: maximumTrackTintColor, }, |
 | panHitSlop | { top?: number | undefined;left?: number | undefined;bottom?: number | undefined;right?: number | undefined;}| pan gesture hit slop | ❌ | { top: 8, left: 0, bottom: 8, right: 0,} |
 
 
