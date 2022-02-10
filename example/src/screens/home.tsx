@@ -30,7 +30,7 @@ export const Home = () => {
     return () => timer.current && clearTimeout(timer.current);
   }, []);
   const onSlidingComplete = (e: number) => {
-    // console.log('onSlidingComplete', e);
+    console.log('onSlidingComplete', e);
     isScrubbing.current = false;
   };
   const onSlidingStart = () => {
@@ -74,8 +74,6 @@ export const Home = () => {
             <Slider
               style={styles.container}
               progress={progress2}
-              onSlidingComplete={onSlidingComplete}
-              onSlidingStart={onSlidingStart}
               minimumValue={min}
               maximumValue={max}
               cache={cache}
@@ -94,8 +92,6 @@ export const Home = () => {
           <Slider
             style={styles.container}
             progress={progress3}
-            onSlidingComplete={onSlidingComplete}
-            onSlidingStart={onSlidingStart}
             minimumValue={min}
             maximumValue={max}
             minimumTrackTintColor="#FFAB76"
@@ -120,8 +116,6 @@ export const Home = () => {
             <Slider
               style={styles.container}
               progress={progress4}
-              onSlidingComplete={onSlidingComplete}
-              onSlidingStart={onSlidingStart}
               minimumValue={min}
               maximumValue={max}
               thumbScaleValue={thumbScaleValue}

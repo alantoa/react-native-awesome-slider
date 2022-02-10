@@ -85,7 +85,7 @@ export type AwesomeSliderProps = {
   /**
    * Callback called when the users starts sliding
    */
-  onSlidingStart: () => void;
+  onSlidingStart?: () => void;
 
   /**
    * Callback called when slide value change
@@ -95,7 +95,7 @@ export type AwesomeSliderProps = {
   /**
    * Callback called when the users stops sliding. the new value will be passed as argument
    */
-  onSlidingComplete: (value: number) => void;
+  onSlidingComplete?: (value: number) => void;
 
   /**
    * Render custom Bubble to show when sliding.
