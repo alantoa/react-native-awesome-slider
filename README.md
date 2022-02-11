@@ -1,22 +1,16 @@
-# react-native-awesome-slider
+<div align="center">
+  <h1 align="center">Awesome Slider</h1>
+  <blockquote><b>🚀 `JSThread` to `JSThread`, `UIThread` to `UIThread`.</b></blockquote>
+  <pre align="center">npm i <a href="https://www.npmjs.com/package/react-native-awesome-slider">react-native-awesome-slider</a>
+  or
+  yarn add <a href="https://www.npmjs.com/package/react-native-awesome-slider">react-native-awesome-slider</a></pre>
+</div>
 
-> 🚀 `JSThread` to `JSThread`, `UIThread` to `UIThread`.
 
-| GIF | VIDEO | 
-| --- | --- |
-| <img src="./assets/example.gif" /> | https://user-images.githubusercontent.com/37520667/149308695-d4b9fc4c-eb43-4914-87a6-c89c56030eb3.mp4 |
+<div align="center">
+  <img src="./assets/example.gif"  width="40%" />
+</div>
 
-
-## Installation
-
-Install via [npm](https://www.npmjs.com/package/react-native-awesome-slider):
-
-```
-npm i react-native-awesome-slider
-or
-yarn add react-native-awesome-slider
-
-```
 ## Example usage
 
 ```jsx
