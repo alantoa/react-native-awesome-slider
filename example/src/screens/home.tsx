@@ -19,6 +19,8 @@ export const Home = () => {
   const progress2 = useSharedValue(30);
   const progress3 = useSharedValue(30);
   const progress4 = useSharedValue(30);
+  const progress5 = useSharedValue(30);
+
   const thumbScaleValue = useSharedValue(1);
   const min = useSharedValue(0);
   const max = useSharedValue(132);
@@ -129,6 +131,27 @@ export const Home = () => {
               style={{ ...styles.btn, backgroundColor: '#7C99AC' }}>
               <Text tx="toggle thumb scale" color="#D3DEDC" />
             </TouchableOpacity>
+          </View>
+
+          <Title tx="Vertical" />
+          <View>
+            <Slider
+              style={[
+                styles.container,
+                {
+                  transform: [
+                    {
+                      rotate: '90deg',
+                    },
+                  ],
+                },
+              ]}
+              progress={progress5}
+              minimumValue={min}
+              maximumValue={max}
+              minimumTrackTintColor="#FFAB76"
+              maximumTrackTintColor="#FFEEAD"
+            />
           </View>
         </ScrollView>
       </View>
