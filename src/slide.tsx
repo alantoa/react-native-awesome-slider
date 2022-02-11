@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import {
   Insets,
   LayoutChangeEvent,
+  StyleProp,
   StyleSheet,
   TextStyle,
   View,
@@ -48,7 +49,7 @@ export type AwesomeSliderProps = {
   /**
    * Style for the container view
    */
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 
   sliderHeight?: number;
   containerStyle?: ViewStyle;
@@ -183,7 +184,7 @@ export const Slider = ({
   isScrubbing,
   onTap,
   thumbScaleValue,
-  sliderHeight = 30,
+  sliderHeight = 5,
   containerStyle,
   panHitSlop = hitSlop,
 }: AwesomeSliderProps) => {
