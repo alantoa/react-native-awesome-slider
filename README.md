@@ -1,7 +1,7 @@
 <div align="center">
   <blockquote><i>`JSThread` to `JSThread`, `UIThread` to `UIThread`.</i></blockquote>
   <h1 align="center">React Native Awesome Slider</h1>
-  <h3 align="center">Typescript Slider component powered by Reanimated v2 and react-native-gesture-handler./h3>
+  <h3 align="center">Typescript Slider component powered by Reanimated v2 and react-native-gesture-handler.</h3>
 </div>
 
 
