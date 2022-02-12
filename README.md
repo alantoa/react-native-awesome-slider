@@ -57,6 +57,7 @@ export const Example = () => {
 ## TODO list
 - Add RTL support
 - Optimize arrows
+- Rewrite using `react-native-gesture-handle` v2
 - ... 
 
 ## Configuration
