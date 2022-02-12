@@ -1,15 +1,23 @@
 <div align="center">
-  <h1 align="center">Awesome Slider</h1>
-  <blockquote><b>🚀 `JSThread` to `JSThread`, `UIThread` to `UIThread`.</b></blockquote>
-  <pre align="center">npm i <a href="https://www.npmjs.com/package/react-native-awesome-slider">react-native-awesome-slider</a>
-  or
-  yarn add <a href="https://www.npmjs.com/package/react-native-awesome-slider">react-native-awesome-slider</a></pre>
+  <blockquote><i>`JSThread` to `JSThread`, `UIThread` to `UIThread`.</i></blockquote>
+  <h1 align="center">React Native Awesome Slider</h1>
+  <h3 align="center">Typescript Slider component powered by Reanimated v2 and react-native-gesture-handler./h3>
 </div>
 
 
 <div align="center">
-  <img src="./assets/example.gif"  width="40%" />
+  <img src="./assets/example.gif" width="30%" />
+  <br/> 
 </div>
+
+## Installation
+
+First you have to follow installation instructions of [Reanimated v2](https://docs.swmansion.com/react-native-reanimated/) and [react-native-gesture-handler](https://docs.swmansion.com/react-native-gesture-handler/)
+
+```sh
+yarn add react-native-awesome-slider
+```
+
 
 ## Example usage
 
