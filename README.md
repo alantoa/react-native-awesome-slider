@@ -96,6 +96,7 @@ The `<Slider/>` component has the following configuration properties:
 | thumbScaleValue | Animated.SharedValue<number> | Control thumb’s transform-scale animation. | ❌ | undefined |
 | sliderHeight | number | The height of the slider component | ❌ | 30 |
 | containerStyle | ViewStyle | styles to be applied to the slider container component | ❌ | { width: '100%', height: 5, borderRadius: 2, borderColor: borderColor, overflow: 'hidden', borderWidth: 1, backgroundColor: maximumTrackTintColor, }, |
-| panHitSlop | { top?: number | undefined;left?: number | undefined;bottom?: number | undefined;right?: number | undefined;}| pan gesture hit slop | ❌ | { top: 8, left: 0, bottom: 8, right: 0,} |
+| panHitSlop               | object                        | pan gesture hit slop                                                                                        | ❌                        | `{ top: 8, left: 0, bottom: 8, right: 0,}     `                                                                                                       |       
+
 
 
