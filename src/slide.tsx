@@ -196,7 +196,7 @@ export const Slider = ({
 
   const sliderTotalValue = () => {
     'worklet';
-    return minimumValue.value + maximumValue.value;
+    return maximumValue.value + minimumValue.value;
   };
 
   const progressToValue = (value: number) => {
@@ -211,11 +211,10 @@ export const Slider = ({
     return {
       width: clamp(currentValue, 0, width.value),
     };
-  }, [progress.value, minimumValue.value, maximumValue.value]);
+  }, [progress, minimumValue, maximumValue, width]);
 
   const animatedThumbStyle = useAnimatedStyle(() => {
     const currentValue = progressToValue(progress.value);
-
     return {
       transform: [
         {
@@ -228,7 +227,7 @@ export const Slider = ({
         },
       ],
     };
-  }, [progress.value, minimumValue.value, maximumValue.value]);
+  }, [progress, minimumValue, maximumValue, width.value]);
 
   const animatedBubbleStyle = useAnimatedStyle(() => {
     return {
@@ -272,8 +271,17 @@ export const Slider = ({
    */
   const shareValueToSeconds = () => {
     'worklet';
-
-    return (thumbValue.value / (width.value - thumbWidth)) * sliderTotalValue();
+    const sliderPercent = clamp(
+      thumbValue.value / (width.value - thumbWidth) +
+        minimumValue.value / sliderTotalValue(),
+      0,
+      1,
+    );
+    return clamp(
+      sliderPercent * sliderTotalValue(),
+      minimumValue.value,
+      maximumValue.value,
+    );
   };
   /**
    * convert [x] position to progress
@@ -281,11 +289,7 @@ export const Slider = ({
    */
   const xToProgress = (x: number) => {
     'worklet';
-    return clamp(
-      (x / (width.value - thumbWidth)) * sliderTotalValue(),
-      minimumValue.value,
-      sliderTotalValue(),
-    );
+    return (x / (width.value - thumbWidth)) * sliderTotalValue();
   };
 
   /**
@@ -297,12 +301,8 @@ export const Slider = ({
       isScrubbing.value = true;
     }
     thumbValue.value = clamp(x, 0, width.value - thumbWidth);
+    progress.value = xToProgress(x);
 
-    progress.value = clamp(
-      xToProgress(x),
-      minimumValue.value,
-      maximumValue.value,
-    );
     runOnJS(onSlideAcitve)(shareValueToSeconds());
   };
 

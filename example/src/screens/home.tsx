@@ -23,11 +23,12 @@ export const Home = () => {
 
   const thumbScaleValue = useSharedValue(1);
   const min = useSharedValue(0);
-  const max = useSharedValue(132);
+  const max = useSharedValue(100);
   const cache = useSharedValue(40);
   const isScrubbing = useRef(false);
   const timer = useRef<any>(null);
-
+  const min10 = useSharedValue(10);
+  const max110 = useSharedValue(110);
   useEffect(() => {
     return () => timer.current && clearTimeout(timer.current);
   }, []);
@@ -92,7 +93,7 @@ export const Home = () => {
 
           <Title tx="Coustom bubble&thumb" />
           <Slider
-            style={styles.container}
+            style={styles.bottomControlGroup}
             progress={progress3}
             minimumValue={min}
             maximumValue={max}
@@ -133,26 +134,15 @@ export const Home = () => {
             </TouchableOpacity>
           </View>
 
-          <Title tx="Vertical" />
-          <View>
-            <Slider
-              style={[
-                styles.container,
-                {
-                  transform: [
-                    {
-                      rotate: '90deg',
-                    },
-                  ],
-                },
-              ]}
-              progress={progress5}
-              minimumValue={min}
-              maximumValue={max}
-              minimumTrackTintColor="#FFAB76"
-              maximumTrackTintColor="#FFEEAD"
-            />
-          </View>
+          <Title tx="Range" />
+          <Slider
+            style={styles.bottomControlGroup}
+            progress={progress5}
+            minimumValue={min10}
+            maximumValue={max110}
+            minimumTrackTintColor="#FFAB76"
+            maximumTrackTintColor="#FFEEAD"
+          />
         </ScrollView>
       </View>
     </>
