@@ -316,9 +316,9 @@ export const Slider = ({
     }
     if (step) {
       const index = stepWidthArr.value.findIndex(item => item >= x);
-      const arr1 = stepWidthArr.value[index];
-      const arr2 = stepWidthArr.value[index - 1];
-      const currentX = (arr1 + arr2) / 2;
+      const arrNext = stepWidthArr.value[index];
+      const arrPrev = stepWidthArr.value[index - 1];
+      const currentX = (arrNext + arrPrev) / 2;
       let thumbIndex = 0;
       if (x - thumbWidth / 2 > currentX) {
         thumbIndex = index;
