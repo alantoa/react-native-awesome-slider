@@ -156,11 +156,6 @@ export type AwesomeSliderProps = {
   panHitSlop?: Insets;
 
   step?: number;
-  marks?:
-    | boolean
-    | {
-        value: number;
-      }[];
   marksStyle?: StyleProp<ViewStyle>;
   markWidth?: number;
 };
@@ -197,7 +192,6 @@ export const Slider = ({
   containerStyle,
   panHitSlop = hitSlop,
   step,
-  marks,
   marksStyle,
   markWidth = 4,
 }: AwesomeSliderProps) => {
