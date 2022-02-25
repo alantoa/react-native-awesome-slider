@@ -82,7 +82,7 @@ The `<Slider/>` component has the following configuration properties:
 | renderBubble | () => React.ReactNode | A custom bubble component that will be rendered while sliding. | ❌ | See the <Bubble/> component |
 | setBubbleText | (string) => void | This function will be called while sliding and can be used to update the text in a custom bubble component. | ❌ | current slider value |
 | bubbleTranslateY | number | Value to pass to the container of the bubble as translateY | ❌ | 7 |
-| renderThumbImage | () => React.ReactNode | Render custom thumb image. If you need to customize thumb, you also need to set the thumb width | ❌ | ReactNode |
+| renderThumb | () => React.ReactNode | Render custom thumb image. If you need to customize thumb, you also need to set the thumb width | ❌ | ReactNode |
 | thumbWidth | number | Thumb elements width | ❌ | 15 |
 | disable | boolean | Disable user interaction with the slider | ❌ | false |
 | disableMinTrackTintColor | string | Disable slider color. Defaults to `minimumTrackTintColor` | ❌ | rgba(61, 219, 209, 1) |
