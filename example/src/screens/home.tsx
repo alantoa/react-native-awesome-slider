@@ -15,6 +15,7 @@ const Title = ({ tx }: { tx: string }) => (
 );
 export const Home = () => {
   const [disable, setDisable] = useState(false);
+  const [value, setvalue] = useState(0);
   const progress1 = useSharedValue(30);
   const progress2 = useSharedValue(30);
   const progress3 = useSharedValue(30);
@@ -29,6 +30,7 @@ export const Home = () => {
   const timer = useRef<any>(null);
   const min10 = useSharedValue(10);
   const max110 = useSharedValue(110);
+
   useEffect(() => {
     return () => timer.current && clearTimeout(timer.current);
   }, []);
@@ -140,8 +142,9 @@ export const Home = () => {
             progress={progress5}
             minimumValue={min10}
             maximumValue={max110}
+            step={10}
             minimumTrackTintColor="#FFAB76"
-            maximumTrackTintColor="#FFEEAD"
+            maximumTrackTintColor="#000"
           />
         </ScrollView>
       </View>

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Insets,
   LayoutChangeEvent,
@@ -52,7 +52,7 @@ export type AwesomeSliderProps = {
   style?: StyleProp<ViewStyle>;
 
   sliderHeight?: number;
-  containerStyle?: ViewStyle;
+  containerStyle?: StyleProp<ViewStyle>;
   /**
    * A function that gets the current value of the slider as you slide it,
    * and returns a string to be used inside the bubble. if not provided it will use the
@@ -138,8 +138,8 @@ export type AwesomeSliderProps = {
    * Bubble elements max width, default 100.
    */
   bubbleMaxWidth?: number;
-  bubbleTextStyle?: TextStyle;
-  bubbleContainerStyle?: ViewStyle;
+  bubbleTextStyle?: StyleProp<TextStyle>;
+  bubbleContainerStyle?: StyleProp<ViewStyle>;
   bubbleBackgroundColor?: string;
   /**
    * By this, you know the slider status as quickly as possible.(This is useful when you doing video-palyer’s scrubber.)
@@ -154,6 +154,15 @@ export type AwesomeSliderProps = {
    */
   thumbScaleValue?: Animated.SharedValue<number>;
   panHitSlop?: Insets;
+
+  step?: number;
+  marks?:
+    | boolean
+    | {
+        value: number;
+      }[];
+  marksStyle?: StyleProp<ViewStyle>;
+  markWidth?: number;
 };
 
 export const Slider = ({
@@ -187,12 +196,17 @@ export const Slider = ({
   sliderHeight = 5,
   containerStyle,
   panHitSlop = hitSlop,
+  step,
+  marks,
+  marksStyle,
+  markWidth = 4,
 }: AwesomeSliderProps) => {
   const bubbleRef = useRef<BubbleRef>(null);
-
+  const [sliderWidth, setSliderWidth] = useState(0);
   const width = useSharedValue(0);
   const thumbValue = useSharedValue(0);
   const bubbleOpacity = useSharedValue(0);
+  const stepWidthArr = useSharedValue<number[]>([]);
 
   const sliderTotalValue = () => {
     'worklet';
@@ -300,10 +314,40 @@ export const Slider = ({
     if (isScrubbing) {
       isScrubbing.value = true;
     }
-    thumbValue.value = clamp(x, 0, width.value - thumbWidth);
-    progress.value = xToProgress(x);
+    if (step) {
+      const index = stepWidthArr.value.findIndex(item => item >= x);
+      const arr1 = stepWidthArr.value[index];
+      const arr2 = stepWidthArr.value[index - 1];
+      const currentX = (arr1 + arr2) / 2;
+      let thumbIndex = 0;
+      if (x - thumbWidth / 2 > currentX) {
+        thumbIndex = index;
+      } else {
+        if (index - 1 === -1) {
+          thumbIndex === 0;
+        } else if (index - 1 < -1) {
+          thumbIndex = step;
+        } else {
+          thumbIndex = index - 1;
+        }
+      }
 
-    runOnJS(onSlideAcitve)(shareValueToSeconds());
+      thumbValue.value = stepWidthArr.value[thumbIndex];
+      progress.value = xToProgress(stepWidthArr.value[thumbIndex]);
+      runOnJS(onSlideAcitve)(
+        clamp(
+          minimumValue.value +
+            (thumbIndex / step) * (maximumValue.value - minimumValue.value),
+          minimumValue.value,
+          maximumValue.value,
+        ),
+      );
+    } else {
+      thumbValue.value = clamp(x, 0, width.value - thumbWidth);
+      progress.value = xToProgress(x);
+
+      runOnJS(onSlideAcitve)(shareValueToSeconds());
+    }
   };
 
   const onGestureEvent = useAnimatedGestureHandler<
@@ -365,11 +409,32 @@ export const Slider = ({
   const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
     const layoutWidth = nativeEvent.layout.width;
     width.value = layoutWidth;
+    setSliderWidth(layoutWidth);
     const currentValue =
       (progress.value / (minimumValue.value + maximumValue.value)) *
       layoutWidth;
 
     thumbValue.value = clamp(currentValue, 0, layoutWidth - thumbWidth);
+    if (step) {
+      stepWidthArr.value = [
+        0,
+        ...new Array(step).fill(0).map((_, i) => {
+          if (i === step - 1) {
+            return layoutWidth - thumbWidth;
+          }
+          let offsetX = 0;
+          if (i < step / 2) {
+            offsetX = ((step - i) / step) * markWidth;
+          } else if (i === step / 2) {
+            offsetX = 0;
+          } else {
+            offsetX = -(i / step) * markWidth;
+          }
+
+          return ((layoutWidth - thumbWidth) / step) * (i + 1) - offsetX;
+        }),
+      ];
+    }
   };
 
   return (
@@ -477,6 +542,26 @@ export const Slider = ({
                 />
               )}
             </Animated.View>
+            {sliderWidth > 0 &&
+              step &&
+              new Array(step + 1).fill(0).map((_, i) => {
+                return (
+                  <View
+                    key={i}
+                    style={[
+                      {
+                        width: markWidth,
+                        height: 4,
+                        backgroundColor: '#fff',
+                        position: 'absolute',
+                        top: 2,
+                        left: sliderWidth * (i / step) - (i / step) * markWidth,
+                      },
+                      marksStyle,
+                    ]}
+                  />
+                );
+              })}
           </Animated.View>
         </TapGestureHandler>
       </Animated.View>

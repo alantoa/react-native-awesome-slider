@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
-import { TextInput, TextStyle, View, ViewStyle } from 'react-native';
+import { StyleProp, TextInput, TextStyle, View, ViewStyle } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { palette } from './theme/palette';
 
@@ -18,12 +18,12 @@ export type BubbleProps = {
   /**
    * the style for the container view
    */
-  containerStyle?: ViewStyle;
+  containerStyle?: StyleProp<ViewStyle>;
 
   /**
    * the style for the TextInput inside bubble
    */
-  textStyle?: TextStyle;
+  textStyle?: StyleProp<TextStyle>;
 
   bubbleMaxWidth?: number;
 };
