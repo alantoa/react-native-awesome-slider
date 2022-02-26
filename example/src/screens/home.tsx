@@ -6,26 +6,32 @@ import {
   View,
   TouchableOpacity,
   TextStyle,
+  Image,
 } from 'react-native';
-import { Slider } from 'react-native-awesome-slider';
+import { HapticModeEnum, Slider } from 'react-native-awesome-slider';
 import { useSharedValue } from 'react-native-reanimated';
 import { Text } from '../components';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+import { palette } from '../../../src/theme/palette';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 const TEXT: TextStyle = {
-  marginTop: 20,
+  marginBottom: 12,
 };
-const Title = ({ tx }: { tx: string }) => <Text tx={tx} h2 style={TEXT} />;
+const Title = ({ tx }: { tx: string }) => <Text tx={tx} h3 style={TEXT} />;
+
 export const Home = () => {
+  const insets = useSafeAreaInsets();
   const [disable, setDisable] = useState(false);
   const progress1 = useSharedValue(30);
-  const progress2 = useSharedValue(30);
   const progress3 = useSharedValue(30);
-  const progress4 = useSharedValue(30);
   const progress5 = useSharedValue(30);
+  const progress6 = useSharedValue(30);
 
   const thumbScaleValue = useSharedValue(1);
   const min = useSharedValue(0);
   const max = useSharedValue(100);
-  const cache = useSharedValue(40);
+  const cache = useSharedValue(0);
   const isScrubbing = useRef(false);
   const timer = useRef<any>(null);
   const min10 = useSharedValue(10);
@@ -43,18 +49,25 @@ export const Home = () => {
     isScrubbing.current = true;
   };
   const openTimer = () => {
-    timer.current = setInterval(() => {
-      progress2.value++;
-      cache.value = cache.value + 1.5;
-    }, 1000);
+    if (!timer.current) {
+      timer.current = setInterval(() => {
+        cache.value = cache.value + 1;
+      }, 1000);
+    }
+  };
+  const clearTimer = () => {
+    timer.current = clearTimeout(timer.current);
   };
   return (
     <>
       <View style={styles.full}>
+        <View style={[styles.header, { paddingTop: insets.top }]}>
+          <Text tx={'React Native Awesome Slider'} h3 />
+        </View>
         <ScrollView style={styles.view}>
           <StatusBar barStyle={'dark-content'} />
-          <Title tx="Base example" />
-          <View style={styles.bottomControlGroup}>
+          <View style={styles.card}>
+            <Title tx="Base" />
             <Slider
               style={styles.container}
               progress={progress1}
@@ -63,123 +76,181 @@ export const Home = () => {
               minimumValue={min}
               maximumValue={max}
               disable={disable}
-            />
-
-            <TouchableOpacity
-              onPress={() => {
-                setDisable(!disable);
-              }}
-              style={styles.btn}>
-              <Text tx="disable" color="#D3DEDC" />
-            </TouchableOpacity>
-          </View>
-
-          <Title tx="Cache example" />
-          <View style={styles.bottomControlGroup}>
-            <Slider
-              style={styles.container}
-              progress={progress2}
-              minimumValue={min}
-              maximumValue={max}
               cache={cache}
-              minimumTrackTintColor="#CE7BB0"
-              cacheTrackTintColor="#FFBCD1"
+              thumbScaleValue={thumbScaleValue}
             />
-
-            <TouchableOpacity onPress={openTimer} style={styles.btn}>
-              <Text tx="increment+" color="#D3DEDC" />
-            </TouchableOpacity>
+            <View style={styles.control}>
+              <TouchableOpacity
+                onPress={() => {
+                  setDisable(!disable);
+                }}
+                style={styles.btn}>
+                <Text tx="disable" color="#D3DEDC" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  thumbScaleValue.value = thumbScaleValue.value === 0 ? 1 : 0;
+                }}
+                style={styles.btn}>
+                <Text tx="toggle thumb scale" color="#D3DEDC" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  cache.value = 40;
+                }}
+                style={styles.btn}>
+                <Text tx="show cache" color="#D3DEDC" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  cache.value = 0;
+                }}
+                style={styles.btn}>
+                <Text tx="hide cache" color="#D3DEDC" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={openTimer} style={styles.btn}>
+                <Text tx="🎬 cache" color="#D3DEDC" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={clearTimer} style={styles.btn}>
+                <Text tx="🛑 cache" color="#D3DEDC" />
+              </TouchableOpacity>
+            </View>
           </View>
 
-          <Title tx="Coustom bubble&thumb" />
-          <Slider
-            style={styles.bottomControlGroup}
-            progress={progress3}
-            minimumValue={min}
-            maximumValue={max}
-            minimumTrackTintColor="#FFAB76"
-            maximumTrackTintColor="#FFEEAD"
-            renderThumb={() => <View style={styles.customThumb} />}
-            renderBubble={() => (
-              <View style={styles.customBubble}>
-                <Text tx={'Hhha~'} color={'#fff'} t3 />
-              </View>
-            )}
-          />
-          <Title tx="Toggle thumb  example" />
-          <View style={styles.bottomControlGroup}>
+          <View style={styles.card}>
+            <Title tx="Coustom bubble & thumb" />
             <Slider
-              style={styles.container}
-              progress={progress4}
+              progress={progress3}
+              style={styles.slider}
               minimumValue={min}
               maximumValue={max}
-              thumbScaleValue={thumbScaleValue}
-              renderBubble={() => <></>}
+              bubbleTranslateY={-50}
+              renderThumb={() => (
+                <View style={styles.customThumb}>
+                  <View style={styles.customThumb1} />
+                  <View style={styles.customThumb2} />
+                </View>
+              )}
+              renderBubble={() => (
+                <View style={styles.customBubble}>
+                  <Image
+                    source={require('./ua.png')}
+                    style={styles.bubbleImg}
+                  />
+                </View>
+              )}
             />
-
-            <TouchableOpacity
-              onPress={() => {
-                thumbScaleValue.value = thumbScaleValue.value === 0 ? 1 : 0;
+          </View>
+          <View style={styles.card}>
+            <Title tx="Range & Haptic step-mode" />
+            <Slider
+              progress={progress5}
+              minimumValue={min10}
+              style={styles.slider}
+              maximumValue={max110}
+              step={10}
+              onHapticFeedback={() => {
+                ReactNativeHapticFeedback.trigger('impactLight', {
+                  enableVibrateFallback: true,
+                  ignoreAndroidSystemSettings: false,
+                });
               }}
-              style={{ ...styles.btn }}>
-              <Text tx="toggle thumb scale" color="#D3DEDC" />
-            </TouchableOpacity>
+              sliderHeight={8}
+              thumbWidth={24}
+              hapticMode={HapticModeEnum.STEP}
+            />
           </View>
 
-          <Title tx="Range" />
-          <Slider
-            style={styles.bottomControlGroup}
-            progress={progress5}
-            minimumValue={min10}
-            maximumValue={max110}
-            step={10}
-            minimumTrackTintColor="#FFAB76"
-            maximumTrackTintColor="#000"
-          />
+          <View style={styles.card}>
+            <Title tx="Haptic both-mode" />
+            <Slider
+              progress={progress6}
+              style={styles.slider}
+              minimumValue={min10}
+              maximumValue={max110}
+              onHapticFeedback={() => {
+                ReactNativeHapticFeedback.trigger('impactLight', {
+                  enableVibrateFallback: true,
+                  ignoreAndroidSystemSettings: false,
+                });
+              }}
+              hapticMode={HapticModeEnum.BOTH}
+            />
+          </View>
         </ScrollView>
       </View>
     </>
   );
 };
 const styles = StyleSheet.create({
+  card: {
+    borderRadius: 8,
+    borderColor: palette.G3,
+    borderWidth: 0.5,
+    padding: 12,
+    marginTop: 20,
+  },
   full: {
     flex: 1,
-    backgroundColor: '#e1e1e1',
+    backgroundColor: palette.G2,
+  },
+  header: {
+    paddingBottom: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 0.5,
+    borderBottomColor: palette.G3,
   },
   view: {
     paddingHorizontal: 20,
-    paddingVertical: 40,
+    paddingBottom: 40,
   },
-  bottomControlGroup: {
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    marginTop: 20,
+  slider: {
+    marginBottom: 20,
+    marginTop: 12,
   },
   container: {
     flex: 1,
   },
   control: {
-    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 12,
+    flexWrap: 'wrap',
   },
   btn: {
     alignItems: 'center',
     height: 28,
     justifyContent: 'center',
-    marginLeft: 20,
     borderRadius: 8,
     paddingHorizontal: 12,
-    backgroundColor: '#7C99AC',
+    backgroundColor: palette.ACTIVE,
+    marginRight: 12,
+    marginTop: 12,
   },
   customThumb: {
-    backgroundColor: '#FF6363',
     width: 20,
     height: 20,
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  customThumb1: {
+    backgroundColor: palette.ACTIVE,
+    width: 20,
+    height: 10,
+  },
+  customThumb2: {
+    backgroundColor: palette.Main,
+    width: 20,
+    height: 10,
   },
   customBubble: {
-    backgroundColor: '#CE7BB0',
     alignItems: 'center',
+  },
+  bubbleImg: {
+    width: 90,
+    borderRadius: 4,
+    height: 60,
   },
   pause: {
     height: 40,

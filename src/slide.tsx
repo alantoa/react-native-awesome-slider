@@ -31,6 +31,14 @@ const hitSlop = {
   top: 12,
   bottom: 12,
 };
+export enum HapticModeEnum {
+  NONE = 'none',
+  STEP = 'step',
+  BOTH = 'both',
+}
+type PanGestureHandlerCtx = {
+  isTriggedHaptic: boolean;
+};
 export type AwesomeSliderProps = {
   /**
    * Color to fill the progress in the seekbar
@@ -158,6 +166,8 @@ export type AwesomeSliderProps = {
   step?: number;
   markStyle?: StyleProp<ViewStyle>;
   markWidth?: number;
+  onHapticFeedback?: () => void;
+  hapticMode?: HapticModeEnum;
 };
 
 export const Slider = ({
@@ -165,7 +175,7 @@ export const Slider = ({
   renderThumb,
   style,
   minimumTrackTintColor = palette.Main,
-  maximumTrackTintColor = palette.G3,
+  maximumTrackTintColor = palette.ACTIVE,
   cacheTrackTintColor = palette.G6,
   bubbleTranslateY = -25,
   progress,
@@ -181,7 +191,7 @@ export const Slider = ({
   disableTapEvent = false,
   bubble,
   bubbleMaxWidth = 100,
-  disableMinTrackTintColor = palette.G3,
+  disableMinTrackTintColor = palette.LIGHT,
   bubbleBackgroundColor = palette.Main,
   bubbleTextStyle,
   bubbleContainerStyle,
@@ -194,6 +204,8 @@ export const Slider = ({
   step,
   markStyle,
   markWidth = 4,
+  onHapticFeedback,
+  hapticMode = HapticModeEnum.NONE,
 }: AwesomeSliderProps) => {
   const bubbleRef = useRef<BubbleRef>(null);
   const [sliderWidth, setSliderWidth] = useState(0);
@@ -224,10 +236,14 @@ export const Slider = ({
     } else {
       seekWidth = progressToValue(progress.value) + thumbWidth / 2;
     }
+    // For reanimated performance, Prevent multiple updates width
+    if (clamp(seekWidth, 0, width.value) <= 0) {
+      return {};
+    }
     return {
       width: clamp(seekWidth, 0, width.value),
     };
-  }, [progress, minimumValue, maximumValue, width]);
+  }, [progress, minimumValue, maximumValue, width, markLeftArr]);
 
   const animatedThumbStyle = useAnimatedStyle(() => {
     let translateX = 0;
@@ -235,7 +251,11 @@ export const Slider = ({
     if (step && markLeftArr.value.length >= step) {
       translateX = markLeftArr.value[thumbIndex.value];
     } else {
-      translateX = progressToValue(progress.value);
+      translateX = clamp(
+        progressToValue(progress.value),
+        0,
+        width.value - thumbWidth,
+      );
     }
     return {
       transform: [
@@ -257,8 +277,8 @@ export const Slider = ({
     if (step && markLeftArr.value.length >= step) {
       translateX = clamp(
         markLeftArr.value[thumbIndex.value] + thumbWidth / 2,
-        thumbWidth / 2,
-        width.value - thumbWidth / 2,
+        0,
+        width.value,
       );
     } else {
       translateX = thumbValue.value + thumbWidth / 2;
@@ -332,7 +352,7 @@ export const Slider = ({
   /**
    * change slide value
    */
-  const onActiveSlider = (x: number) => {
+  const onActiveSlider = (x: number, ctx: PanGestureHandlerCtx) => {
     'worklet';
     if (isScrubbing) {
       isScrubbing.value = true;
@@ -342,6 +362,7 @@ export const Slider = ({
       const arrNext = markLeftArr.value[index];
       const arrPrev = markLeftArr.value[index - 1];
       const currentX = (arrNext + arrPrev) / 2;
+      const thumbIndexPrev = thumbIndex.value;
       if (x - thumbWidth / 2 > currentX) {
         thumbIndex.value = index;
       } else {
@@ -352,6 +373,16 @@ export const Slider = ({
         } else {
           thumbIndex.value = index - 1;
         }
+      }
+      if (
+        thumbIndexPrev !== thumbIndex.value &&
+        hapticMode === HapticModeEnum.STEP &&
+        onHapticFeedback
+      ) {
+        runOnJS(onHapticFeedback)();
+        ctx.isTriggedHaptic = true;
+      } else {
+        ctx.isTriggedHaptic = false;
       }
 
       runOnJS(onSlideAcitve)(
@@ -367,30 +398,45 @@ export const Slider = ({
       thumbValue.value = clamp(x, 0, width.value - thumbWidth);
       progress.value = xToProgress(x);
 
+      if (x <= 0 || x >= width.value - thumbWidth) {
+        if (
+          !ctx.isTriggedHaptic &&
+          hapticMode === HapticModeEnum.BOTH &&
+          onHapticFeedback
+        ) {
+          runOnJS(onHapticFeedback)();
+          ctx.isTriggedHaptic = true;
+        }
+      } else {
+        ctx.isTriggedHaptic = false;
+      }
       runOnJS(onSlideAcitve)(shareValueToSeconds());
     }
   };
 
   const onGestureEvent = useAnimatedGestureHandler<
-    GestureEvent<PanGestureHandlerEventPayload>
+    GestureEvent<PanGestureHandlerEventPayload>,
+    PanGestureHandlerCtx
   >({
-    onStart: () => {
+    onStart: ({}, ctx) => {
       if (disable) {
         return;
       }
       if (isScrubbing) {
         isScrubbing.value = true;
       }
+      ctx.isTriggedHaptic = false;
       if (onSlidingStart) {
         runOnJS(onSlidingStart)();
       }
     },
-    onActive: ({ x }) => {
+    onActive: ({ x }, ctx) => {
       if (disable) {
         return;
       }
+
       bubbleOpacity.value = withSpring(1);
-      onActiveSlider(x);
+      onActiveSlider(x, ctx);
     },
 
     onEnd: () => {
@@ -409,9 +455,10 @@ export const Slider = ({
   });
 
   const onSingleTapEvent = useAnimatedGestureHandler<
-    GestureEvent<TapGestureHandlerEventPayload>
+    GestureEvent<TapGestureHandlerEventPayload>,
+    PanGestureHandlerCtx
   >({
-    onActive: ({ x }) => {
+    onActive: ({ x }, ctx) => {
       if (onTap) {
         runOnJS(onTap)();
       }
@@ -422,7 +469,7 @@ export const Slider = ({
         return;
       }
 
-      onActiveSlider(x);
+      onActiveSlider(x, ctx);
     },
     onEnd: () => {
       if (disable || disableTapEvent) {
@@ -606,7 +653,6 @@ const styles = StyleSheet.create({
     height: 4,
     backgroundColor: '#fff',
     position: 'absolute',
-    top: 1,
   },
   thumb: {
     position: 'absolute',

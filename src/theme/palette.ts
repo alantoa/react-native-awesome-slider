@@ -1,7 +1,8 @@
 export const palette = {
   transparent: 'rgba(0,0,0,0)',
-  Main: 'rgba(61, 219, 209, 1)',
-  ActiveMain: 'rgba(41, 142, 136, 1)',
+  Main: '#ffcf32',
+  ACTIVE: '#0551ae',
+  LIGHT: '#ffe19f',
   Danger: 'rgba(255, 61, 74, 1)',
   Warning: 'rgba(255, 187, 0, 1)',
   Info: 'rgba(0, 99, 247, 1)',

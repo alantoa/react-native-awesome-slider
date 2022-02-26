@@ -27,6 +27,7 @@ const App = gestureHandlerRootHOC(() => {
           name="Example"
           options={{
             title: 'Slide Example',
+            headerShown: false,
           }}
           component={Home}
         />
