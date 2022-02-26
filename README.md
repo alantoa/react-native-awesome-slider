@@ -38,6 +38,30 @@ export const Example = () => {
 };
 ```
 
+#### Add pan haptic feedback?
+
+1. You need add haptics feedback lib to you project.
+
+- [Expo](https://docs.expo.dev/versions/latest/sdk/haptics/)
+- [NON-Expo](https://github.com/junina-de/react-native-haptic-feedback)
+
+2. Add onHapticFeedback callback to you slider component.
+
+```jsx
+<Slider
+  onHapticFeedback={() => {
+    ReactNativeHapticFeedback.trigger('impactLight', {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: false,
+    });
+  }}
+/>
+```
+
+3. Set haptic mode, if you open 'step' prop, you need set hapticMode=HapticModeEnum.STEP, otherwise set to hapticMode=HapticModeEnum.BOTH.
+
+4. ✅ Finish!
+
 ## Why use this library?
 
 - Pure javascript slider implementations usually rely on `react-native`'s gesture events which may inadvertently trigger 'swipe to go back' events as you pan the slider. ❌
@@ -50,6 +74,8 @@ export const Example = () => {
 - 100% written in `TypeScript`.
 - 100% built upon `react-native-reanimated` and `react-native-gusture-handle`.
 - Supports Tap & Pan triggering.
+- Support for discrete slider.
+- Support haptic feedback.
 - and more...
 
 ## TODO list
