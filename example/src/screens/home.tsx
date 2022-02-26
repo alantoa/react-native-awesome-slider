@@ -5,17 +5,17 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
+  TextStyle,
 } from 'react-native';
 import { Slider } from 'react-native-awesome-slider';
 import { useSharedValue } from 'react-native-reanimated';
 import { Text } from '../components';
-
-const Title = ({ tx }: { tx: string }) => (
-  <Text tx={tx} h2 style={{ marginTop: 20 }} />
-);
+const TEXT: TextStyle = {
+  marginTop: 20,
+};
+const Title = ({ tx }: { tx: string }) => <Text tx={tx} h2 style={TEXT} />;
 export const Home = () => {
   const [disable, setDisable] = useState(false);
-  const [value, setvalue] = useState(0);
   const progress1 = useSharedValue(30);
   const progress2 = useSharedValue(30);
   const progress3 = useSharedValue(30);
@@ -50,8 +50,8 @@ export const Home = () => {
   };
   return (
     <>
-      <View style={{ flex: 1, backgroundColor: '#e1e1e1' }}>
-        <ScrollView style={{ paddingHorizontal: 20, paddingVertical: 40 }}>
+      <View style={styles.full}>
+        <ScrollView style={styles.view}>
           <StatusBar barStyle={'dark-content'} />
           <Title tx="Base example" />
           <View style={styles.bottomControlGroup}>
@@ -69,7 +69,7 @@ export const Home = () => {
               onPress={() => {
                 setDisable(!disable);
               }}
-              style={{ ...styles.btn, backgroundColor: '#7C99AC' }}>
+              style={styles.btn}>
               <Text tx="disable" color="#D3DEDC" />
             </TouchableOpacity>
           </View>
@@ -86,9 +86,7 @@ export const Home = () => {
               cacheTrackTintColor="#FFBCD1"
             />
 
-            <TouchableOpacity
-              onPress={openTimer}
-              style={{ ...styles.btn, backgroundColor: '#7C99AC' }}>
+            <TouchableOpacity onPress={openTimer} style={styles.btn}>
               <Text tx="increment+" color="#D3DEDC" />
             </TouchableOpacity>
           </View>
@@ -101,18 +99,10 @@ export const Home = () => {
             maximumValue={max}
             minimumTrackTintColor="#FFAB76"
             maximumTrackTintColor="#FFEEAD"
-            renderThumb={() => (
-              <View
-                style={{ backgroundColor: '#FF6363', width: 20, height: 20 }}
-              />
-            )}
+            renderThumb={() => <View style={styles.customThumb} />}
             renderBubble={() => (
-              <View
-                style={{
-                  backgroundColor: '#CE7BB0',
-                  alignItems: 'center',
-                }}>
-                <Text tx={`Hhha~`} color={'#fff'} t3 />
+              <View style={styles.customBubble}>
+                <Text tx={'Hhha~'} color={'#fff'} t3 />
               </View>
             )}
           />
@@ -131,7 +121,7 @@ export const Home = () => {
               onPress={() => {
                 thumbScaleValue.value = thumbScaleValue.value === 0 ? 1 : 0;
               }}
-              style={{ ...styles.btn, backgroundColor: '#7C99AC' }}>
+              style={{ ...styles.btn }}>
               <Text tx="toggle thumb scale" color="#D3DEDC" />
             </TouchableOpacity>
           </View>
@@ -152,6 +142,14 @@ export const Home = () => {
   );
 };
 const styles = StyleSheet.create({
+  full: {
+    flex: 1,
+    backgroundColor: '#e1e1e1',
+  },
+  view: {
+    paddingHorizontal: 20,
+    paddingVertical: 40,
+  },
   bottomControlGroup: {
     alignItems: 'center',
     alignSelf: 'stretch',
@@ -172,8 +170,17 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     borderRadius: 8,
     paddingHorizontal: 12,
+    backgroundColor: '#7C99AC',
   },
-
+  customThumb: {
+    backgroundColor: '#FF6363',
+    width: 20,
+    height: 20,
+  },
+  customBubble: {
+    backgroundColor: '#CE7BB0',
+    alignItems: 'center',
+  },
   pause: {
     height: 40,
     left: 0,

@@ -156,7 +156,7 @@ export type AwesomeSliderProps = {
   panHitSlop?: Insets;
 
   step?: number;
-  marksStyle?: StyleProp<ViewStyle>;
+  markStyle?: StyleProp<ViewStyle>;
   markWidth?: number;
 };
 
@@ -192,7 +192,7 @@ export const Slider = ({
   containerStyle,
   panHitSlop = hitSlop,
   step,
-  marksStyle,
+  markStyle,
   markWidth = 4,
 }: AwesomeSliderProps) => {
   const bubbleRef = useRef<BubbleRef>(null);
@@ -200,7 +200,8 @@ export const Slider = ({
   const width = useSharedValue(0);
   const thumbValue = useSharedValue(0);
   const bubbleOpacity = useSharedValue(0);
-  const stepWidthArr = useSharedValue<number[]>([]);
+  const markLeftArr = useSharedValue<number[]>([]);
+  const thumbIndex = useSharedValue(0);
 
   const sliderTotalValue = () => {
     'worklet';
@@ -209,24 +210,37 @@ export const Slider = ({
 
   const progressToValue = (value: number) => {
     'worklet';
-    if (sliderTotalValue() === 0) return 0;
+    if (sliderTotalValue() === 0) {
+      return 0;
+    }
     return (value / sliderTotalValue()) * (width.value - thumbWidth);
   };
 
   const animatedSeekStyle = useAnimatedStyle(() => {
-    const currentValue = progressToValue(progress.value) + thumbWidth / 2;
-
+    let seekWidth = 0;
+    // when you set step
+    if (step && markLeftArr.value.length >= step) {
+      seekWidth = markLeftArr.value[thumbIndex.value] + thumbWidth / 2;
+    } else {
+      seekWidth = progressToValue(progress.value) + thumbWidth / 2;
+    }
     return {
-      width: clamp(currentValue, 0, width.value),
+      width: clamp(seekWidth, 0, width.value),
     };
   }, [progress, minimumValue, maximumValue, width]);
 
   const animatedThumbStyle = useAnimatedStyle(() => {
-    const currentValue = progressToValue(progress.value);
+    let translateX = 0;
+    // when you set step
+    if (step && markLeftArr.value.length >= step) {
+      translateX = markLeftArr.value[thumbIndex.value];
+    } else {
+      translateX = progressToValue(progress.value);
+    }
     return {
       transform: [
         {
-          translateX: clamp(currentValue, 0, width.value - thumbWidth),
+          translateX,
         },
         {
           scale: withTiming(thumbScaleValue ? thumbScaleValue.value : 1, {
@@ -238,6 +252,17 @@ export const Slider = ({
   }, [progress, minimumValue, maximumValue, width.value]);
 
   const animatedBubbleStyle = useAnimatedStyle(() => {
+    let translateX = 0;
+    // when you set step
+    if (step && markLeftArr.value.length >= step) {
+      translateX = clamp(
+        markLeftArr.value[thumbIndex.value] + thumbWidth / 2,
+        thumbWidth / 2,
+        width.value - thumbWidth / 2,
+      );
+    } else {
+      translateX = thumbValue.value + thumbWidth / 2;
+    }
     return {
       opacity: bubbleOpacity.value,
       transform: [
@@ -245,7 +270,7 @@ export const Slider = ({
           translateY: bubbleTranslateY,
         },
         {
-          translateX: thumbValue.value + thumbWidth / 2,
+          translateX,
         },
         {
           scale: bubbleOpacity.value,
@@ -297,7 +322,11 @@ export const Slider = ({
    */
   const xToProgress = (x: number) => {
     'worklet';
-    return (x / (width.value - thumbWidth)) * sliderTotalValue();
+    if (step && markLeftArr.value.length >= step) {
+      return markLeftArr.value[thumbIndex.value];
+    } else {
+      return (x / (width.value - thumbWidth)) * sliderTotalValue();
+    }
   };
 
   /**
@@ -309,29 +338,27 @@ export const Slider = ({
       isScrubbing.value = true;
     }
     if (step) {
-      const index = stepWidthArr.value.findIndex(item => item >= x);
-      const arrNext = stepWidthArr.value[index];
-      const arrPrev = stepWidthArr.value[index - 1];
+      const index = markLeftArr.value.findIndex(item => item >= x);
+      const arrNext = markLeftArr.value[index];
+      const arrPrev = markLeftArr.value[index - 1];
       const currentX = (arrNext + arrPrev) / 2;
-      let thumbIndex = 0;
       if (x - thumbWidth / 2 > currentX) {
-        thumbIndex = index;
+        thumbIndex.value = index;
       } else {
         if (index - 1 === -1) {
-          thumbIndex === 0;
+          thumbIndex.value === 0;
         } else if (index - 1 < -1) {
-          thumbIndex = step;
+          thumbIndex.value = step;
         } else {
-          thumbIndex = index - 1;
+          thumbIndex.value = index - 1;
         }
       }
 
-      thumbValue.value = stepWidthArr.value[thumbIndex];
-      progress.value = xToProgress(stepWidthArr.value[thumbIndex]);
       runOnJS(onSlideAcitve)(
         clamp(
           minimumValue.value +
-            (thumbIndex / step) * (maximumValue.value - minimumValue.value),
+            (thumbIndex.value / step) *
+              (maximumValue.value - minimumValue.value),
           minimumValue.value,
           maximumValue.value,
         ),
@@ -348,7 +375,9 @@ export const Slider = ({
     GestureEvent<PanGestureHandlerEventPayload>
   >({
     onStart: () => {
-      if (disable) return;
+      if (disable) {
+        return;
+      }
       if (isScrubbing) {
         isScrubbing.value = true;
       }
@@ -357,13 +386,17 @@ export const Slider = ({
       }
     },
     onActive: ({ x }) => {
-      if (disable) return;
+      if (disable) {
+        return;
+      }
       bubbleOpacity.value = withSpring(1);
       onActiveSlider(x);
     },
 
     onEnd: () => {
-      if (disable) return;
+      if (disable) {
+        return;
+      }
       if (isScrubbing) {
         isScrubbing.value = true;
       }
@@ -382,13 +415,19 @@ export const Slider = ({
       if (onTap) {
         runOnJS(onTap)();
       }
-      if (disable) return;
-      if (disableTapEvent) return;
+      if (disable) {
+        return;
+      }
+      if (disableTapEvent) {
+        return;
+      }
 
       onActiveSlider(x);
     },
     onEnd: () => {
-      if (disable || disableTapEvent) return;
+      if (disable || disableTapEvent) {
+        return;
+      }
       if (isScrubbing) {
         isScrubbing.value = true;
       }
@@ -404,30 +443,33 @@ export const Slider = ({
     const layoutWidth = nativeEvent.layout.width;
     width.value = layoutWidth;
     setSliderWidth(layoutWidth);
-    const currentValue =
-      (progress.value / (minimumValue.value + maximumValue.value)) *
-      layoutWidth;
-
-    thumbValue.value = clamp(currentValue, 0, layoutWidth - thumbWidth);
     if (step) {
-      stepWidthArr.value = [
-        0,
-        ...new Array(step).fill(0).map((_, i) => {
-          if (i === step - 1) {
-            return layoutWidth - thumbWidth;
-          }
-          let offsetX = 0;
-          if (i < step / 2) {
-            offsetX = ((step - i) / step) * markWidth;
-          } else if (i === step / 2) {
-            offsetX = 0;
-          } else {
-            offsetX = -(i / step) * markWidth;
-          }
+      // correct mark left position Array
+      markLeftArr.value = new Array(step + 1).fill(0).map((_, i) => {
+        return (
+          Math.round(layoutWidth * (i / step)) -
+          (i / step) * markWidth -
+          Math.round(thumbWidth / 3)
+        );
+      });
 
-          return ((layoutWidth - thumbWidth) / step) * (i + 1) - offsetX;
-        }),
-      ];
+      const marksLeft = new Array(step + 1)
+        .fill(0)
+        .map((_, i) => Math.round(layoutWidth * (i / step)));
+
+      // current positon width
+      const currentWidth =
+        ((progress.value - minimumValue.value) /
+          (maximumValue.value - minimumValue.value)) *
+        layoutWidth;
+
+      const currentIndex = marksLeft.findIndex(value => value >= currentWidth);
+      thumbIndex.value = clamp(currentIndex, 0, step);
+    } else {
+      const currentValue =
+        (progress.value / (minimumValue.value + maximumValue.value)) *
+        layoutWidth;
+      thumbValue.value = clamp(currentValue, 0, layoutWidth - thumbWidth);
     }
   };
 
@@ -439,52 +481,33 @@ export const Slider = ({
       minPointers={1}
       maxPointers={1}>
       <Animated.View
-        style={[
-          {
-            flex: 1,
-            height: sliderHeight,
-          },
-          style,
-        ]}
+        style={[styles.view, { height: sliderHeight }, style]}
         hitSlop={panHitSlop}
         onLayout={onLayout}>
         <TapGestureHandler onGestureEvent={onSingleTapEvent}>
-          <Animated.View
-            style={{
-              width: '100%',
-              height: '100%',
-              overflow: 'visible',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
+          <Animated.View style={styles.container}>
             <Animated.View
               style={StyleSheet.flatten([
+                styles.slider,
                 {
-                  width: '100%',
                   height: sliderHeight,
-                  overflow: 'hidden',
                   backgroundColor: maximumTrackTintColor,
                 },
                 containerStyle,
               ])}>
               <Animated.View
                 style={[
+                  styles.cache,
                   {
                     backgroundColor: cacheTrackTintColor,
-                    height: '100%',
-                    left: 0,
-                    position: 'absolute',
                   },
                   animatedCacheXStyle,
                 ]}
               />
               <Animated.View
                 style={[
+                  styles.seek,
                   {
-                    height: '100%',
-                    maxWidth: '100%',
-                    left: 0,
-                    position: 'absolute',
                     backgroundColor: disable
                       ? disableMinTrackTintColor
                       : minimumTrackTintColor,
@@ -493,14 +516,25 @@ export const Slider = ({
                 ]}
               />
             </Animated.View>
-            <Animated.View
-              style={[
-                {
-                  position: 'absolute',
-                  left: 0,
-                },
-                animatedThumbStyle,
-              ]}>
+            {sliderWidth > 0 &&
+              step &&
+              new Array(step + 1).fill(0).map((_, i) => {
+                return (
+                  <View
+                    key={i}
+                    style={[
+                      styles.mark,
+                      {
+                        width: markWidth,
+                        borderRadius: markWidth,
+                        left: sliderWidth * (i / step) - (i / step) * markWidth,
+                      },
+                      markStyle,
+                    ]}
+                  />
+                );
+              })}
+            <Animated.View style={[styles.thumb, animatedThumbStyle]}>
               {renderThumb ? (
                 renderThumb()
               ) : (
@@ -517,8 +551,8 @@ export const Slider = ({
 
             <Animated.View
               style={[
+                styles.bubble,
                 {
-                  position: 'absolute',
                   left: -bubbleMaxWidth / 2,
                   width: bubbleMaxWidth,
                 },
@@ -536,29 +570,49 @@ export const Slider = ({
                 />
               )}
             </Animated.View>
-            {sliderWidth > 0 &&
-              step &&
-              new Array(step + 1).fill(0).map((_, i) => {
-                return (
-                  <View
-                    key={i}
-                    style={[
-                      {
-                        width: markWidth,
-                        height: 4,
-                        backgroundColor: '#fff',
-                        position: 'absolute',
-                        top: 2,
-                        left: sliderWidth * (i / step) - (i / step) * markWidth,
-                      },
-                      marksStyle,
-                    ]}
-                  />
-                );
-              })}
           </Animated.View>
         </TapGestureHandler>
       </Animated.View>
     </PanGestureHandler>
   );
 };
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    height: '100%',
+    overflow: 'visible',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  slider: {
+    width: '100%',
+    overflow: 'hidden',
+  },
+  view: {
+    flex: 1,
+  },
+  cache: {
+    height: '100%',
+    left: 0,
+    position: 'absolute',
+  },
+  seek: {
+    height: '100%',
+    maxWidth: '100%',
+    left: 0,
+    position: 'absolute',
+  },
+  mark: {
+    height: 4,
+    backgroundColor: '#fff',
+    position: 'absolute',
+    top: 1,
+  },
+  thumb: {
+    position: 'absolute',
+    left: 0,
+  },
+  bubble: {
+    position: 'absolute',
+  },
+});

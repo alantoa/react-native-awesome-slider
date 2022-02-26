@@ -7,5 +7,4 @@ module.exports = {
     'no-shadow': 'off',
     '@typescript-eslint/no-shadow': ['error'],
   },
-  curly: [2, 'multi-line'],
 };

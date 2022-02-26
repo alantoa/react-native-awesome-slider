@@ -25,6 +25,7 @@
     "prepare": "bob build",
     "release": "release-it",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "fix": "eslint \"**/*.{js,ts,tsx}\" --fix",
     "test": "jest"
   },
   "keywords": [

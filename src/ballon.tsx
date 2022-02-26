@@ -1,5 +1,12 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
-import { StyleProp, TextInput, TextStyle, View, ViewStyle } from 'react-native';
+import {
+  StyleProp,
+  TextInput,
+  TextStyle,
+  View,
+  ViewStyle,
+  StyleSheet,
+} from 'react-native';
 import Animated from 'react-native-reanimated';
 import { palette } from './theme/palette';
 
@@ -46,7 +53,7 @@ export const Bubble = forwardRef<BubbleRef, BubbleProps>(
       },
     }));
     return (
-      <Animated.View style={[containerStyle, { alignItems: 'center' }]}>
+      <Animated.View style={[styles.view, containerStyle]}>
         <Animated.View
           style={{
             ...BUBBLE_STYLE,
@@ -56,26 +63,38 @@ export const Bubble = forwardRef<BubbleRef, BubbleProps>(
           <TextInput
             ref={textRef}
             textAlign="center"
-            style={[
-              { color: palette.W, fontSize: 12, paddingVertical: 0 },
-              textStyle,
-            ]}
+            style={[styles.textStyle, textStyle]}
             defaultValue=""
             caretHidden
           />
         </Animated.View>
         <View
-          style={{
-            width: 10,
-            height: 10,
-            borderWidth: 5,
-            borderColor: 'transparent',
-            borderTopColor: color,
-            backgroundColor: 'transparent',
-            flexDirection: 'row',
-          }}
+          style={[
+            styles.triangle,
+            {
+              borderTopColor: color,
+            },
+          ]}
         />
       </Animated.View>
     );
   },
 );
+const styles = StyleSheet.create({
+  triangle: {
+    width: 10,
+    height: 10,
+    borderWidth: 5,
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+  },
+  textStyle: {
+    color: palette.W,
+    fontSize: 12,
+    paddingVertical: 0,
+  },
+  view: {
+    alignItems: 'center',
+  },
+});
