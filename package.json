@@ -30,12 +30,13 @@
   },
   "keywords": [
     "react-native",
-    "ios",
-    "android",
     "react-native-reanimted",
     "react-native-gesture-handle",
     "slider",
-    "scrubber"
+    "scrubber",
+    "react-native-slider",
+    "react-native-scrubber",
+    "slider haptics feedback"
   ],
   "repository": {
     "type": "git",
