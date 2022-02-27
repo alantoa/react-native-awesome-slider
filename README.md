@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-  <img src="./assets/example.gif" width="30%" />
+  <img src="./assets/slider-example.gif" width="30%" />
   <p><a href="https://twitter.com/alan_toa/status/1497531806740267009" >🔗 Watch video</a><p/>
   <br/> 
 </div>
