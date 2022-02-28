@@ -8,7 +8,11 @@ import {
   TextStyle,
   Image,
 } from 'react-native';
-import { HapticModeEnum, Slider } from 'react-native-awesome-slider';
+import {
+  HapticModeEnum,
+  Slider,
+  SliderThemeType,
+} from 'react-native-awesome-slider';
 import { useSharedValue } from 'react-native-reanimated';
 import { Text } from '../components';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
@@ -19,10 +23,18 @@ const TEXT: TextStyle = {
   marginBottom: 12,
 };
 const Title = ({ tx }: { tx: string }) => <Text tx={tx} h3 style={TEXT} />;
-
+const defaultTheme = {
+  disableMinTrackTintColor: '#fff',
+  maximumTrackTintColor: '#fff',
+  minimumTrackTintColor: '#000',
+  cacheTrackTintColor: '#333',
+  bubbleBackgroundColor: '#666',
+};
 export const Home = () => {
   const insets = useSafeAreaInsets();
   const [disable, setDisable] = useState(false);
+  const [theme, setTheme] = useState<SliderThemeType>(defaultTheme);
+
   const progress1 = useSharedValue(30);
   const progress3 = useSharedValue(30);
   const progress5 = useSharedValue(30);
@@ -78,6 +90,7 @@ export const Home = () => {
               disable={disable}
               cache={cache}
               thumbScaleValue={thumbScaleValue}
+              theme={theme}
             />
             <View style={styles.control}>
               <TouchableOpacity
@@ -93,6 +106,13 @@ export const Home = () => {
                 }}
                 style={styles.btn}>
                 <Text tx="toggle thumb scale" color="#D3DEDC" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  theme ? setTheme(undefined) : setTheme(defaultTheme);
+                }}
+                style={styles.btn}>
+                <Text tx="🎨toggle theme" color="#D3DEDC" />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
