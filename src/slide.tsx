@@ -36,24 +36,35 @@ export enum HapticModeEnum {
   STEP = 'step',
   BOTH = 'both',
 }
+export type SliderThemeType =
+  | {
+      /**
+       * Color to fill the progress in the seekbar
+       */
+      minimumTrackTintColor?: string;
+      /**
+       * Color to fill the background in the seekbar
+       */
+      maximumTrackTintColor?: string;
+      /**
+       * Color to fill the cache in the seekbar
+       */
+      cacheTrackTintColor?: string;
+      /**
+       * Color to fill the bubble backgrouundColor
+       */
+      bubbleBackgroundColor?: string;
+      /**
+       * Disabled color to fill the progress in the seekbar
+       */
+      disableMinTrackTintColor?: string;
+    }
+  | null
+  | undefined;
 type PanGestureHandlerCtx = {
   isTriggedHaptic: boolean;
 };
 export type AwesomeSliderProps = {
-  /**
-   * Color to fill the progress in the seekbar
-   */
-  minimumTrackTintColor?: string;
-  /**
-   * Color to fill the background in the seekbar
-   */
-  maximumTrackTintColor?: string;
-
-  /**
-   * Color to fill the cache in the seekbar
-   */
-  cacheTrackTintColor?: string;
-
   /**
    * Style for the container view
    */
@@ -134,10 +145,7 @@ export type AwesomeSliderProps = {
    * Disable slider
    */
   disable?: boolean;
-  /**
-   * Disable slider color, default is minimumTrackTintColor
-   */
-  disableMinTrackTintColor?: string;
+
   /**
    * Enable tap event change value, default true
    */
@@ -148,7 +156,7 @@ export type AwesomeSliderProps = {
   bubbleMaxWidth?: number;
   bubbleTextStyle?: StyleProp<TextStyle>;
   bubbleContainerStyle?: StyleProp<ViewStyle>;
-  bubbleBackgroundColor?: string;
+
   /**
    * By this, you know the slider status as quickly as possible.(This is useful when you doing video-palyer’s scrubber.)
    */
@@ -168,15 +176,19 @@ export type AwesomeSliderProps = {
   markWidth?: number;
   onHapticFeedback?: () => void;
   hapticMode?: HapticModeEnum;
+  theme?: SliderThemeType;
 };
-
+const defaultTheme: SliderThemeType = {
+  minimumTrackTintColor: palette.Main,
+  maximumTrackTintColor: palette.ACTIVE,
+  cacheTrackTintColor: palette.G6,
+  disableMinTrackTintColor: palette.LIGHT,
+  bubbleBackgroundColor: palette.Main,
+};
 export const Slider = ({
   renderBubble,
   renderThumb,
   style,
-  minimumTrackTintColor = palette.Main,
-  maximumTrackTintColor = palette.ACTIVE,
-  cacheTrackTintColor = palette.G6,
   bubbleTranslateY = -25,
   progress,
   minimumValue,
@@ -191,8 +203,6 @@ export const Slider = ({
   disableTapEvent = false,
   bubble,
   bubbleMaxWidth = 100,
-  disableMinTrackTintColor = palette.LIGHT,
-  bubbleBackgroundColor = palette.Main,
   bubbleTextStyle,
   bubbleContainerStyle,
   isScrubbing,
@@ -206,6 +216,7 @@ export const Slider = ({
   markWidth = 4,
   onHapticFeedback,
   hapticMode = HapticModeEnum.NONE,
+  theme,
 }: AwesomeSliderProps) => {
   const bubbleRef = useRef<BubbleRef>(null);
   const [sliderWidth, setSliderWidth] = useState(0);
@@ -214,6 +225,11 @@ export const Slider = ({
   const bubbleOpacity = useSharedValue(0);
   const markLeftArr = useSharedValue<number[]>([]);
   const thumbIndex = useSharedValue(0);
+
+  const _theme = {
+    ...defaultTheme,
+    ...theme,
+  };
 
   const sliderTotalValue = () => {
     'worklet';
@@ -538,7 +554,7 @@ export const Slider = ({
                 styles.slider,
                 {
                   height: sliderHeight,
-                  backgroundColor: maximumTrackTintColor,
+                  backgroundColor: _theme.maximumTrackTintColor,
                 },
                 containerStyle,
               ])}>
@@ -546,7 +562,7 @@ export const Slider = ({
                 style={[
                   styles.cache,
                   {
-                    backgroundColor: cacheTrackTintColor,
+                    backgroundColor: _theme.cacheTrackTintColor,
                   },
                   animatedCacheXStyle,
                 ]}
@@ -556,8 +572,8 @@ export const Slider = ({
                   styles.seek,
                   {
                     backgroundColor: disable
-                      ? disableMinTrackTintColor
-                      : minimumTrackTintColor,
+                      ? _theme.disableMinTrackTintColor
+                      : _theme.minimumTrackTintColor,
                   },
                   animatedSeekStyle,
                 ]}
@@ -587,7 +603,7 @@ export const Slider = ({
               ) : (
                 <View
                   style={{
-                    backgroundColor: minimumTrackTintColor,
+                    backgroundColor: _theme.minimumTrackTintColor,
                     height: thumbWidth,
                     width: thumbWidth,
                     borderRadius: thumbWidth,
@@ -610,7 +626,7 @@ export const Slider = ({
               ) : (
                 <Bubble
                   ref={bubbleRef}
-                  color={bubbleBackgroundColor}
+                  color={_theme.bubbleBackgroundColor}
                   textStyle={bubbleTextStyle}
                   containerStyle={bubbleContainerStyle}
                   bubbleMaxWidth={bubbleMaxWidth}

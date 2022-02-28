@@ -39,6 +39,22 @@ export const Example = () => {
 };
 ```
 
+#### Change slider theme color?
+
+Use the Theme object.
+
+```jsx
+<Slider
+  theme={{
+    disableMinTrackTintColor: '#fff',
+    maximumTrackTintColor: '#fff',
+    minimumTrackTintColor: '#000',
+    cacheTrackTintColor: '#333',
+    bubbleBackgroundColor: '#666',
+  }}
+/>
+```
+
 #### Add pan haptic feedback?
 
 1. You need add haptics feedback lib to you project.
@@ -90,41 +106,252 @@ export const Example = () => {
 
 The `<Slider/>` component has the following configuration properties:
 
-| Name                     | Type                                                               | Description                                                                                                 | Required | Default Value                                                                                                                                         |
-| ------------------------ | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| minimumTrackTintColor    | string                                                             | color applied to track from the min position up to the thumb position                                       | ❌       | rgba(61, 219, 209, 1)                                                                                                                                 |
-| maximumTrackTintColor    | string                                                             | color applied to track from the thumb position up to the maximum position                                   | ❌       | rgba(195, 197, 199, 1)                                                                                                                                |
-| cacheTrackTintColor      | string                                                             | cache track tint color                                                                                      | ❌       | rgba(39, 41, 46, 1)                                                                                                                                   |
-| style                    | ViewStyle                                                          |                                                                                                             | ❌       |                                                                                                                                                       |
-| borderColor              | string                                                             | Color of the border of the slider, also you can use containerStyle .                                        | ❌       | transparent                                                                                                                                           |
-| bubble                   | (number) => string                                                 | Get the current value of the slider as you slide it, and returns a string to be used inside the bubble.     | ❌       | (number) => string                                                                                                                                    |
-| progress                 | Animated.SharedValue<number>                                       | Current value of the slider                                                                                 | ✅       | 0                                                                                                                                                     |
-| cache                    | Animated.SharedValue<number>                                       | Cache value of the slider                                                                                   | ❌       | 0                                                                                                                                                     |
-| minimumValue             | Animated.SharedValue<number>                                       | An Animated.SharedValue from react-native-reanimated library which is the minimum value of the slider.      | ✅       | undefined                                                                                                                                             |
-| maximumValue             | Animated.SharedValue<number>                                       | An Animated.SharedValue from react-native-reanimated library which is the maximum value of the slider.      | ✅       | undefined                                                                                                                                             |
-| onSlidingStart           | () => void                                                         | Callback called when the sliding interaction starts                                                         | ❌       | undefined                                                                                                                                             |
-| onValueChange            | (number) => void                                                   | Callback called when the slider value changes                                                               | ❌       | undefined                                                                                                                                             |
-| onSlidingComplete        | (number) => void                                                   | Callback called when the sliding interaction stops. The updated slider value will be passed as argument     | ❌       | undefined                                                                                                                                             |
-| renderBubble             | () => React.ReactNode                                              | A custom bubble component that will be rendered while sliding.                                              | ❌       | See the <Bubble/> component                                                                                                                           |
-| setBubbleText            | (string) => void                                                   | This function will be called while sliding and can be used to update the text in a custom bubble component. | ❌       | current slider value                                                                                                                                  |
-| bubbleTranslateY         | number                                                             | Value to pass to the container of the bubble as translateY                                                  | ❌       | 7                                                                                                                                                     |
-| renderThumb              | () => React.ReactNode                                              | Render custom thumb image. If you need to customize thumb, you also need to set the thumb width             | ❌       | ReactNode                                                                                                                                             |
-| thumbWidth               | number                                                             | Thumb elements width                                                                                        | ❌       | 15                                                                                                                                                    |
-| disable                  | boolean                                                            | Disable user interaction with the slider                                                                    | ❌       | false                                                                                                                                                 |
-| disableMinTrackTintColor | string                                                             | Disable slider color. Defaults to `minimumTrackTintColor`                                                   | ❌       | rgba(61, 219, 209, 1)                                                                                                                                 |
-| disableTapEvent          | boolean                                                            | Enable tap event change value. Defaults to `true`                                                           | ❌       | true                                                                                                                                                  |
-| bubbleMaxWidth           | number                                                             | The maximum width of the bubble component                                                                   | ❌       | 100                                                                                                                                                   |
-| bubbleTextStyle          | TextStyle                                                          | Bubble text style                                                                                           | ❌       |                                                                                                                                                       |
-| bubbleContainerStyle     | ViewStyle                                                          | Bubble container text style                                                                                 | ❌       |                                                                                                                                                       |
-| bubbleBackgroundColor    | string                                                             | Bubble background color                                                                                     | ❌       | rgba(61, 219, 209, 1)                                                                                                                                 |
-| isScrubbing              | Animated.SharedValue<boolean>                                      | callback slider is scrubbing status                                                                         | ❌       | undefined                                                                                                                                             |
-| onTap                    | () => void                                                         | A callback for when the slider is tapped.(Useful for video-player scrubbing.)                               | ❌       | undefined                                                                                                                                             |
-| thumbScaleValue          | Animated.SharedValue<number>                                       | Control thumb’s transform-scale animation.                                                                  | ❌       | undefined                                                                                                                                             |
-| sliderHeight             | number                                                             | The height of the slider component                                                                          | ❌       | 30                                                                                                                                                    |
-| containerStyle           | ViewStyle                                                          | styles to be applied to the slider container component                                                      | ❌       | { width: '100%', height: 5, borderRadius: 2, borderColor: borderColor, overflow: 'hidden', borderWidth: 1, backgroundColor: maximumTrackTintColor, }, |
-| panHitSlop               | object                                                             | pan gesture hit slop                                                                                        | ❌       | `{ top: 8, left: 0, bottom: 8, right: 0,} `                                                                                                           |
-| step                     | number                                                             | Step value of the slider. The value should be between 0 and maximumValue - minimumValue)                    | ❌       | undefined                                                                                                                                             |
-| markWidth                | number                                                             | Step mark width, if you need custom mark style, you must be fix this width                                  | ❌       | 4                                                                                                                                                     |
-| marksStyle               | ViewStyle                                                          | Step mark style                                                                                             | ❌       | {width: {markWidth}, height: 4, backgroundColor: '#fff', position: 'absolute', top: 2}                                                                |
-| onHapticFeedback         | function                                                           | Haptic feedback callback                                                                                    | ❌       | undefined                                                                                                                                             |
-| hapticMode               | enum HapticModeEnum { NONE = 'none',STEP = 'step', BOTH = 'both',} | haptic feedback mode                                                                                        | ❌       | HapticModeEnum.NONE                                                                                                                                   |
+<table>
+  <tr>
+    <td>Name</td>
+    <td>Type</td>
+    <td>Description</td>
+    <td>Required</td>
+    <td>Default Value</td>
+  </tr>
+  <tr>
+    <td>theme</td>
+    <td>object</td>
+    <td>The slider theme color</td>
+    <td>❌</td>
+    <td>
+      {
+        // Color to fill the progress in the seekbar
+        minimumTrackTintColor: string, 
+        // Color to fill the background in the seekbar
+        maximumTrackTintColor: string, 
+        // Color to fill the cache in the seekbar
+        cacheTrackTintColor: string,
+        // Color to fill the bubble backgrouundColor
+        disableMinTrackTintColor: string, 
+        // Disabled color to fill the progress in the seekbar
+        bubbleBackgroundColor: string
+      }
+    </td>
+  </tr>
+
+  <tr>
+    <td>style</td>
+    <td>ViewStyle</td>
+    <td></td>
+    <td>❌</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>borderColor</td>
+    <td>string</td>
+    <td>Color of the border of the slider, also you can use containerStyle .</td>
+    <td>❌</td>
+    <td>transparent</td>
+  </tr>
+  <tr>
+    <td>bubble</td>
+    <td>(number) =&gt; string</td>
+    <td>Get the current value of the slider as you slide it, and returns a string to be used inside the bubble.</td>
+    <td>❌</td>
+    <td>(number) =&gt; string</td>
+  </tr>
+  <tr>
+    <td>progress</td>
+    <td>Animated.SharedValue&lt;number&gt;</td>
+    <td>Current value of the slider</td>
+    <td>✅</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td>cache</td>
+    <td>Animated.SharedValue&lt;number&gt;</td>
+    <td>Cache value of the slider</td>
+    <td>❌</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td>minimumValue</td>
+    <td>Animated.SharedValue&lt;number&gt;</td>
+    <td>An Animated.SharedValue from react-native-reanimated library which is the minimum value of the slider.</td>
+    <td>✅</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>maximumValue</td>
+    <td>Animated.SharedValue&lt;number&gt;</td>
+    <td>An Animated.SharedValue from react-native-reanimated library which is the maximum value of the slider.</td>
+    <td>✅</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>onSlidingStart</td>
+    <td>() =&gt; void</td>
+    <td>Callback called when the sliding interaction starts</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>onValueChange</td>
+    <td>(number) =&gt; void</td>
+    <td>Callback called when the slider value changes</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>onSlidingComplete</td>
+    <td>(number) =&gt; void</td>
+    <td>Callback called when the sliding interaction stops. The updated slider value will be passed as argument</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>renderBubble</td>
+    <td>() =&gt; React.ReactNode</td>
+    <td>A custom bubble component that will be rendered while sliding.</td>
+    <td>❌</td>
+    <td>See the &lt;Bubble/&gt; component</td>
+  </tr>
+  <tr>
+    <td>setBubbleText</td>
+    <td>(string) =&gt; void</td>
+    <td>This function will be called while sliding and can be used to update the text in a custom bubble component.</td>
+    <td>❌</td>
+    <td>current slider value</td>
+  </tr>
+  <tr>
+    <td>bubbleTranslateY</td>
+    <td>number</td>
+    <td>Value to pass to the container of the bubble as translateY</td>
+    <td>❌</td>
+    <td>7</td>
+  </tr>
+  <tr>
+    <td>renderThumb</td>
+    <td>() =&gt; React.ReactNode</td>
+    <td>Render custom thumb image. If you need to customize thumb, you also need to set the thumb width</td>
+    <td>❌</td>
+    <td>ReactNode</td>
+  </tr>
+  <tr>
+    <td>thumbWidth</td>
+    <td>number</td>
+    <td>Thumb elements width</td>
+    <td>❌</td>
+    <td>15</td>
+  </tr>
+  <tr>
+    <td>disable</td>
+    <td>boolean</td>
+    <td>Disable user interaction with the slider</td>
+    <td>❌</td>
+    <td>false</td>
+  </tr>
+
+  <tr>
+    <td>disableTapEvent</td>
+    <td>boolean</td>
+    <td>Enable tap event change value. Defaults to `true`</td>
+    <td>❌</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>bubbleMaxWidth</td>
+    <td>number</td>
+    <td>The maximum width of the bubble component</td>
+    <td>❌</td>
+    <td>100</td>
+  </tr>
+  <tr>
+    <td>bubbleTextStyle</td>
+    <td>TextStyle</td>
+    <td>Bubble text style</td>
+    <td>❌</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>bubbleContainerStyle</td>
+    <td>ViewStyle</td>
+    <td>Bubble container text style</td>
+    <td>❌</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>isScrubbing</td>
+    <td>Animated.SharedValue&lt;boolean&gt;</td>
+    <td>callback slider is scrubbing status</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>onTap</td>
+    <td>() =&gt; void</td>
+    <td>A callback for when the slider is tapped.(Useful for video-player scrubbing.)</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>thumbScaleValue</td>
+    <td>Animated.SharedValue&lt;number&gt;</td>
+    <td>Control thumb’s transform-scale animation.</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>sliderHeight</td>
+    <td>number</td>
+    <td>The height of the slider component</td>
+    <td>❌</td>
+    <td>30</td>
+  </tr>
+  <tr>
+    <td>containerStyle</td>
+    <td>ViewStyle</td>
+    <td>styles to be applied to the slider container component</td>
+    <td>❌</td>
+    <td>{ width: '100%', height: 5, borderRadius: 2, borderColor: borderColor, overflow: 'hidden', borderWidth: 1,
+      backgroundColor: maximumTrackTintColor, },</td>
+  </tr>
+  <tr>
+    <td>panHitSlop</td>
+    <td>object</td>
+    <td>pan gesture hit slop</td>
+    <td>❌</td>
+    <td>`{ top: 8, left: 0, bottom: 8, right: 0,} `</td>
+  </tr>
+  <tr>
+    <td>step</td>
+    <td>number</td>
+    <td>Step value of the slider. The value should be between 0 and maximumValue - minimumValue)</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>markWidth</td>
+    <td>number</td>
+    <td>Step mark width, if you need custom mark style, you must be fix this width</td>
+    <td>❌</td>
+    <td>4</td>
+  </tr>
+  <tr>
+    <td>marksStyle</td>
+    <td>ViewStyle</td>
+    <td>Step mark style</td>
+    <td>❌</td>
+    <td>{width: {markWidth}, height: 4, backgroundColor: '#fff', position: 'absolute', top: 2}</td>
+  </tr>
+  <tr>
+    <td>onHapticFeedback</td>
+    <td>function</td>
+    <td>Haptic feedback callback</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>hapticMode</td>
+    <td>enum HapticModeEnum { NONE = 'none',STEP = 'step', BOTH = 'both',}</td>
+    <td>haptic feedback mode</td>
+    <td>❌</td>
+    <td>HapticModeEnum.NONE</td>
+  </tr>
+</table>
