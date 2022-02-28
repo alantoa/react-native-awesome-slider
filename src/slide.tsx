@@ -414,7 +414,7 @@ export const Slider = ({
       thumbValue.value = clamp(x, 0, width.value - thumbWidth);
       progress.value = xToProgress(x);
 
-      if (x <= 0 || x >= width.value - thumbWidth) {
+      if (x <= thumbWidth / 2 || x >= width.value - thumbWidth) {
         if (
           !ctx.isTriggedHaptic &&
           hapticMode === HapticModeEnum.BOTH &&
