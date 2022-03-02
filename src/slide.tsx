@@ -340,17 +340,26 @@ export const Slider = ({
    */
   const shareValueToSeconds = () => {
     'worklet';
-    const sliderPercent = clamp(
-      thumbValue.value / (width.value - thumbWidth) +
-        minimumValue.value / sliderTotalValue(),
-      0,
-      1,
-    );
-    return clamp(
-      sliderPercent * sliderTotalValue(),
-      minimumValue.value,
-      maximumValue.value,
-    );
+    if (step) {
+      return clamp(
+        minimumValue.value +
+          (thumbIndex.value / step) * (maximumValue.value - minimumValue.value),
+        minimumValue.value,
+        maximumValue.value,
+      );
+    } else {
+      const sliderPercent = clamp(
+        thumbValue.value / (width.value - thumbWidth) +
+          minimumValue.value / sliderTotalValue(),
+        0,
+        1,
+      );
+      return clamp(
+        sliderPercent * sliderTotalValue(),
+        minimumValue.value,
+        maximumValue.value,
+      );
+    }
   };
   /**
    * convert [x] position to progress
@@ -377,6 +386,7 @@ export const Slider = ({
       const index = markLeftArr.value.findIndex(item => item >= x);
       const arrNext = markLeftArr.value[index];
       const arrPrev = markLeftArr.value[index - 1];
+      // Computing step boundaries
       const currentX = (arrNext + arrPrev) / 2;
       const thumbIndexPrev = thumbIndex.value;
       if (x - thumbWidth / 2 > currentX) {
@@ -390,6 +400,7 @@ export const Slider = ({
           thumbIndex.value = index - 1;
         }
       }
+      // Determine trigger haptics callback
       if (
         thumbIndexPrev !== thumbIndex.value &&
         hapticMode === HapticModeEnum.STEP &&
@@ -401,19 +412,11 @@ export const Slider = ({
         ctx.isTriggedHaptic = false;
       }
 
-      runOnJS(onSlideAcitve)(
-        clamp(
-          minimumValue.value +
-            (thumbIndex.value / step) *
-              (maximumValue.value - minimumValue.value),
-          minimumValue.value,
-          maximumValue.value,
-        ),
-      );
+      runOnJS(onSlideAcitve)(shareValueToSeconds());
     } else {
       thumbValue.value = clamp(x, 0, width.value - thumbWidth);
       progress.value = xToProgress(x);
-
+      // Determines whether the thumb slides to both ends
       if (x <= thumbWidth / 2 || x >= width.value - thumbWidth) {
         if (
           !ctx.isTriggedHaptic &&

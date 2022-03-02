@@ -176,6 +176,9 @@ export const Home = () => {
                 });
               }}
               sliderHeight={8}
+              onSlidingComplete={e => {
+                console.log(e);
+              }}
               thumbWidth={24}
               hapticMode={HapticModeEnum.STEP}
             />

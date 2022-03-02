@@ -97,10 +97,11 @@ Use the Theme object.
 
 ## TODO list
 
+- ~~Support step props~~
+- ~~Optimize bubble & thumb~~
 - Add RTL support
-- Optimize arrows
 - Rewrite using `react-native-gesture-handle` v2
-- ...
+- Support marks props
 
 ## Configuration
 
