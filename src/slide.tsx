@@ -36,6 +36,11 @@ export enum HapticModeEnum {
   STEP = 'step',
   BOTH = 'both',
 }
+export enum PanDirectionEnum {
+  LEFT = 0,
+  CENTER = 1,
+  RIGHT = 2,
+}
 export type SliderThemeType =
   | {
       /**
@@ -177,6 +182,7 @@ export type AwesomeSliderProps = {
   onHapticFeedback?: () => void;
   hapticMode?: HapticModeEnum;
   theme?: SliderThemeType;
+  panDirectionValue?: Animated.SharedValue<PanDirectionEnum>;
 };
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,
@@ -217,8 +223,11 @@ export const Slider = ({
   onHapticFeedback,
   hapticMode = HapticModeEnum.NONE,
   theme,
+  panDirectionValue,
 }: AwesomeSliderProps) => {
   const bubbleRef = useRef<BubbleRef>(null);
+  const prevX = useSharedValue(0);
+
   const [sliderWidth, setSliderWidth] = useState(0);
   const width = useSharedValue(0);
   const thumbValue = useSharedValue(0);
@@ -445,6 +454,11 @@ export const Slider = ({
         isScrubbing.value = true;
       }
       ctx.isTriggedHaptic = false;
+      if (panDirectionValue) {
+        panDirectionValue.value = PanDirectionEnum.CENTER;
+        prevX.value = 0;
+      }
+
       if (onSlidingStart) {
         runOnJS(onSlidingStart)();
       }
@@ -452,6 +466,11 @@ export const Slider = ({
     onActive: ({ x }, ctx) => {
       if (disable) {
         return;
+      }
+      if (panDirectionValue) {
+        panDirectionValue.value =
+          prevX.value - x > 0 ? PanDirectionEnum.LEFT : PanDirectionEnum.RIGHT;
+        prevX.value = x;
       }
 
       bubbleOpacity.value = withSpring(1);
@@ -551,7 +570,7 @@ export const Slider = ({
         hitSlop={panHitSlop}
         onLayout={onLayout}>
         <TapGestureHandler onGestureEvent={onSingleTapEvent}>
-          <Animated.View style={styles.container}>
+          <Animated.View style={[styles.container]}>
             <Animated.View
               style={StyleSheet.flatten([
                 styles.slider,

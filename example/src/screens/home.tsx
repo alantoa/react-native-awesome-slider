@@ -10,14 +10,21 @@ import {
 } from 'react-native';
 import {
   HapticModeEnum,
+  PanDirectionEnum,
   Slider,
   SliderThemeType,
 } from 'react-native-awesome-slider';
-import { useSharedValue } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedProps,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { Text } from '../components';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import { palette } from '../../../src/theme/palette';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import LottieView from 'lottie-react-native';
+const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
 
 const TEXT: TextStyle = {
   marginBottom: 12,
@@ -39,6 +46,7 @@ export const Home = () => {
   const progress3 = useSharedValue(30);
   const progress5 = useSharedValue(30);
   const progress6 = useSharedValue(30);
+  const progress7 = useSharedValue(20);
 
   const thumbScaleValue = useSharedValue(1);
   const min = useSharedValue(0);
@@ -48,6 +56,8 @@ export const Home = () => {
   const timer = useRef<any>(null);
   const min10 = useSharedValue(10);
   const max110 = useSharedValue(110);
+
+  const thumbLottieValue = useSharedValue<PanDirectionEnum>(0);
 
   useEffect(() => {
     return () => timer.current && clearTimeout(timer.current);
@@ -70,6 +80,20 @@ export const Home = () => {
   const clearTimer = () => {
     timer.current = clearTimeout(timer.current);
   };
+
+  const thumbAnimatedProps = useAnimatedProps(() => {
+    let value = 0;
+    if (thumbLottieValue.value === PanDirectionEnum.CENTER) {
+      value = 0.25;
+    }
+
+    if (thumbLottieValue.value === PanDirectionEnum.RIGHT) {
+      value = 0.5;
+    }
+    return {
+      progress: withTiming(value, { duration: 600 }),
+    };
+  }, [thumbLottieValue.value]);
   return (
     <>
       <View style={styles.full}>
@@ -200,6 +224,31 @@ export const Home = () => {
               hapticMode={HapticModeEnum.BOTH}
             />
           </View>
+          <View style={styles.card}>
+            <Title tx="Lottie thumb" />
+            <Slider
+              progress={progress7}
+              style={styles.slider}
+              minimumValue={min10}
+              maximumValue={max110}
+              theme={{
+                minimumTrackTintColor: '#ea7a99',
+                maximumTrackTintColor: 'rgba(0,0,0,.1)',
+              }}
+              panDirectionValue={thumbLottieValue}
+              renderBubble={() => null}
+              containerStyle={styles.borderRadius}
+              thumbWidth={60}
+              renderThumb={() => (
+                <View style={{ width: 60, height: 60, bottom: -4 }}>
+                  <AnimatedLottieView
+                    animatedProps={thumbAnimatedProps}
+                    source={require('./rainbow.json')}
+                  />
+                </View>
+              )}
+            />
+          </View>
         </ScrollView>
       </View>
     </>
@@ -232,6 +281,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 12,
   },
+
   container: {
     flex: 1,
   },
@@ -294,4 +344,7 @@ const styles = StyleSheet.create({
   },
 
   trackStyle: { height: 2 },
+  borderRadius: {
+    borderRadius: 10,
+  },
 });
