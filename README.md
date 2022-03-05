@@ -353,9 +353,31 @@ The `<Slider/>` component has the following configuration properties:
   </tr>
   <tr>
     <td>hapticMode</td>
-    <td>enum HapticModeEnum { NONE = 'none',STEP = 'step', BOTH = 'both',}</td>
+    <td>enum</td>
     <td>haptic feedback mode</td>
     <td>❌</td>
     <td>HapticModeEnum.NONE</td>
+  </tr>
+
+  <tr>
+    <td>panDirectionValue</td>
+    <td>enum</td>
+    <td>Current swipe direction</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>disableTrackFollow</td>
+    <td>boolean</td>
+    <td>Disable track follow thumb.(Commonly used in video audio players)</td>
+    <td>❌</td>
+    <td>false</td>
+  </tr>
+  <tr>
+    <td>bubbleWidth</td>
+    <td>number</td>
+    <td>Bubble width, If you set this value, bubble positioning left & right will be clamp.</td>
+    <td>❌</td>
+    <td>0</td>
   </tr>
 </table>

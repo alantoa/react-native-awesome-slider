@@ -47,6 +47,7 @@ export const Home = () => {
   const progress5 = useSharedValue(30);
   const progress6 = useSharedValue(30);
   const progress7 = useSharedValue(20);
+  const progress8 = useSharedValue(40);
 
   const thumbScaleValue = useSharedValue(1);
   const min = useSharedValue(0);
@@ -57,7 +58,9 @@ export const Home = () => {
   const min10 = useSharedValue(10);
   const max110 = useSharedValue(110);
 
-  const thumbLottieValue = useSharedValue<PanDirectionEnum>(0);
+  const thumbLottieValue = useSharedValue<PanDirectionEnum>(
+    PanDirectionEnum.START,
+  );
 
   useEffect(() => {
     return () => timer.current && clearTimeout(timer.current);
@@ -83,12 +86,17 @@ export const Home = () => {
 
   const thumbAnimatedProps = useAnimatedProps(() => {
     let value = 0;
-    if (thumbLottieValue.value === PanDirectionEnum.CENTER) {
+    if (thumbLottieValue.value === PanDirectionEnum.START) {
       value = 0.25;
     }
-
+    if (thumbLottieValue.value === PanDirectionEnum.LEFT) {
+      value = 0.0;
+    }
     if (thumbLottieValue.value === PanDirectionEnum.RIGHT) {
       value = 0.5;
+    }
+    if (thumbLottieValue.value === PanDirectionEnum.END) {
+      value = 0.25;
     }
     return {
       progress: withTiming(value, { duration: 600 }),
@@ -100,7 +108,9 @@ export const Home = () => {
         <View style={[styles.header, { paddingTop: insets.top }]}>
           <Text tx={'React Native Awesome Slider'} h3 />
         </View>
-        <ScrollView style={styles.view}>
+        <ScrollView
+          style={styles.view}
+          contentContainerStyle={styles.contentContainerStyle}>
           <StatusBar barStyle={'dark-content'} />
           <View style={styles.card}>
             <Title tx="Base" />
@@ -168,6 +178,7 @@ export const Home = () => {
               style={styles.slider}
               minimumValue={min}
               maximumValue={max}
+              bubbleWidth={90}
               bubbleTranslateY={-50}
               renderThumb={() => (
                 <View style={styles.customThumb}>
@@ -232,7 +243,7 @@ export const Home = () => {
               minimumValue={min10}
               maximumValue={max110}
               theme={{
-                minimumTrackTintColor: '#ea7a99',
+                minimumTrackTintColor: '#fc8bab',
                 maximumTrackTintColor: 'rgba(0,0,0,.1)',
               }}
               panDirectionValue={thumbLottieValue}
@@ -247,6 +258,22 @@ export const Home = () => {
                   />
                 </View>
               )}
+            />
+          </View>
+          <View style={styles.card}>
+            <Title tx="Disable track follow" />
+            <Slider
+              progress={progress8}
+              style={styles.slider}
+              minimumValue={min}
+              theme={{
+                minimumTrackTintColor: '#fc8bab',
+                maximumTrackTintColor: 'rgba(0,0,0,.1)',
+              }}
+              renderBubble={() => null}
+              maximumValue={max}
+              disableTrackFollow
+              hapticMode={HapticModeEnum.BOTH}
             />
           </View>
         </ScrollView>
@@ -281,7 +308,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 12,
   },
-
+  contentContainerStyle: {
+    paddingBottom: 100,
+  },
   container: {
     flex: 1,
   },

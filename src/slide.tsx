@@ -37,9 +37,10 @@ export enum HapticModeEnum {
   BOTH = 'both',
 }
 export enum PanDirectionEnum {
-  LEFT = 0,
-  CENTER = 1,
+  START = 0,
+  LEFT = 1,
   RIGHT = 2,
+  END = 3,
 }
 export type SliderThemeType =
   | {
@@ -182,7 +183,19 @@ export type AwesomeSliderProps = {
   onHapticFeedback?: () => void;
   hapticMode?: HapticModeEnum;
   theme?: SliderThemeType;
+  /**
+   * Current swipe direction
+   * @enum Animated.SharedValue<PanDirectionEnum>
+   */
   panDirectionValue?: Animated.SharedValue<PanDirectionEnum>;
+  /**
+   * Disable track follow thumb.(Commonly used in video/audio players)
+   */
+  disableTrackFollow?: boolean;
+  /**
+   * Bubble width, If you set this value, bubble positioning left & right will be clamp.
+   */
+  bubbleWidth?: number;
 };
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,
@@ -224,6 +237,8 @@ export const Slider = ({
   hapticMode = HapticModeEnum.NONE,
   theme,
   panDirectionValue,
+  disableTrackFollow = false,
+  bubbleWidth = 0,
 }: AwesomeSliderProps) => {
   const bubbleRef = useRef<BubbleRef>(null);
   const prevX = useSharedValue(0);
@@ -275,6 +290,8 @@ export const Slider = ({
     // when you set step
     if (step && markLeftArr.value.length >= step) {
       translateX = markLeftArr.value[thumbIndex.value];
+    } else if (disableTrackFollow) {
+      translateX = clamp(thumbValue.value, 0, width.value - thumbWidth);
     } else {
       translateX = clamp(
         progressToValue(progress.value),
@@ -300,11 +317,7 @@ export const Slider = ({
     let translateX = 0;
     // when you set step
     if (step && markLeftArr.value.length >= step) {
-      translateX = clamp(
-        markLeftArr.value[thumbIndex.value] + thumbWidth / 2,
-        0,
-        width.value,
-      );
+      translateX = markLeftArr.value[thumbIndex.value] + thumbWidth / 2;
     } else {
       translateX = thumbValue.value + thumbWidth / 2;
     }
@@ -315,7 +328,11 @@ export const Slider = ({
           translateY: bubbleTranslateY,
         },
         {
-          translateX,
+          translateX: clamp(
+            translateX,
+            bubbleWidth / 2,
+            width.value - bubbleWidth / 2,
+          ),
         },
         {
           scale: bubbleOpacity.value,
@@ -424,7 +441,9 @@ export const Slider = ({
       runOnJS(onSlideAcitve)(shareValueToSeconds());
     } else {
       thumbValue.value = clamp(x, 0, width.value - thumbWidth);
-      progress.value = xToProgress(x);
+      if (!disableTrackFollow) {
+        progress.value = xToProgress(x);
+      }
       // Determines whether the thumb slides to both ends
       if (x <= thumbWidth / 2 || x >= width.value - thumbWidth) {
         if (
@@ -455,7 +474,7 @@ export const Slider = ({
       }
       ctx.isTriggedHaptic = false;
       if (panDirectionValue) {
-        panDirectionValue.value = PanDirectionEnum.CENTER;
+        panDirectionValue.value = PanDirectionEnum.START;
         prevX.value = 0;
       }
 
@@ -477,15 +496,20 @@ export const Slider = ({
       onActiveSlider(x, ctx);
     },
 
-    onEnd: () => {
+    onEnd: ({ x }) => {
       if (disable) {
         return;
       }
       if (isScrubbing) {
         isScrubbing.value = true;
       }
+      if (panDirectionValue) {
+        panDirectionValue.value = PanDirectionEnum.END;
+      }
       bubbleOpacity.value = withSpring(0);
-
+      if (disableTrackFollow) {
+        progress.value = xToProgress(x);
+      }
       if (onSlidingComplete) {
         runOnJS(onSlidingComplete)(shareValueToSeconds());
       }
