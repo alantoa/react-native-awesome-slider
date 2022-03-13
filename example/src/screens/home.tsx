@@ -12,7 +12,6 @@ import {
   HapticModeEnum,
   PanDirectionEnum,
   Slider,
-  SliderThemeType,
 } from 'react-native-awesome-slider';
 import Animated, {
   useAnimatedProps,
@@ -22,25 +21,17 @@ import Animated, {
 import { Text } from '../components';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import { palette } from '../../../src/theme/palette';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LottieView from 'lottie-react-native';
+import { useTheme } from '@react-navigation/native';
 const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
 
-const TEXT: TextStyle = {
+const TITLE: TextStyle = {
   marginBottom: 12,
 };
-const Title = ({ tx }: { tx: string }) => <Text tx={tx} h3 style={TEXT} />;
-const defaultTheme = {
-  disableMinTrackTintColor: '#fff',
-  maximumTrackTintColor: '#fff',
-  minimumTrackTintColor: '#000',
-  cacheTrackTintColor: '#333',
-  bubbleBackgroundColor: '#666',
-};
+
 export const Home = () => {
-  const insets = useSafeAreaInsets();
+  const theme = useTheme();
   const [disable, setDisable] = useState(false);
-  const [theme, setTheme] = useState<SliderThemeType>(defaultTheme);
 
   const progress1 = useSharedValue(30);
   const progress3 = useSharedValue(30);
@@ -104,16 +95,20 @@ export const Home = () => {
   }, [thumbLottieValue.value]);
   return (
     <>
-      <View style={styles.full}>
-        <View style={[styles.header, { paddingTop: insets.top }]}>
-          <Text tx={'React Native Awesome Slider'} h3 />
-        </View>
+      <View style={[styles.full]}>
         <ScrollView
           style={styles.view}
           contentContainerStyle={styles.contentContainerStyle}>
           <StatusBar barStyle={'dark-content'} />
-          <View style={styles.card}>
-            <Title tx="Base" />
+          <View
+            style={[
+              styles.card,
+              {
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.card,
+              },
+            ]}>
+            <Text tx="Base" color={theme.colors.text} h3 style={TITLE} />
             <Slider
               style={styles.container}
               progress={progress1}
@@ -124,7 +119,6 @@ export const Home = () => {
               disable={disable}
               cache={cache}
               thumbScaleValue={thumbScaleValue}
-              theme={theme}
             />
             <View style={styles.control}>
               <TouchableOpacity
@@ -132,47 +126,85 @@ export const Home = () => {
                   setDisable(!disable);
                 }}
                 style={styles.btn}>
-                <Text tx="disable" color="#D3DEDC" />
+                <Text tx="disable" color={theme.colors.text} />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
                   thumbScaleValue.value = thumbScaleValue.value === 0 ? 1 : 0;
                 }}
                 style={styles.btn}>
-                <Text tx="toggle thumb scale" color="#D3DEDC" />
+                <Text tx="toggle thumb scale" color={theme.colors.text} />
               </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  theme ? setTheme(undefined) : setTheme(defaultTheme);
-                }}
-                style={styles.btn}>
-                <Text tx="🎨toggle theme" color="#D3DEDC" />
-              </TouchableOpacity>
+
               <TouchableOpacity
                 onPress={() => {
                   cache.value = 40;
                 }}
                 style={styles.btn}>
-                <Text tx="show cache" color="#D3DEDC" />
+                <Text tx="show cache" color={theme.colors.text} />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
                   cache.value = 0;
                 }}
                 style={styles.btn}>
-                <Text tx="hide cache" color="#D3DEDC" />
+                <Text tx="hide cache" color={theme.colors.text} />
               </TouchableOpacity>
               <TouchableOpacity onPress={openTimer} style={styles.btn}>
-                <Text tx="🎬 cache" color="#D3DEDC" />
+                <Text tx="🎬 cache" color={theme.colors.text} />
               </TouchableOpacity>
               <TouchableOpacity onPress={clearTimer} style={styles.btn}>
-                <Text tx="🛑 cache" color="#D3DEDC" />
+                <Text tx="🛑 cache" color={theme.colors.text} />
               </TouchableOpacity>
             </View>
           </View>
+          <View
+            style={[
+              styles.card,
+              {
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.card,
+              },
+            ]}>
+            <Text
+              tx="Light & Dark theme"
+              color={theme.colors.text}
+              h3
+              style={TITLE}
+            />
+            <Slider
+              style={styles.container}
+              progress={progress1}
+              onSlidingComplete={onSlidingComplete}
+              onSlidingStart={onSlidingStart}
+              minimumValue={min}
+              maximumValue={max}
+              disable={disable}
+              cache={cache}
+              thumbScaleValue={thumbScaleValue}
+              theme={{
+                minimumTrackTintColor: theme.colors.primary,
+                maximumTrackTintColor: theme.colors.border,
+                bubbleBackgroundColor: theme.colors.background,
+                bubbleTextColor: theme.colors.text,
+              }}
+            />
+          </View>
+          <View
+            style={[
+              styles.card,
+              {
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.card,
+              },
+            ]}>
+            <Text
+              tx="Coustom bubble & thumb"
+              color={theme.colors.text}
+              h3
+              style={TITLE}
+            />
 
-          <View style={styles.card}>
-            <Title tx="Coustom bubble & thumb" />
             <Slider
               progress={progress3}
               style={styles.slider}
@@ -180,24 +212,31 @@ export const Home = () => {
               maximumValue={max}
               bubbleWidth={90}
               bubbleTranslateY={-50}
-              renderThumb={() => (
-                <View style={styles.customThumb}>
-                  <View style={styles.customThumb1} />
-                  <View style={styles.customThumb2} />
-                </View>
-              )}
+              renderThumb={() => <View style={styles.customThumb} />}
               renderBubble={() => (
                 <View style={styles.customBubble}>
                   <Image
-                    source={require('./ua.png')}
+                    source={require('./preview.png')}
                     style={styles.bubbleImg}
                   />
                 </View>
               )}
             />
           </View>
-          <View style={styles.card}>
-            <Title tx="Range & Haptic step-mode" />
+          <View
+            style={[
+              styles.card,
+              {
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.card,
+              },
+            ]}>
+            <Text
+              tx="Range & Haptic step-mode"
+              color={theme.colors.text}
+              h3
+              style={TITLE}
+            />
             <Slider
               progress={progress5}
               minimumValue={min10}
@@ -219,8 +258,20 @@ export const Home = () => {
             />
           </View>
 
-          <View style={styles.card}>
-            <Title tx="Haptic both-mode" />
+          <View
+            style={[
+              styles.card,
+              {
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.card,
+              },
+            ]}>
+            <Text
+              tx="Haptic both-mode"
+              color={theme.colors.text}
+              h3
+              style={TITLE}
+            />
             <Slider
               progress={progress6}
               style={styles.slider}
@@ -235,8 +286,20 @@ export const Home = () => {
               hapticMode={HapticModeEnum.BOTH}
             />
           </View>
-          <View style={styles.card}>
-            <Title tx="Lottie thumb" />
+          <View
+            style={[
+              styles.card,
+              {
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.card,
+              },
+            ]}>
+            <Text
+              tx="Lottie thumb"
+              color={theme.colors.text}
+              h3
+              style={TITLE}
+            />
             <Slider
               progress={progress7}
               style={styles.slider}
@@ -260,8 +323,20 @@ export const Home = () => {
               )}
             />
           </View>
-          <View style={styles.card}>
-            <Title tx="Disable track follow" />
+          <View
+            style={[
+              styles.card,
+              {
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.card,
+              },
+            ]}>
+            <Text
+              tx="Disable track follow"
+              color={theme.colors.text}
+              h3
+              style={TITLE}
+            />
             <Slider
               progress={progress8}
               style={styles.slider}
@@ -272,6 +347,7 @@ export const Home = () => {
               }}
               renderBubble={() => null}
               maximumValue={max}
+              disableTapEvent
               disableTrackFollow
               hapticMode={HapticModeEnum.BOTH}
             />
@@ -284,21 +360,19 @@ export const Home = () => {
 const styles = StyleSheet.create({
   card: {
     borderRadius: 8,
-    borderColor: palette.G3,
     borderWidth: 0.5,
     padding: 12,
     marginTop: 20,
   },
   full: {
     flex: 1,
-    backgroundColor: palette.G2,
   },
   header: {
     paddingBottom: 12,
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomWidth: 0.5,
-    borderBottomColor: palette.G3,
+    borderBottomColor: palette.Gray,
   },
   view: {
     paddingHorizontal: 20,
@@ -326,25 +400,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 8,
     paddingHorizontal: 12,
-    backgroundColor: palette.ACTIVE,
+    backgroundColor: palette.Info,
     marginRight: 12,
     marginTop: 12,
   },
   customThumb: {
     width: 20,
     height: 20,
-    borderRadius: 4,
+    borderRadius: 8,
     overflow: 'hidden',
-  },
-  customThumb1: {
-    backgroundColor: palette.ACTIVE,
-    width: 20,
-    height: 10,
-  },
-  customThumb2: {
-    backgroundColor: palette.Main,
-    width: 20,
-    height: 10,
+    backgroundColor: palette.Danger,
   },
   customBubble: {
     alignItems: 'center',
@@ -354,26 +419,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     height: 60,
   },
-  pause: {
-    height: 40,
-    left: 0,
-    position: 'absolute',
-    width: 40,
-  },
-
-  thumbStyle: {
-    backgroundColor: '#fff',
-    height: 8,
-    width: 2,
-  },
-
-  timerText: {
-    textAlign: 'right',
-    width: 40,
-  },
-
-  trackStyle: { height: 2 },
   borderRadius: {
-    borderRadius: 10,
+    borderRadius: 20,
   },
 });
