@@ -15,7 +15,7 @@
 
 ## Installation
 
-First you have to follow installation instructions of [Reanimated v2](https://docs.swmansion.com/react-native-reanimated/) and [react-native-gesture-handler](https://docs.swmansion.com/react-native-gesture-handler/)
+First you have to follow installation instructions of [Reanimated v2](https://docs.swmansion.com/react-native-reanimated/) and [react-native-gesture-handler v2](https://docs.swmansion.com/react-native-gesture-handler/)
 
 ```sh
 yarn add react-native-awesome-slider

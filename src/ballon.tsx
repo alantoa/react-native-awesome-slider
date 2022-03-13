@@ -31,7 +31,7 @@ export type BubbleProps = {
    * the style for the TextInput inside bubble
    */
   textStyle?: StyleProp<TextStyle>;
-
+  textColor?: string;
   bubbleMaxWidth?: number;
 };
 /**
@@ -42,7 +42,13 @@ export type BubbleRef = {
 };
 export const Bubble = forwardRef<BubbleRef, BubbleProps>(
   (
-    { containerStyle, color = palette.Main, textStyle, bubbleMaxWidth },
+    {
+      containerStyle,
+      color = palette.Main,
+      textStyle,
+      textColor = palette.White,
+      bubbleMaxWidth,
+    },
     ref,
   ) => {
     const textRef = useRef<TextInput>(null);
@@ -63,7 +69,7 @@ export const Bubble = forwardRef<BubbleRef, BubbleProps>(
           <TextInput
             ref={textRef}
             textAlign="center"
-            style={[styles.textStyle, textStyle]}
+            style={[styles.textStyle, { color: textColor }, textStyle]}
             defaultValue=""
             caretHidden
           />
@@ -90,7 +96,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   textStyle: {
-    color: palette.W,
     fontSize: 12,
     paddingVertical: 0,
   },
