@@ -8,16 +8,9 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {
-  GestureEvent,
-  PanGestureHandler,
-  PanGestureHandlerEventPayload,
-  TapGestureHandler,
-  TapGestureHandlerEventPayload,
-} from 'react-native-gesture-handler';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
-  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -61,15 +54,17 @@ export type SliderThemeType =
        */
       bubbleBackgroundColor?: string;
       /**
+       * Bubble text color
+       */
+      bubbleTextColor?: string;
+      /**
        * Disabled color to fill the progress in the seekbar
        */
       disableMinTrackTintColor?: string;
     }
   | null
   | undefined;
-type PanGestureHandlerCtx = {
-  isTriggedHaptic: boolean;
-};
+
 export type AwesomeSliderProps = {
   /**
    * Style for the container view
@@ -199,10 +194,10 @@ export type AwesomeSliderProps = {
 };
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,
-  maximumTrackTintColor: palette.ACTIVE,
-  cacheTrackTintColor: palette.G6,
-  disableMinTrackTintColor: palette.LIGHT,
+  maximumTrackTintColor: palette.Gray,
+  cacheTrackTintColor: palette.Gray,
   bubbleBackgroundColor: palette.Main,
+  bubbleTextColor: palette.White,
 };
 export const Slider = ({
   renderBubble,
@@ -249,7 +244,7 @@ export const Slider = ({
   const bubbleOpacity = useSharedValue(0);
   const markLeftArr = useSharedValue<number[]>([]);
   const thumbIndex = useSharedValue(0);
-
+  const isTriggedHaptic = useSharedValue(false);
   const _theme = {
     ...defaultTheme,
     ...theme,
@@ -276,10 +271,7 @@ export const Slider = ({
     } else {
       seekWidth = progressToValue(progress.value) + thumbWidth / 2;
     }
-    // For reanimated performance, Prevent multiple updates width
-    if (clamp(seekWidth, 0, width.value) <= 0) {
-      return {};
-    }
+
     return {
       width: clamp(seekWidth, 0, width.value),
     };
@@ -403,7 +395,7 @@ export const Slider = ({
   /**
    * change slide value
    */
-  const onActiveSlider = (x: number, ctx: PanGestureHandlerCtx) => {
+  const onActiveSlider = (x: number) => {
     'worklet';
     if (isScrubbing) {
       isScrubbing.value = true;
@@ -433,9 +425,9 @@ export const Slider = ({
         onHapticFeedback
       ) {
         runOnJS(onHapticFeedback)();
-        ctx.isTriggedHaptic = true;
+        isTriggedHaptic.value = true;
       } else {
-        ctx.isTriggedHaptic = false;
+        isTriggedHaptic.value = false;
       }
 
       runOnJS(onSlideAcitve)(shareValueToSeconds());
@@ -445,44 +437,41 @@ export const Slider = ({
         progress.value = xToProgress(x);
       }
       // Determines whether the thumb slides to both ends
-      if (x <= thumbWidth / 2 || x >= width.value - thumbWidth) {
+      if (x <= 0 || x >= width.value - thumbWidth) {
         if (
-          !ctx.isTriggedHaptic &&
+          !isTriggedHaptic.value &&
           hapticMode === HapticModeEnum.BOTH &&
           onHapticFeedback
         ) {
           runOnJS(onHapticFeedback)();
-          ctx.isTriggedHaptic = true;
+          isTriggedHaptic.value = true;
         }
       } else {
-        ctx.isTriggedHaptic = false;
+        isTriggedHaptic.value = false;
       }
       runOnJS(onSlideAcitve)(shareValueToSeconds());
     }
   };
 
-  const onGestureEvent = useAnimatedGestureHandler<
-    GestureEvent<PanGestureHandlerEventPayload>,
-    PanGestureHandlerCtx
-  >({
-    onStart: ({}, ctx) => {
+  const onGestureEvent = Gesture.Pan()
+    .onStart(() => {
+      // e.absoluteX
       if (disable) {
         return;
       }
       if (isScrubbing) {
         isScrubbing.value = true;
       }
-      ctx.isTriggedHaptic = false;
+      // ctx.isTriggedHaptic = false;
       if (panDirectionValue) {
         panDirectionValue.value = PanDirectionEnum.START;
         prevX.value = 0;
       }
-
       if (onSlidingStart) {
         runOnJS(onSlidingStart)();
       }
-    },
-    onActive: ({ x }, ctx) => {
+    })
+    .onChange(({ x }) => {
       if (disable) {
         return;
       }
@@ -491,12 +480,10 @@ export const Slider = ({
           prevX.value - x > 0 ? PanDirectionEnum.LEFT : PanDirectionEnum.RIGHT;
         prevX.value = x;
       }
-
       bubbleOpacity.value = withSpring(1);
-      onActiveSlider(x, ctx);
-    },
-
-    onEnd: ({ x }) => {
+      onActiveSlider(x);
+    })
+    .onEnd(({ x }) => {
       if (disable) {
         return;
       }
@@ -507,46 +494,34 @@ export const Slider = ({
         panDirectionValue.value = PanDirectionEnum.END;
       }
       bubbleOpacity.value = withSpring(0);
+
       if (disableTrackFollow) {
         progress.value = xToProgress(x);
       }
       if (onSlidingComplete) {
         runOnJS(onSlidingComplete)(shareValueToSeconds());
       }
-    },
+    });
+  const onSingleTapEvent = Gesture.Tap().onEnd(({ x }, isFinished) => {
+    if (onTap) {
+      runOnJS(onTap)();
+    }
+    if (disable || disableTapEvent) {
+      return;
+    }
+    if (isFinished) {
+      onActiveSlider(x);
+    }
+    if (isScrubbing) {
+      isScrubbing.value = true;
+    }
+    bubbleOpacity.value = withSpring(0);
+    if (onSlidingComplete) {
+      runOnJS(onSlidingComplete)(shareValueToSeconds());
+    }
   });
 
-  const onSingleTapEvent = useAnimatedGestureHandler<
-    GestureEvent<TapGestureHandlerEventPayload>,
-    PanGestureHandlerCtx
-  >({
-    onActive: ({ x }, ctx) => {
-      if (onTap) {
-        runOnJS(onTap)();
-      }
-      if (disable) {
-        return;
-      }
-      if (disableTapEvent) {
-        return;
-      }
-
-      onActiveSlider(x, ctx);
-    },
-    onEnd: () => {
-      if (disable || disableTapEvent) {
-        return;
-      }
-      if (isScrubbing) {
-        isScrubbing.value = true;
-      }
-      bubbleOpacity.value = withSpring(0);
-
-      if (onSlidingComplete) {
-        runOnJS(onSlidingComplete)(shareValueToSeconds());
-      }
-    },
-  });
+  const gesture = Gesture.Race(onSingleTapEvent, onGestureEvent);
 
   const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
     const layoutWidth = nativeEvent.layout.width;
@@ -583,122 +558,109 @@ export const Slider = ({
   };
 
   return (
-    <PanGestureHandler
-      onGestureEvent={onGestureEvent}
-      minDist={10}
-      hitSlop={panHitSlop}
-      minPointers={1}
-      maxPointers={1}>
+    <GestureDetector gesture={gesture}>
       <Animated.View
         style={[styles.view, { height: sliderHeight }, style]}
         hitSlop={panHitSlop}
         onLayout={onLayout}>
-        <TapGestureHandler onGestureEvent={onSingleTapEvent}>
-          <Animated.View style={[styles.container]}>
-            <Animated.View
-              style={StyleSheet.flatten([
-                styles.slider,
-                {
-                  height: sliderHeight,
-                  backgroundColor: _theme.maximumTrackTintColor,
-                },
-                containerStyle,
-              ])}>
-              <Animated.View
+        <Animated.View
+          style={StyleSheet.flatten([
+            styles.slider,
+            {
+              height: sliderHeight,
+              backgroundColor: _theme.maximumTrackTintColor,
+            },
+            containerStyle,
+          ])}>
+          <Animated.View
+            style={[
+              styles.cache,
+              {
+                backgroundColor: _theme.cacheTrackTintColor,
+              },
+              animatedCacheXStyle,
+            ]}
+          />
+          <Animated.View
+            style={[
+              styles.seek,
+              {
+                backgroundColor: disable
+                  ? _theme.disableMinTrackTintColor
+                  : _theme.minimumTrackTintColor,
+              },
+              animatedSeekStyle,
+            ]}
+          />
+        </Animated.View>
+        {sliderWidth > 0 &&
+          step &&
+          new Array(step + 1).fill(0).map((_, i) => {
+            return (
+              <View
+                key={i}
                 style={[
-                  styles.cache,
+                  styles.mark,
                   {
-                    backgroundColor: _theme.cacheTrackTintColor,
+                    width: markWidth,
+                    borderRadius: markWidth,
+                    left: sliderWidth * (i / step) - (i / step) * markWidth,
                   },
-                  animatedCacheXStyle,
+                  markStyle,
                 ]}
               />
-              <Animated.View
-                style={[
-                  styles.seek,
-                  {
-                    backgroundColor: disable
-                      ? _theme.disableMinTrackTintColor
-                      : _theme.minimumTrackTintColor,
-                  },
-                  animatedSeekStyle,
-                ]}
-              />
-            </Animated.View>
-            {sliderWidth > 0 &&
-              step &&
-              new Array(step + 1).fill(0).map((_, i) => {
-                return (
-                  <View
-                    key={i}
-                    style={[
-                      styles.mark,
-                      {
-                        width: markWidth,
-                        borderRadius: markWidth,
-                        left: sliderWidth * (i / step) - (i / step) * markWidth,
-                      },
-                      markStyle,
-                    ]}
-                  />
-                );
-              })}
-            <Animated.View style={[styles.thumb, animatedThumbStyle]}>
-              {renderThumb ? (
-                renderThumb()
-              ) : (
-                <View
-                  style={{
-                    backgroundColor: _theme.minimumTrackTintColor,
-                    height: thumbWidth,
-                    width: thumbWidth,
-                    borderRadius: thumbWidth,
-                  }}
-                />
-              )}
-            </Animated.View>
+            );
+          })}
+        <Animated.View style={[styles.thumb, animatedThumbStyle]}>
+          {renderThumb ? (
+            renderThumb()
+          ) : (
+            <View
+              style={{
+                backgroundColor: _theme.minimumTrackTintColor,
+                height: thumbWidth,
+                width: thumbWidth,
+                borderRadius: thumbWidth,
+              }}
+            />
+          )}
+        </Animated.View>
 
-            <Animated.View
-              style={[
-                styles.bubble,
-                {
-                  left: -bubbleMaxWidth / 2,
-                  width: bubbleMaxWidth,
-                },
-                animatedBubbleStyle,
-              ]}>
-              {renderBubble ? (
-                renderBubble()
-              ) : (
-                <Bubble
-                  ref={bubbleRef}
-                  color={_theme.bubbleBackgroundColor}
-                  textStyle={bubbleTextStyle}
-                  containerStyle={bubbleContainerStyle}
-                  bubbleMaxWidth={bubbleMaxWidth}
-                />
-              )}
-            </Animated.View>
-          </Animated.View>
-        </TapGestureHandler>
+        <Animated.View
+          style={[
+            styles.bubble,
+            {
+              left: -bubbleMaxWidth / 2,
+              width: bubbleMaxWidth,
+            },
+            animatedBubbleStyle,
+          ]}>
+          {renderBubble ? (
+            renderBubble()
+          ) : (
+            <Bubble
+              ref={bubbleRef}
+              color={_theme.bubbleBackgroundColor}
+              textColor={_theme.bubbleTextColor}
+              textStyle={bubbleTextStyle}
+              containerStyle={bubbleContainerStyle}
+              bubbleMaxWidth={bubbleMaxWidth}
+            />
+          )}
+        </Animated.View>
       </Animated.View>
-    </PanGestureHandler>
+    </GestureDetector>
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '100%',
-    overflow: 'visible',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   slider: {
     width: '100%',
     overflow: 'hidden',
   },
   view: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   cache: {
     height: '100%',

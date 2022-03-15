@@ -8,9 +8,14 @@
  * @format
  */
 
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  DarkTheme,
+  DefaultTheme,
+  NavigationContainer,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
+import { useColorScheme } from 'react-native';
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
 import { Home } from './src/screens';
 
@@ -20,14 +25,14 @@ export type RootParamList = {
 const Stack = createNativeStackNavigator<RootParamList>();
 
 const App = gestureHandlerRootHOC(() => {
+  const scheme = useColorScheme();
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack.Navigator>
         <Stack.Screen
           name="Example"
           options={{
-            title: 'Slide Example',
-            headerShown: false,
+            title: 'React Native Awesome Slider',
           }}
           component={Home}
         />
