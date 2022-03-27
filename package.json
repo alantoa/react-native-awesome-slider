@@ -26,7 +26,8 @@
     "release": "release-it",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "fix": "eslint \"**/*.{js,ts,tsx}\" --fix",
-    "test": "jest"
+    "test": "jest",
+    "bootstrap": "yarn && cd example && yarn && yarn setup && yarn pods"
   },
   "keywords": [
     "react-native",

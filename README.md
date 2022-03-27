@@ -8,28 +8,30 @@
 </div>
 
 <div align="center">
-  <img src="./assets/slider-example.gif" width="30%" />
+  <img src="./assets/slider.gif" width="40%" />
   <p><a href="https://twitter.com/alan_toa/status/1497531806740267009" >🔗 Watch video</a><p/>
   <br/> 
 </div>
 
 ## Installation
 
+First you have to follow installation instructions of [Reanimated v2](https://docs.swmansion.com/react-native-reanimated/) and [react-native-gesture-handler](https://docs.swmansion.com/react-native-gesture-handler/)
 
-First you have to follow installation instructions of [Reanimated v2](https://docs.swmansion.com/react-native-reanimated/) and [react-native-gesture-handler](https://docs.swmansion.com/react-native-gesture-handler/) 
-
-If you react-native-gesture-handler version < 2:
-```sh
-yarn add react-native-awesome-slider@1
-```
 If you react-native-gesture-handler version >= 2:
 
 ```sh
 yarn add react-native-awesome-slider
 ```
-source code please check [v2](https://github.com/alantoa/react-native-awesome-slider/tree/v2) 
+
+else:
+
+```sh
+yarn add react-native-awesome-slider@1
+```
 
 ## Example usage
+
+Basic use:
 
 ```jsx
 import { useSharedValue } from 'react-native-reanimated';
@@ -65,6 +67,8 @@ Use the Theme object.
   }}
 />
 ```
+
+> For more usage, please view [Example](https://github.com/alantoa/react-native-awesome-slider/tree/main/example).
 
 #### Add pan haptic feedback?
 
