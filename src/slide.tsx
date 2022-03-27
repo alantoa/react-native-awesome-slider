@@ -454,6 +454,7 @@ export const Slider = ({
   };
 
   const onGestureEvent = Gesture.Pan()
+    .hitSlop(panHitSlop)
     .onStart(() => {
       // e.absoluteX
       if (disable) {
@@ -502,24 +503,26 @@ export const Slider = ({
         runOnJS(onSlidingComplete)(shareValueToSeconds());
       }
     });
-  const onSingleTapEvent = Gesture.Tap().onEnd(({ x }, isFinished) => {
-    if (onTap) {
-      runOnJS(onTap)();
-    }
-    if (disable || disableTapEvent) {
-      return;
-    }
-    if (isFinished) {
-      onActiveSlider(x);
-    }
-    if (isScrubbing) {
-      isScrubbing.value = true;
-    }
-    bubbleOpacity.value = withSpring(0);
-    if (onSlidingComplete) {
-      runOnJS(onSlidingComplete)(shareValueToSeconds());
-    }
-  });
+  const onSingleTapEvent = Gesture.Tap()
+    .hitSlop(panHitSlop)
+    .onEnd(({ x }, isFinished) => {
+      if (onTap) {
+        runOnJS(onTap)();
+      }
+      if (disable || disableTapEvent) {
+        return;
+      }
+      if (isFinished) {
+        onActiveSlider(x);
+      }
+      if (isScrubbing) {
+        isScrubbing.value = true;
+      }
+      bubbleOpacity.value = withSpring(0);
+      if (onSlidingComplete) {
+        runOnJS(onSlidingComplete)(shareValueToSeconds());
+      }
+    });
 
   const gesture = Gesture.Race(onSingleTapEvent, onGestureEvent);
 
@@ -561,7 +564,6 @@ export const Slider = ({
     <GestureDetector gesture={gesture}>
       <Animated.View
         style={[styles.view, { height: sliderHeight }, style]}
-        hitSlop={panHitSlop}
         onLayout={onLayout}>
         <Animated.View
           style={StyleSheet.flatten([
