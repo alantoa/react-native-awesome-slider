@@ -8,8 +8,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "setup": "cd ios && bundle install",
-    "pods": "cd ios && bundle exec pod install"
+    "pods": "cd ios && pod install"
   },
   "dependencies": {
     "@react-navigation/native": "^6.0.6",
