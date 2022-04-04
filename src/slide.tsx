@@ -472,7 +472,7 @@ export const Slider = ({
         runOnJS(onSlidingStart)();
       }
     })
-    .onChange(({ x }) => {
+    .onUpdate(({ x }) => {
       if (disable) {
         return;
       }
@@ -564,6 +564,7 @@ export const Slider = ({
     <GestureDetector gesture={gesture}>
       <Animated.View
         style={[styles.view, { height: sliderHeight }, style]}
+        hitSlop={panHitSlop}
         onLayout={onLayout}>
         <Animated.View
           style={StyleSheet.flatten([
