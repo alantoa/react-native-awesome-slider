@@ -613,7 +613,6 @@ export const Slider: FC<AwesomeSliderProps> = ({
         testID={testID}
         style={[styles.view, { height: sliderHeight }, style]}
         hitSlop={panHitSlop}
-        key={`${step}${maximumValue.value}${minimumValue.value}`}
         onLayout={onLayout}>
         <Animated.View
           style={StyleSheet.flatten([
