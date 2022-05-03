@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import {
   Insets,
   LayoutChangeEvent,
@@ -177,7 +177,7 @@ export type AwesomeSliderProps = {
   markStyle?: StyleProp<ViewStyle>;
   markWidth?: number;
   onHapticFeedback?: () => void;
-  hapticMode?: HapticModeEnum;
+  hapticMode?: `${HapticModeEnum}`;
   theme?: SliderThemeType;
   /**
    * Current swipe direction
@@ -201,43 +201,43 @@ const defaultTheme: SliderThemeType = {
   bubbleBackgroundColor: palette.Main,
   bubbleTextColor: palette.White,
 };
-export const Slider = ({
-  renderBubble,
-  renderThumb,
-  style,
-  bubbleTranslateY = -25,
-  progress,
-  minimumValue,
-  maximumValue,
-  cache,
-  onSlidingComplete,
-  onSlidingStart,
-  setBubbleText,
-  onValueChange,
-  thumbWidth = 15,
-  disable = false,
-  disableTapEvent = false,
+export const Slider: FC<AwesomeSliderProps> = ({
   bubble,
+  bubbleContainerStyle,
   bubbleMaxWidth = 100,
   bubbleTextStyle,
-  bubbleContainerStyle,
-  isScrubbing,
-  onTap,
-  thumbScaleValue,
-  sliderHeight = 5,
+  bubbleTranslateY = -25,
+  bubbleWidth = 0,
+  cache,
   containerStyle,
-  panHitSlop = hitSlop,
-  step,
+  disable = false,
+  disableTapEvent = false,
+  disableTrackFollow = false,
+  hapticMode = 'none',
+  isScrubbing,
   markStyle,
   markWidth = 4,
+  maximumValue,
+  minimumValue,
   onHapticFeedback,
-  hapticMode = HapticModeEnum.NONE,
-  theme,
+  onSlidingComplete,
+  onSlidingStart,
+  onTap,
+  onValueChange,
   panDirectionValue,
-  disableTrackFollow = false,
-  bubbleWidth = 0,
+  panHitSlop = hitSlop,
+  progress,
+  renderBubble,
+  renderThumb,
+  setBubbleText,
+  sliderHeight = 5,
+  step,
+  style,
   testID,
-}: AwesomeSliderProps) => {
+  theme,
+  thumbScaleValue,
+  thumbWidth = 15,
+}) => {
   const bubbleRef = useRef<BubbleRef>(null);
   const prevX = useSharedValue(0);
 
