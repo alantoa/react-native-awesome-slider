@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { FC, useRef, useState } from 'react';
 import {
   Insets,
   LayoutChangeEvent,
@@ -11,12 +11,13 @@ import {
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { Bubble, BubbleRef } from './balloon';
+import { Bubble, BubbleRef } from './ballon';
 import { palette } from './theme/palette';
 import { clamp } from './utils';
 const formatSeconds = (second: number) => `${Math.round(second * 100) / 100}`;
@@ -176,7 +177,7 @@ export type AwesomeSliderProps = {
   markStyle?: StyleProp<ViewStyle>;
   markWidth?: number;
   onHapticFeedback?: () => void;
-  hapticMode?: HapticModeEnum;
+  hapticMode?: `${HapticModeEnum}`;
   theme?: SliderThemeType;
   /**
    * Current swipe direction
@@ -191,6 +192,7 @@ export type AwesomeSliderProps = {
    * Bubble width, If you set this value, bubble positioning left & right will be clamp.
    */
   bubbleWidth?: number;
+  testID?: string;
 };
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,
@@ -199,42 +201,43 @@ const defaultTheme: SliderThemeType = {
   bubbleBackgroundColor: palette.Main,
   bubbleTextColor: palette.White,
 };
-export const Slider = ({
-  renderBubble,
-  renderThumb,
-  style,
-  bubbleTranslateY = -25,
-  progress,
-  minimumValue,
-  maximumValue,
-  cache,
-  onSlidingComplete,
-  onSlidingStart,
-  setBubbleText,
-  onValueChange,
-  thumbWidth = 15,
-  disable = false,
-  disableTapEvent = false,
+export const Slider: FC<AwesomeSliderProps> = ({
   bubble,
+  bubbleContainerStyle,
   bubbleMaxWidth = 100,
   bubbleTextStyle,
-  bubbleContainerStyle,
-  isScrubbing,
-  onTap,
-  thumbScaleValue,
-  sliderHeight = 5,
+  bubbleTranslateY = -25,
+  bubbleWidth = 0,
+  cache,
   containerStyle,
-  panHitSlop = hitSlop,
-  step,
+  disable = false,
+  disableTapEvent = false,
+  disableTrackFollow = false,
+  hapticMode = 'none',
+  isScrubbing,
   markStyle,
   markWidth = 4,
+  maximumValue,
+  minimumValue,
   onHapticFeedback,
-  hapticMode = HapticModeEnum.NONE,
-  theme,
+  onSlidingComplete,
+  onSlidingStart,
+  onTap,
+  onValueChange,
   panDirectionValue,
-  disableTrackFollow = false,
-  bubbleWidth = 0,
-}: AwesomeSliderProps) => {
+  panHitSlop = hitSlop,
+  progress,
+  renderBubble,
+  renderThumb,
+  setBubbleText,
+  sliderHeight = 5,
+  step,
+  style,
+  testID,
+  theme,
+  thumbScaleValue,
+  thumbWidth = 15,
+}) => {
   const bubbleRef = useRef<BubbleRef>(null);
   const prevX = useSharedValue(0);
 
@@ -526,43 +529,88 @@ export const Slider = ({
 
   const gesture = Gesture.Race(onSingleTapEvent, onGestureEvent);
 
-  const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
-    const layoutWidth = nativeEvent.layout.width;
-    width.value = layoutWidth;
-    setSliderWidth(layoutWidth);
-    if (step) {
-      // correct mark left position Array
-      markLeftArr.value = new Array(step + 1).fill(0).map((_, i) => {
+  // setting markLeftArr
+  useAnimatedReaction(
+    () => {
+      if (!step) {
+        return [];
+      }
+      return new Array(step + 1).fill(0).map((_, i) => {
         return (
-          Math.round(layoutWidth * (i / step)) -
+          Math.round(width.value * (i / step)) -
           (i / step) * markWidth -
           Math.round(thumbWidth / 3)
         );
       });
+    },
+    data => {
+      markLeftArr.value = data;
+    },
+    [thumbWidth, markWidth, step, progress, width],
+  );
 
+  // setting thumbIndex
+  useAnimatedReaction(
+    () => {
+      if (isScrubbing && isScrubbing.value) {
+        return undefined;
+      }
+      if (!step) {
+        return undefined;
+      }
       const marksLeft = new Array(step + 1)
         .fill(0)
-        .map((_, i) => Math.round(layoutWidth * (i / step)));
+        .map((_, i) => Math.round(width.value * (i / step)));
 
       // current positon width
       const currentWidth =
         ((progress.value - minimumValue.value) /
           (maximumValue.value - minimumValue.value)) *
-        layoutWidth;
+        width.value;
 
       const currentIndex = marksLeft.findIndex(value => value >= currentWidth);
-      thumbIndex.value = clamp(currentIndex, 0, step);
-    } else {
+      return clamp(currentIndex, 0, step);
+    },
+    data => {
+      if (data !== undefined) {
+        thumbIndex.value = data;
+      }
+    },
+    [isScrubbing, maximumValue, minimumValue, step, progress, width],
+  );
+
+  // setting thumbValue
+  useAnimatedReaction(
+    () => {
+      if (isScrubbing && isScrubbing.value) {
+        return undefined;
+      }
+      if (step) {
+        return undefined;
+      }
       const currentValue =
         (progress.value / (minimumValue.value + maximumValue.value)) *
-        layoutWidth;
-      thumbValue.value = clamp(currentValue, 0, layoutWidth - thumbWidth);
-    }
+        width.value;
+      return clamp(currentValue, 0, width.value - thumbWidth);
+    },
+    data => {
+      if (data !== undefined) {
+        thumbValue.value = data;
+      }
+    },
+    [thumbWidth, maximumValue, minimumValue, step, progress, width],
+  );
+
+  const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
+    const layoutWidth = nativeEvent.layout.width;
+    width.value = layoutWidth;
+    setSliderWidth(layoutWidth);
   };
 
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View
+        testID={testID}
         style={[styles.view, { height: sliderHeight }, style]}
         hitSlop={panHitSlop}
         onLayout={onLayout}>
