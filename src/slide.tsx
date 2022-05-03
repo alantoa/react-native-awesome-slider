@@ -11,12 +11,13 @@ import {
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { Bubble, BubbleRef } from './balloon';
+import { Bubble, BubbleRef } from './ballon';
 import { palette } from './theme/palette';
 import { clamp } from './utils';
 const formatSeconds = (second: number) => `${Math.round(second * 100) / 100}`;
@@ -526,38 +527,82 @@ export const Slider = ({
 
   const gesture = Gesture.Race(onSingleTapEvent, onGestureEvent);
 
-  const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
-    const layoutWidth = nativeEvent.layout.width;
-    width.value = layoutWidth;
-    setSliderWidth(layoutWidth);
-    if (step) {
-      // correct mark left position Array
-      markLeftArr.value = new Array(step + 1).fill(0).map((_, i) => {
+  // setting markLeftArr
+  useAnimatedReaction(
+    () => {
+      if (!step) {
+        return [];
+      }
+      return new Array(step + 1).fill(0).map((_, i) => {
         return (
-          Math.round(layoutWidth * (i / step)) -
+          Math.round(width.value * (i / step)) -
           (i / step) * markWidth -
           Math.round(thumbWidth / 3)
         );
       });
+    },
+    data => {
+      markLeftArr.value = data;
+    },
+    [thumbWidth, markWidth, step, progress, width],
+  );
 
+  // setting thumbIndex
+  useAnimatedReaction(
+    () => {
+      if (isScrubbing && isScrubbing.value) {
+        return undefined;
+      }
+      if (!step) {
+        return undefined;
+      }
       const marksLeft = new Array(step + 1)
         .fill(0)
-        .map((_, i) => Math.round(layoutWidth * (i / step)));
+        .map((_, i) => Math.round(width.value * (i / step)));
 
       // current positon width
       const currentWidth =
         ((progress.value - minimumValue.value) /
           (maximumValue.value - minimumValue.value)) *
-        layoutWidth;
+        width.value;
 
       const currentIndex = marksLeft.findIndex(value => value >= currentWidth);
-      thumbIndex.value = clamp(currentIndex, 0, step);
-    } else {
+      return clamp(currentIndex, 0, step);
+    },
+    data => {
+      if (data !== undefined) {
+        thumbIndex.value = data;
+      }
+    },
+    [isScrubbing, maximumValue, minimumValue, step, progress, width],
+  );
+
+  // setting thumbValue
+  useAnimatedReaction(
+    () => {
+      if (isScrubbing && isScrubbing.value) {
+        return undefined;
+      }
+      if (step) {
+        return undefined;
+      }
       const currentValue =
         (progress.value / (minimumValue.value + maximumValue.value)) *
-        layoutWidth;
-      thumbValue.value = clamp(currentValue, 0, layoutWidth - thumbWidth);
-    }
+        width.value;
+      return clamp(currentValue, 0, width.value - thumbWidth);
+    },
+    data => {
+      if (data !== undefined) {
+        thumbValue.value = data;
+      }
+    },
+    [thumbWidth, maximumValue, minimumValue, step, progress, width],
+  );
+
+  const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
+    const layoutWidth = nativeEvent.layout.width;
+    width.value = layoutWidth;
+    setSliderWidth(layoutWidth);
   };
 
   return (
