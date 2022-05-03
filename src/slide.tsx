@@ -192,6 +192,7 @@ export type AwesomeSliderProps = {
    * Bubble width, If you set this value, bubble positioning left & right will be clamp.
    */
   bubbleWidth?: number;
+  testID?: string;
 };
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,
@@ -235,6 +236,7 @@ export const Slider = ({
   panDirectionValue,
   disableTrackFollow = false,
   bubbleWidth = 0,
+  testID,
 }: AwesomeSliderProps) => {
   const bubbleRef = useRef<BubbleRef>(null);
   const prevX = useSharedValue(0);
@@ -608,6 +610,7 @@ export const Slider = ({
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View
+        testID={testID}
         style={[styles.view, { height: sliderHeight }, style]}
         hitSlop={panHitSlop}
         onLayout={onLayout}>
