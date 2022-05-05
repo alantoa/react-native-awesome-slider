@@ -563,10 +563,11 @@ export const Slider: FC<AwesomeSliderProps> = ({
         .map((_, i) => Math.round(width.value * (i / step)));
 
       // current positon width
-      const currentWidth =
+      const currentWidth = Math.round(
         ((progress.value - minimumValue.value) /
           (maximumValue.value - minimumValue.value)) *
-        width.value;
+          width.value,
+      );
 
       const currentIndex = marksLeft.findIndex(value => value >= currentWidth);
       return clamp(currentIndex, 0, step);
