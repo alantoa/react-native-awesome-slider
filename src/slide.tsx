@@ -174,6 +174,10 @@ export type AwesomeSliderProps = {
   panHitSlop?: Insets;
 
   step?: number;
+  /**
+   * withTiming options when step is defined. if false, no animation will be used. default false.
+   */
+  stepTimingOptions?: false | Animated.WithTimingConfig;
   markStyle?: StyleProp<ViewStyle>;
   markWidth?: number;
   onHapticFeedback?: () => void;
@@ -232,6 +236,7 @@ export const Slider: FC<AwesomeSliderProps> = ({
   setBubbleText,
   sliderHeight = 5,
   step,
+  stepTimingOptions = false,
   style,
   testID,
   theme,
@@ -276,7 +281,10 @@ export const Slider: FC<AwesomeSliderProps> = ({
     }
 
     return {
-      width: clamp(seekWidth, 0, width.value),
+      width:
+        step && stepTimingOptions
+          ? withTiming(clamp(seekWidth, 0, width.value), stepTimingOptions)
+          : clamp(seekWidth, 0, width.value),
     };
   }, [progress, minimumValue, maximumValue, width, markLeftArr]);
 
@@ -284,7 +292,9 @@ export const Slider: FC<AwesomeSliderProps> = ({
     let translateX = 0;
     // when you set step
     if (step && markLeftArr.value.length >= step) {
-      translateX = markLeftArr.value[thumbIndex.value];
+      translateX = stepTimingOptions
+        ? withTiming(markLeftArr.value[thumbIndex.value], stepTimingOptions)
+        : markLeftArr.value[thumbIndex.value];
     } else if (disableTrackFollow) {
       translateX = clamp(thumbValue.value, 0, width.value - thumbWidth);
     } else {
@@ -323,11 +333,21 @@ export const Slider: FC<AwesomeSliderProps> = ({
           translateY: bubbleTranslateY,
         },
         {
-          translateX: clamp(
-            translateX,
-            bubbleWidth / 2,
-            width.value - bubbleWidth / 2,
-          ),
+          translateX:
+            step && stepTimingOptions
+              ? withTiming(
+                  clamp(
+                    translateX,
+                    bubbleWidth / 2,
+                    width.value - bubbleWidth / 2,
+                  ),
+                  stepTimingOptions,
+                )
+              : clamp(
+                  translateX,
+                  bubbleWidth / 2,
+                  width.value - bubbleWidth / 2,
+                ),
         },
         {
           scale: bubbleOpacity.value,
