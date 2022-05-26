@@ -8,7 +8,7 @@
 </div>
 
 <div align="center">
-  <img src="./assets/slider.gif" width="40%" />
+  <img src="./assets/slider.gif" width="300" />
   <p><a href="https://twitter.com/alan_toa/status/1497531806740267009" >🔗 Watch video</a><p/>
   <br/> 
 </div>
