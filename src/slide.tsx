@@ -296,12 +296,12 @@ export const Slider: FC<AwesomeSliderProps> = ({
         ? withTiming(markLeftArr.value[thumbIndex.value], stepTimingOptions)
         : markLeftArr.value[thumbIndex.value];
     } else if (disableTrackFollow) {
-      translateX = clamp(thumbValue.value, 0, width.value - thumbWidth);
+      translateX = clamp(thumbValue.value, 0, width.value ? width.value - thumbWidth : 0);
     } else {
       translateX = clamp(
         progressToValue(progress.value),
         0,
-        width.value - thumbWidth,
+        width.value ? width.value - thumbWidth : 0,
       );
     }
     return {
