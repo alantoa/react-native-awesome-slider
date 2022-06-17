@@ -611,7 +611,7 @@ export const Slider: FC<AwesomeSliderProps> = ({
       }
       const currentValue =
         (progress.value / (minimumValue.value + maximumValue.value)) *
-        width.value;
+        (width.value - (disableTrackFollow ? thumbWidth : 0));
       return clamp(currentValue, 0, width.value - thumbWidth);
     },
     data => {
