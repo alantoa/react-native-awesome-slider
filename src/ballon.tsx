@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, memo } from 'react';
 import {
   StyleProp,
   TextInput,
@@ -40,7 +40,7 @@ export type BubbleProps = {
 export type BubbleRef = {
   setText: (text: string) => void;
 };
-export const Bubble = forwardRef<BubbleRef, BubbleProps>(
+export const BubbleComponent = forwardRef<BubbleRef, BubbleProps>(
   (
     {
       containerStyle,
@@ -86,6 +86,7 @@ export const Bubble = forwardRef<BubbleRef, BubbleProps>(
     );
   },
 );
+export const Bubble = memo(BubbleComponent);
 const styles = StyleSheet.create({
   triangle: {
     width: 10,

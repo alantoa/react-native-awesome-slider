@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useRef, useState, useMemo, memo, useCallback } from 'react';
 import {
   Insets,
   LayoutChangeEvent,
@@ -205,7 +205,7 @@ const defaultTheme: SliderThemeType = {
   bubbleBackgroundColor: palette.Main,
   bubbleTextColor: palette.White,
 };
-export const Slider: FC<AwesomeSliderProps> = ({
+export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   bubble,
   bubbleContainerStyle,
   bubbleMaxWidth = 100,
@@ -242,7 +242,7 @@ export const Slider: FC<AwesomeSliderProps> = ({
   theme,
   thumbScaleValue,
   thumbWidth = 15,
-}) => {
+}) {
   const bubbleRef = useRef<BubbleRef>(null);
   const prevX = useSharedValue(0);
 
@@ -258,17 +258,17 @@ export const Slider: FC<AwesomeSliderProps> = ({
     ...theme,
   };
 
-  const sliderTotalValue = () => {
+  const sliderTotalValue = useMemo(() => {
     'worklet';
     return maximumValue.value + minimumValue.value;
-  };
+  }, [maximumValue.value, minimumValue.value]);
 
   const progressToValue = (value: number) => {
     'worklet';
-    if (sliderTotalValue() === 0) {
+    if (sliderTotalValue === 0) {
       return 0;
     }
-    return (value / sliderTotalValue()) * (width.value - thumbWidth);
+    return (value / sliderTotalValue) * (width.value - thumbWidth);
   };
 
   const animatedSeekStyle = useAnimatedStyle(() => {
@@ -296,7 +296,11 @@ export const Slider: FC<AwesomeSliderProps> = ({
         ? withTiming(markLeftArr.value[thumbIndex.value], stepTimingOptions)
         : markLeftArr.value[thumbIndex.value];
     } else if (disableTrackFollow) {
-      translateX = clamp(thumbValue.value, 0, width.value ? width.value - thumbWidth : 0);
+      translateX = clamp(
+        thumbValue.value,
+        0,
+        width.value ? width.value - thumbWidth : 0,
+      );
     } else {
       translateX = clamp(
         progressToValue(progress.value),
@@ -320,7 +324,7 @@ export const Slider: FC<AwesomeSliderProps> = ({
 
   const animatedBubbleStyle = useAnimatedStyle(() => {
     let translateX = 0;
-    // when you set step
+    // when set step
     if (step && markLeftArr.value.length >= step) {
       translateX = markLeftArr.value[thumbIndex.value] + thumbWidth / 2;
     } else {
@@ -358,7 +362,7 @@ export const Slider: FC<AwesomeSliderProps> = ({
 
   const animatedCacheXStyle = useAnimatedStyle(() => {
     const cacheX = cache?.value
-      ? (cache?.value / sliderTotalValue()) * width.value
+      ? (cache?.value / sliderTotalValue) * width.value
       : 0;
 
     return {
@@ -366,20 +370,23 @@ export const Slider: FC<AwesomeSliderProps> = ({
     };
   });
 
-  const onSlideAcitve = (seconds: number) => {
-    const bubbleText = bubble ? bubble?.(seconds) : formatSeconds(seconds);
-    onValueChange?.(seconds);
+  const onSlideAcitve = useCallback(
+    (seconds: number) => {
+      const bubbleText = bubble ? bubble?.(seconds) : formatSeconds(seconds);
+      onValueChange?.(seconds);
 
-    setBubbleText
-      ? setBubbleText(bubbleText)
-      : bubbleRef.current?.setText(bubbleText);
-  };
+      setBubbleText
+        ? setBubbleText(bubbleText)
+        : bubbleRef.current?.setText(bubbleText);
+    },
+    [bubble, onValueChange, setBubbleText],
+  );
 
   /**
    * convert Sharevalue to callback seconds
    * @returns number
    */
-  const shareValueToSeconds = () => {
+  const shareValueToSeconds = useCallback(() => {
     'worklet';
     if (step) {
       return clamp(
@@ -391,163 +398,239 @@ export const Slider: FC<AwesomeSliderProps> = ({
     } else {
       const sliderPercent = clamp(
         thumbValue.value / (width.value - thumbWidth) +
-          minimumValue.value / sliderTotalValue(),
+          minimumValue.value / sliderTotalValue,
         0,
         1,
       );
       return clamp(
-        sliderPercent * sliderTotalValue(),
+        sliderPercent * sliderTotalValue,
         minimumValue.value,
         maximumValue.value,
       );
     }
-  };
+  }, [
+    maximumValue.value,
+    minimumValue.value,
+    sliderTotalValue,
+    step,
+    thumbIndex.value,
+    thumbValue.value,
+    thumbWidth,
+    width.value,
+  ]);
   /**
    * convert [x] position to progress
    * @returns number
    */
-  const xToProgress = (x: number) => {
-    'worklet';
-    if (step && markLeftArr.value.length >= step) {
-      return markLeftArr.value[thumbIndex.value];
-    } else {
-      return (x / (width.value - thumbWidth)) * sliderTotalValue();
-    }
-  };
+  const xToProgress = useCallback(
+    (x: number) => {
+      'worklet';
+      if (step && markLeftArr.value.length >= step) {
+        return markLeftArr.value[thumbIndex.value];
+      } else {
+        return (x / (width.value - thumbWidth)) * sliderTotalValue;
+      }
+    },
+    [
+      markLeftArr.value,
+      sliderTotalValue,
+      step,
+      thumbIndex.value,
+      thumbWidth,
+      width.value,
+    ],
+  );
 
   /**
    * change slide value
    */
-  const onActiveSlider = (x: number) => {
-    'worklet';
-    if (isScrubbing) {
-      isScrubbing.value = true;
-    }
-    if (step) {
-      const index = markLeftArr.value.findIndex(item => item >= x);
-      const arrNext = markLeftArr.value[index];
-      const arrPrev = markLeftArr.value[index - 1];
-      // Computing step boundaries
-      const currentX = (arrNext + arrPrev) / 2;
-      const thumbIndexPrev = thumbIndex.value;
-      if (x - thumbWidth / 2 > currentX) {
-        thumbIndex.value = index;
-      } else {
-        if (index - 1 === -1) {
-          thumbIndex.value === 0;
-        } else if (index - 1 < -1) {
-          thumbIndex.value = step;
+  const onActiveSlider = useCallback(
+    (x: number) => {
+      'worklet';
+      if (isScrubbing) {
+        isScrubbing.value = true;
+      }
+      if (step) {
+        const index = markLeftArr.value.findIndex(item => item >= x);
+        const arrNext = markLeftArr.value[index];
+        const arrPrev = markLeftArr.value[index - 1];
+        // Computing step boundaries
+        const currentX = (arrNext + arrPrev) / 2;
+        const thumbIndexPrev = thumbIndex.value;
+        if (x - thumbWidth / 2 > currentX) {
+          thumbIndex.value = index;
         } else {
-          thumbIndex.value = index - 1;
+          if (index - 1 === -1) {
+            thumbIndex.value === 0;
+          } else if (index - 1 < -1) {
+            thumbIndex.value = step;
+          } else {
+            thumbIndex.value = index - 1;
+          }
         }
-      }
-      // Determine trigger haptics callback
-      if (
-        thumbIndexPrev !== thumbIndex.value &&
-        hapticMode === HapticModeEnum.STEP &&
-        onHapticFeedback
-      ) {
-        runOnJS(onHapticFeedback)();
-        isTriggedHaptic.value = true;
-      } else {
-        isTriggedHaptic.value = false;
-      }
-
-      runOnJS(onSlideAcitve)(shareValueToSeconds());
-    } else {
-      thumbValue.value = clamp(x, 0, width.value - thumbWidth);
-      if (!disableTrackFollow) {
-        progress.value = xToProgress(x);
-      }
-      // Determines whether the thumb slides to both ends
-      if (x <= 0 || x >= width.value - thumbWidth) {
+        // Determine trigger haptics callback
         if (
-          !isTriggedHaptic.value &&
-          hapticMode === HapticModeEnum.BOTH &&
+          thumbIndexPrev !== thumbIndex.value &&
+          hapticMode === HapticModeEnum.STEP &&
           onHapticFeedback
         ) {
           runOnJS(onHapticFeedback)();
           isTriggedHaptic.value = true;
+        } else {
+          isTriggedHaptic.value = false;
         }
+
+        runOnJS(onSlideAcitve)(shareValueToSeconds());
       } else {
-        isTriggedHaptic.value = false;
+        thumbValue.value = clamp(x, 0, width.value - thumbWidth);
+        if (!disableTrackFollow) {
+          progress.value = xToProgress(x);
+        }
+        // Determines whether the thumb slides to both ends
+        if (x <= 0 || x >= width.value - thumbWidth) {
+          if (
+            !isTriggedHaptic.value &&
+            hapticMode === HapticModeEnum.BOTH &&
+            onHapticFeedback
+          ) {
+            runOnJS(onHapticFeedback)();
+            isTriggedHaptic.value = true;
+          }
+        } else {
+          isTriggedHaptic.value = false;
+        }
+        runOnJS(onSlideAcitve)(shareValueToSeconds());
       }
-      runOnJS(onSlideAcitve)(shareValueToSeconds());
-    }
-  };
+    },
+    [
+      disableTrackFollow,
+      hapticMode,
+      isScrubbing,
+      isTriggedHaptic,
+      markLeftArr.value,
+      onHapticFeedback,
+      onSlideAcitve,
+      progress,
+      shareValueToSeconds,
+      step,
+      thumbIndex,
+      thumbValue,
+      thumbWidth,
+      width.value,
+      xToProgress,
+    ],
+  );
 
-  const onGestureEvent = Gesture.Pan()
-    .hitSlop(panHitSlop)
-    .onStart(() => {
-      // e.absoluteX
-      if (disable) {
-        return;
-      }
-      if (isScrubbing) {
-        isScrubbing.value = true;
-      }
-      // ctx.isTriggedHaptic = false;
-      if (panDirectionValue) {
-        panDirectionValue.value = PanDirectionEnum.START;
-        prevX.value = 0;
-      }
-      if (onSlidingStart) {
-        runOnJS(onSlidingStart)();
-      }
-    })
-    .onUpdate(({ x }) => {
-      if (disable) {
-        return;
-      }
-      if (panDirectionValue) {
-        panDirectionValue.value =
-          prevX.value - x > 0 ? PanDirectionEnum.LEFT : PanDirectionEnum.RIGHT;
-        prevX.value = x;
-      }
-      bubbleOpacity.value = withSpring(1);
-      onActiveSlider(x);
-    })
-    .onEnd(({ x }) => {
-      if (disable) {
-        return;
-      }
-      if (isScrubbing) {
-        isScrubbing.value = true;
-      }
-      if (panDirectionValue) {
-        panDirectionValue.value = PanDirectionEnum.END;
-      }
-      bubbleOpacity.value = withSpring(0);
+  const onGestureEvent = useMemo(
+    () =>
+      Gesture.Pan()
+        .hitSlop(panHitSlop)
+        .onStart(() => {
+          // e.absoluteX
+          if (disable) {
+            return;
+          }
+          if (isScrubbing) {
+            isScrubbing.value = true;
+          }
+          // ctx.isTriggedHaptic = false;
+          if (panDirectionValue) {
+            panDirectionValue.value = PanDirectionEnum.START;
+            prevX.value = 0;
+          }
+          if (onSlidingStart) {
+            runOnJS(onSlidingStart)();
+          }
+        })
+        .onUpdate(({ x }) => {
+          if (disable) {
+            return;
+          }
+          if (panDirectionValue) {
+            panDirectionValue.value =
+              prevX.value - x > 0
+                ? PanDirectionEnum.LEFT
+                : PanDirectionEnum.RIGHT;
+            prevX.value = x;
+          }
+          bubbleOpacity.value = withSpring(1);
 
-      if (disableTrackFollow) {
-        progress.value = xToProgress(x);
-      }
-      if (onSlidingComplete) {
-        runOnJS(onSlidingComplete)(shareValueToSeconds());
-      }
-    });
-  const onSingleTapEvent = Gesture.Tap()
-    .hitSlop(panHitSlop)
-    .onEnd(({ x }, isFinished) => {
-      if (onTap) {
-        runOnJS(onTap)();
-      }
-      if (disable || disableTapEvent) {
-        return;
-      }
-      if (isFinished) {
-        onActiveSlider(x);
-      }
-      if (isScrubbing) {
-        isScrubbing.value = true;
-      }
-      bubbleOpacity.value = withSpring(0);
-      if (onSlidingComplete) {
-        runOnJS(onSlidingComplete)(shareValueToSeconds());
-      }
-    });
+          onActiveSlider(x);
+        })
+        .onEnd(({ x }) => {
+          if (disable) {
+            return;
+          }
+          if (isScrubbing) {
+            isScrubbing.value = true;
+          }
+          if (panDirectionValue) {
+            panDirectionValue.value = PanDirectionEnum.END;
+          }
+          bubbleOpacity.value = withSpring(0);
 
-  const gesture = Gesture.Race(onSingleTapEvent, onGestureEvent);
+          if (disableTrackFollow) {
+            progress.value = xToProgress(x);
+          }
+          if (onSlidingComplete) {
+            runOnJS(onSlidingComplete)(shareValueToSeconds());
+          }
+        }),
+    [
+      bubbleOpacity,
+      disable,
+      disableTrackFollow,
+      isScrubbing,
+      onActiveSlider,
+      onSlidingComplete,
+      onSlidingStart,
+      panDirectionValue,
+      panHitSlop,
+      prevX,
+      progress,
+      shareValueToSeconds,
+      xToProgress,
+    ],
+  );
+  const onSingleTapEvent = useMemo(
+    () =>
+      Gesture.Tap()
+        .hitSlop(panHitSlop)
+        .onEnd(({ x }, isFinished) => {
+          if (onTap) {
+            runOnJS(onTap)();
+          }
+          if (disable || disableTapEvent) {
+            return;
+          }
+          if (isFinished) {
+            onActiveSlider(x);
+          }
+          if (isScrubbing) {
+            isScrubbing.value = true;
+          }
+          bubbleOpacity.value = withSpring(0);
+          if (onSlidingComplete) {
+            runOnJS(onSlidingComplete)(shareValueToSeconds());
+          }
+        }),
+    [
+      bubbleOpacity,
+      disable,
+      disableTapEvent,
+      isScrubbing,
+      onActiveSlider,
+      onSlidingComplete,
+      onTap,
+      panHitSlop,
+      shareValueToSeconds,
+    ],
+  );
+
+  const gesture = useMemo(
+    () => Gesture.Race(onSingleTapEvent, onGestureEvent),
+    [onGestureEvent, onSingleTapEvent],
+  );
 
   // setting markLeftArr
   useAnimatedReaction(
@@ -598,28 +681,6 @@ export const Slider: FC<AwesomeSliderProps> = ({
       }
     },
     [isScrubbing, maximumValue, minimumValue, step, progress, width],
-  );
-
-  // setting thumbValue
-  useAnimatedReaction(
-    () => {
-      if (isScrubbing && isScrubbing.value) {
-        return undefined;
-      }
-      if (step) {
-        return undefined;
-      }
-      const currentValue =
-        (progress.value / (minimumValue.value + maximumValue.value)) *
-        (width.value - (disableTrackFollow ? thumbWidth : 0));
-      return clamp(currentValue, 0, width.value - thumbWidth);
-    },
-    data => {
-      if (data !== undefined) {
-        thumbValue.value = data;
-      }
-    },
-    [thumbWidth, maximumValue, minimumValue, step, progress, width],
   );
 
   const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
@@ -723,7 +784,7 @@ export const Slider: FC<AwesomeSliderProps> = ({
       </Animated.View>
     </GestureDetector>
   );
-};
+});
 const styles = StyleSheet.create({
   slider: {
     width: '100%',
