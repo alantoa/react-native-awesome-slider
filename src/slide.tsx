@@ -244,6 +244,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   thumbWidth = 15,
 }) {
   const bubbleRef = useRef<BubbleRef>(null);
+
+  const isScrubbingInner = useSharedValue(false);
   const prevX = useSharedValue(0);
 
   const [sliderWidth, setSliderWidth] = useState(0);
@@ -295,7 +297,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       translateX = stepTimingOptions
         ? withTiming(markLeftArr.value[thumbIndex.value], stepTimingOptions)
         : markLeftArr.value[thumbIndex.value];
-    } else if (disableTrackFollow) {
+    } else if (disableTrackFollow && isScrubbingInner.value) {
       translateX = clamp(
         thumbValue.value,
         0,
@@ -447,6 +449,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   const onActiveSlider = useCallback(
     (x: number) => {
       'worklet';
+      isScrubbingInner.value = true;
       if (isScrubbing) {
         isScrubbing.value = true;
       }
@@ -506,6 +509,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       disableTrackFollow,
       hapticMode,
       isScrubbing,
+      isScrubbingInner,
       isTriggedHaptic,
       markLeftArr.value,
       onHapticFeedback,
@@ -530,6 +534,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           if (disable) {
             return;
           }
+          isScrubbingInner.value = true;
           if (isScrubbing) {
             isScrubbing.value = true;
           }
@@ -561,8 +566,9 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           if (disable) {
             return;
           }
+          isScrubbingInner.value = false;
           if (isScrubbing) {
-            isScrubbing.value = true;
+            isScrubbing.value = false;
           }
           if (panDirectionValue) {
             panDirectionValue.value = PanDirectionEnum.END;
@@ -581,6 +587,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       disable,
       disableTrackFollow,
       isScrubbing,
+      isScrubbingInner,
       onActiveSlider,
       onSlidingComplete,
       onSlidingStart,
@@ -606,6 +613,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           if (isFinished) {
             onActiveSlider(x);
           }
+          isScrubbingInner.value = true;
           if (isScrubbing) {
             isScrubbing.value = true;
           }
@@ -619,6 +627,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       disable,
       disableTapEvent,
       isScrubbing,
+      isScrubbingInner,
       onActiveSlider,
       onSlidingComplete,
       onTap,
@@ -655,9 +664,10 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   // setting thumbIndex
   useAnimatedReaction(
     () => {
-      if (isScrubbing && isScrubbing.value) {
+      if (isScrubbingInner.value) {
         return undefined;
       }
+
       if (!step) {
         return undefined;
       }
@@ -682,7 +692,27 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     },
     [isScrubbing, maximumValue, minimumValue, step, progress, width],
   );
-
+  // setting thumbValue
+  useAnimatedReaction(
+    () => {
+      if (isScrubbingInner.value) {
+        return undefined;
+      }
+      if (step) {
+        return undefined;
+      }
+      const currentValue =
+        (progress.value / (minimumValue.value + maximumValue.value)) *
+        (width.value - (disableTrackFollow ? thumbWidth : 0));
+      return clamp(currentValue, 0, width.value - thumbWidth);
+    },
+    data => {
+      if (data !== undefined) {
+        thumbValue.value = data;
+      }
+    },
+    [thumbWidth, maximumValue, minimumValue, step, progress, width],
+  );
   const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
     const layoutWidth = nativeEvent.layout.width;
     width.value = layoutWidth;
