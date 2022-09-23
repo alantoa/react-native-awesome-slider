@@ -461,7 +461,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           thumbIndex.value = index;
         } else {
           if (index - 1 === -1) {
-            thumbIndex.value === 0;
+            thumbIndex.value = 0;
           } else if (index - 1 < -1) {
             thumbIndex.value = step;
           } else {
