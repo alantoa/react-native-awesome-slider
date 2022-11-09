@@ -142,17 +142,7 @@ export type AwesomeSliderProps = {
   /**
    * Render custom mark element. if you need to customize thumb, you also need to set the `mark width`
    */
-  renderMark?: ({
-    index,
-    markWidth,
-    steps,
-    left,
-  }: {
-    index: number;
-    markWidth: number;
-    steps: number;
-    left: number;
-  }) => React.ReactNode;
+  renderMark?: ({ index }: { index: number }) => React.ReactNode;
 
   /**
    * Thumb elements width, default 15
@@ -787,12 +777,17 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           new Array(step + 1).fill(0).map((_, i) => {
             const left = sliderWidth * (i / step) - (i / step) * markWidth;
             return renderMark ? (
-              renderMark({
-                markWidth,
-                steps: step,
-                index: i,
-                left,
-              })
+              <View
+                key={i}
+                style={[
+                  styles.customMarkContainer,
+                  {
+                    left,
+                    width: markWidth,
+                  },
+                ]}>
+                {renderMark({ index: i })}
+              </View>
             ) : (
               <View
                 key={i}
@@ -873,6 +868,9 @@ const styles = StyleSheet.create({
   mark: {
     height: 4,
     backgroundColor: '#fff',
+    position: 'absolute',
+  },
+  customMarkContainer: {
     position: 'absolute',
   },
   thumb: {
