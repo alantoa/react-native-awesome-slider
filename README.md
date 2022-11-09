@@ -251,17 +251,7 @@ The `<Slider/>` component has the following configuration properties:
   </tr>
   <tr>
     <td>renderMark</td>
-    <td>({
-    index,
-    markWidth,
-    steps,
-    left
-  }: {
-    index: number;
-    markWidth: number;
-    steps: number;
-    left: number;
-  }) =&gt; React.ReactNode</td>
+    <td>({ index }: { index: number }) =&gt; React.ReactNode</td>
     <td>Render custom mark element. If you need to customize mark, you also need to set the mark width</td>
     <td>❌</td>
     <td>ReactNode</td>
