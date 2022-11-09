@@ -296,7 +296,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   const animatedSeekStyle = useAnimatedStyle(() => {
     let seekWidth = 0;
     // when you set step
-    if (step && markLeftArr.value.length >= step && snapToStep) {
+    if (snappingEnabled && markLeftArr.value.length >= step) {
       seekWidth = markLeftArr.value[thumbIndex.value] + thumbWidth / 2;
     } else {
       seekWidth = progressToValue(progress.value) + thumbWidth / 2;
