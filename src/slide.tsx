@@ -140,7 +140,7 @@ export type AwesomeSliderProps = {
   renderThumb?: () => React.ReactNode;
 
   /**
-   * Render custom mark element. if you need to customize thumb, you also need to set the `mark width`
+   * Render custom mark element. if you need to customize mark, you also need to set the `mark width`
    */
   renderMark?: ({ index }: { index: number }) => React.ReactNode;
 
