@@ -384,19 +384,17 @@ export const Home = () => {
                 thumbScaleValue.value = 1;
               }}
               markWidth={4}
-              renderMark={({ index, markWidth, steps, left }) => {
-                if ([0, 2, 3, 5, 6, 7, 8, 9, steps].includes(index)) {
+              renderMark={({ index }) => {
+                if ([0, 2, 3, 5, 6, 7, 8, 9, 10].includes(index)) {
                   return <View key={index} />;
                 }
                 return (
                   <View
                     key={index}
                     style={{
-                      width: markWidth,
+                      width: 4,
                       height: 10,
                       backgroundColor: theme.colors.card,
-                      left: left,
-                      position: 'absolute',
                     }}
                   />
                 );
