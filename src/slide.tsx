@@ -140,6 +140,21 @@ export type AwesomeSliderProps = {
   renderThumb?: () => React.ReactNode;
 
   /**
+   * Render custom mark element. if you need to customize thumb, you also need to set the `mark width`
+   */
+  renderMark?: ({
+    index,
+    markWidth,
+    steps,
+    left,
+  }: {
+    index: number;
+    markWidth: number;
+    steps: number;
+    left: number;
+  }) => React.ReactNode;
+
+  /**
    * Thumb elements width, default 15
    */
   thumbWidth?: number;
@@ -197,6 +212,7 @@ export type AwesomeSliderProps = {
    */
   bubbleWidth?: number;
   testID?: string;
+  snapToStep?: boolean;
 };
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,
@@ -233,6 +249,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   progress,
   renderBubble,
   renderThumb,
+  renderMark,
   setBubbleText,
   sliderHeight = 5,
   step,
@@ -242,6 +259,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   theme,
   thumbScaleValue,
   thumbWidth = 15,
+  snapToStep = true,
 }) {
   const bubbleRef = useRef<BubbleRef>(null);
 
@@ -260,6 +278,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     ...theme,
   };
 
+  const snappingEnabled = snapToStep && step;
+
   const sliderTotalValue = useMemo(() => {
     'worklet';
     return maximumValue.value + minimumValue.value;
@@ -276,7 +296,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   const animatedSeekStyle = useAnimatedStyle(() => {
     let seekWidth = 0;
     // when you set step
-    if (step && markLeftArr.value.length >= step) {
+    if (step && markLeftArr.value.length >= step && snapToStep) {
       seekWidth = markLeftArr.value[thumbIndex.value] + thumbWidth / 2;
     } else {
       seekWidth = progressToValue(progress.value) + thumbWidth / 2;
@@ -284,7 +304,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
 
     return {
       width:
-        step && stepTimingOptions
+        snappingEnabled && stepTimingOptions
           ? withTiming(clamp(seekWidth, 0, width.value), stepTimingOptions)
           : clamp(seekWidth, 0, width.value),
     };
@@ -293,7 +313,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   const animatedThumbStyle = useAnimatedStyle(() => {
     let translateX = 0;
     // when you set step
-    if (step && markLeftArr.value.length >= step) {
+    if (snappingEnabled && markLeftArr.value.length >= step) {
       translateX = stepTimingOptions
         ? withTiming(markLeftArr.value[thumbIndex.value], stepTimingOptions)
         : markLeftArr.value[thumbIndex.value];
@@ -327,7 +347,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   const animatedBubbleStyle = useAnimatedStyle(() => {
     let translateX = 0;
     // when set step
-    if (step && markLeftArr.value.length >= step) {
+    if (snappingEnabled && markLeftArr.value.length >= step) {
       translateX = markLeftArr.value[thumbIndex.value] + thumbWidth / 2;
     } else {
       translateX = thumbValue.value + thumbWidth / 2;
@@ -340,7 +360,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         },
         {
           translateX:
-            step && stepTimingOptions
+            snappingEnabled && stepTimingOptions
               ? withTiming(
                   clamp(
                     translateX,
@@ -390,7 +410,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
    */
   const shareValueToSeconds = useCallback(() => {
     'worklet';
-    if (step) {
+    if (snappingEnabled) {
       return clamp(
         minimumValue.value +
           (thumbIndex.value / step) * (maximumValue.value - minimumValue.value),
@@ -419,6 +439,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     thumbValue.value,
     thumbWidth,
     width.value,
+    snappingEnabled,
   ]);
   /**
    * convert [x] position to progress
@@ -427,7 +448,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   const xToProgress = useCallback(
     (x: number) => {
       'worklet';
-      if (step && markLeftArr.value.length >= step) {
+      if (snappingEnabled && markLeftArr.value.length >= step) {
         return markLeftArr.value[thumbIndex.value];
       } else {
         return (x / (width.value - thumbWidth)) * sliderTotalValue;
@@ -440,6 +461,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       thumbIndex.value,
       thumbWidth,
       width.value,
+      snappingEnabled,
     ],
   );
 
@@ -453,7 +475,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       if (isScrubbing) {
         isScrubbing.value = true;
       }
-      if (step) {
+      if (snappingEnabled) {
         const index = markLeftArr.value.findIndex(item => item >= x);
         const arrNext = markLeftArr.value[index];
         const arrPrev = markLeftArr.value[index - 1];
@@ -522,6 +544,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       thumbWidth,
       width.value,
       xToProgress,
+      snappingEnabled,
     ],
   );
 
@@ -644,16 +667,16 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   // setting markLeftArr
   useAnimatedReaction(
     () => {
-      if (!step) {
-        return [];
+      if (snappingEnabled) {
+        return new Array(step + 1).fill(0).map((_, i) => {
+          return (
+            Math.round(width.value * (i / step)) -
+            (i / step) * markWidth -
+            Math.round(thumbWidth / 3)
+          );
+        });
       }
-      return new Array(step + 1).fill(0).map((_, i) => {
-        return (
-          Math.round(width.value * (i / step)) -
-          (i / step) * markWidth -
-          Math.round(thumbWidth / 3)
-        );
-      });
+      return [];
     },
     data => {
       markLeftArr.value = data;
@@ -668,22 +691,25 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         return undefined;
       }
 
-      if (!step) {
-        return undefined;
+      if (snappingEnabled) {
+        const marksLeft = new Array(step + 1)
+          .fill(0)
+          .map((_, i) => Math.round(width.value * (i / step)));
+
+        // current positon width
+        const currentWidth = Math.round(
+          ((progress.value - minimumValue.value) /
+            (maximumValue.value - minimumValue.value)) *
+            width.value,
+        );
+
+        const currentIndex = marksLeft.findIndex(
+          value => value >= currentWidth,
+        );
+        return clamp(currentIndex, 0, step);
       }
-      const marksLeft = new Array(step + 1)
-        .fill(0)
-        .map((_, i) => Math.round(width.value * (i / step)));
 
-      // current positon width
-      const currentWidth = Math.round(
-        ((progress.value - minimumValue.value) /
-          (maximumValue.value - minimumValue.value)) *
-          width.value,
-      );
-
-      const currentIndex = marksLeft.findIndex(value => value >= currentWidth);
-      return clamp(currentIndex, 0, step);
+      return undefined;
     },
     data => {
       if (data !== undefined) {
@@ -698,7 +724,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       if (isScrubbingInner.value) {
         return undefined;
       }
-      if (step) {
+      if (snappingEnabled) {
         return undefined;
       }
       const currentValue =
@@ -759,7 +785,15 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         {sliderWidth > 0 &&
           step &&
           new Array(step + 1).fill(0).map((_, i) => {
-            return (
+            const left = sliderWidth * (i / step) - (i / step) * markWidth;
+            return renderMark ? (
+              renderMark({
+                markWidth,
+                steps: step,
+                index: i,
+                left,
+              })
+            ) : (
               <View
                 key={i}
                 style={[
@@ -767,7 +801,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
                   {
                     width: markWidth,
                     borderRadius: markWidth,
-                    left: sliderWidth * (i / step) - (i / step) * markWidth,
+                    left,
                   },
                   markStyle,
                 ]}
