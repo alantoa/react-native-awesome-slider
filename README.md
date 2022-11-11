@@ -1,16 +1,16 @@
 <div align="center">
   <blockquote><i>`JSThread` to `JSThread`, `UIThread` to `UIThread`.</i></blockquote>
   <h1 align="center">React Native Awesome Slider</h1>
-  
+
 [![Reanimated v2 version](https://img.shields.io/github/package-json/v/alantoa/react-native-awesome-slider/master?label=Reanimated%20v2&style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider)  [![npm](https://img.shields.io/npm/l/react-native-awesome-slider?style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![npm](https://img.shields.io/badge/types-included-blue?style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![runs with expo](https://img.shields.io/badge/Runs%20with%20Expo-4630EB.svg?style=flat-square&logo=EXPO&labelColor=f3f3f3&logoColor=000)](https://expo.io/)
-  
+
   <h3 align="center">Typescript Slider component powered by Reanimated v2 and react-native-gesture-handler.</h3>
 </div>
 
 <div align="center">
   <img src="./assets/slider.gif" width="300" />
   <p><a href="https://twitter.com/alan_toa/status/1497531806740267009" >🔗 Watch video</a><p/>
-  <br/> 
+  <br/>
 </div>
 
 ## Installation
@@ -138,13 +138,13 @@ The `<Slider/>` component has the following configuration properties:
     <td>
       {
         // Color to fill the progress in the seekbar
-        minimumTrackTintColor: string, 
+        minimumTrackTintColor: string,
         // Color to fill the background in the seekbar
-        maximumTrackTintColor: string, 
+        maximumTrackTintColor: string,
         // Color to fill the cache in the seekbar
         cacheTrackTintColor: string,
         // Color to fill the bubble backgrouundColor
-        disableMinTrackTintColor: string, 
+        disableMinTrackTintColor: string,
         // Disabled color to fill the progress in the seekbar
         bubbleBackgroundColor: string
       }
@@ -250,6 +250,13 @@ The `<Slider/>` component has the following configuration properties:
     <td>ReactNode</td>
   </tr>
   <tr>
+    <td>renderMark</td>
+    <td>({ index }: { index: number }) =&gt; React.ReactNode</td>
+    <td>Render custom mark element. If you need to customize mark, you also need to set the mark width</td>
+    <td>❌</td>
+    <td>ReactNode</td>
+  </tr>
+  <tr>
     <td>thumbWidth</td>
     <td>number</td>
     <td>Thumb elements width</td>
@@ -341,6 +348,13 @@ The `<Slider/>` component has the following configuration properties:
     <td>Step value of the slider. The value should be between 0 and maximumValue - minimumValue)</td>
     <td>❌</td>
     <td>undefined</td>
+  </tr>
+  <tr>
+    <td>snapToStep</td>
+    <td>boolean</td>
+    <td>Enables or disables step snapping</td>
+    <td>❌</td>
+    <td>true</td>
   </tr>
   <tr>
     <td>markWidth</td>

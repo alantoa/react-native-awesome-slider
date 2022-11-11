@@ -39,6 +39,7 @@ export const Home = () => {
   const progress6 = useSharedValue(30);
   const progress7 = useSharedValue(20);
   const progress8 = useSharedValue(40);
+  const progress9 = useSharedValue(30);
 
   const thumbScaleValue = useSharedValue(1);
   const min = useSharedValue(0);
@@ -350,6 +351,61 @@ export const Home = () => {
               disableTapEvent
               disableTrackFollow
               hapticMode={HapticModeEnum.BOTH}
+            />
+          </View>
+          <View
+            style={[
+              styles.card,
+              {
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.card,
+              },
+            ]}>
+            <Text
+              tx="Disable step snapping"
+              color={theme.colors.text}
+              h3
+              style={TITLE}
+            />
+            <Slider
+              step={10}
+              theme={{
+                bubbleBackgroundColor: '#0066FF',
+                minimumTrackTintColor: '#0066FF',
+                maximumTrackTintColor: '#173051',
+              }}
+              bubbleContainerStyle={{
+                marginBottom: 24,
+              }}
+              onSlidingStart={() => {
+                thumbScaleValue.value = 1.15;
+              }}
+              onSlidingComplete={() => {
+                thumbScaleValue.value = 1;
+              }}
+              markWidth={4}
+              renderMark={({ index }) => {
+                if ([0, 2, 3, 5, 6, 7, 8, 9, 10].includes(index)) {
+                  return <View key={index} />;
+                }
+                return (
+                  <View
+                    key={index}
+                    style={{
+                      width: 4,
+                      height: 10,
+                      backgroundColor: theme.colors.card,
+                    }}
+                  />
+                );
+              }}
+              style={styles.slider}
+              snapToStep={false}
+              thumbWidth={26}
+              progress={progress9}
+              minimumValue={min}
+              maximumValue={max}
+              thumbScaleValue={thumbScaleValue}
             />
           </View>
         </ScrollView>
