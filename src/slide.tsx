@@ -547,7 +547,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           if (disable) {
             return;
           }
-          isScrubbingInner.value = true;
+          isScrubbingInner.value = false;
           if (isScrubbing) {
             isScrubbing.value = true;
           }
@@ -579,7 +579,6 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           if (disable) {
             return;
           }
-          isScrubbingInner.value = false;
           if (isScrubbing) {
             isScrubbing.value = false;
           }
@@ -677,6 +676,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   // setting thumbIndex
   useAnimatedReaction(
     () => {
+      console.log(isScrubbingInner.value);
+
       if (isScrubbingInner.value) {
         return undefined;
       }
