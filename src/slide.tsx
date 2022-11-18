@@ -676,7 +676,6 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   // setting thumbIndex
   useAnimatedReaction(
     () => {
-      console.log(isScrubbingInner.value);
 
       if (isScrubbingInner.value) {
         return undefined;
