@@ -5,7 +5,6 @@ import {
   Text as NativeText,
   TextProps,
 } from 'react-native';
-import { palette } from '../../../src/theme/palette';
 const normalize = (size: number) => size;
 export interface _TextProps extends TextProps {
   h1?: boolean;
@@ -42,7 +41,7 @@ export const Text = React.forwardRef<NativeText, _TextProps>(function Text(
     children = '',
     tx = '',
     verticalCenter = false,
-    color = palette.G7,
+    color = '#111',
     isCenter,
     paragraph,
     ...rest

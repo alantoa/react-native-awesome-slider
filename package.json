@@ -27,7 +27,8 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "fix": "eslint \"**/*.{js,ts,tsx}\" --fix",
     "test": "jest",
-    "bootstrap": "yarn && cd example && yarn && yarn pods"
+    "example": "yarn --cwd example",
+    "bootstrap": "yarn example && yarn install"
   },
   "keywords": [
     "react-native",
@@ -71,7 +72,8 @@
     "react-native-reanimated": "2.1.0",
     "react-test-renderer": "17.0.2",
     "release-it": "*",
-    "typescript": "^4.4.4"
+    "typescript": "^4.4.4",
+    "pod-install": "^0.1.0"
   },
   "peerDependencies": {
     "react": "*",

@@ -281,7 +281,10 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     if (sliderTotalValue.value === 0) {
       return 0;
     }
-    return ((value - minimumValue.value) / sliderTotalValue.value) * (width.value - thumbWidth);
+    return (
+      ((value - minimumValue.value) / sliderTotalValue.value) *
+      (width.value - thumbWidth)
+    );
   };
 
   const animatedSeekStyle = useAnimatedStyle(() => {
@@ -681,7 +684,6 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   // setting thumbIndex
   useAnimatedReaction(
     () => {
-
       if (isScrubbingInner.value) {
         return undefined;
       }
