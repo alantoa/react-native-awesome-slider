@@ -13,6 +13,7 @@ import Animated, {
   runOnJS,
   useAnimatedReaction,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withSpring,
   withTiming,
@@ -270,17 +271,17 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
 
   const snappingEnabled = snapToStep && step;
 
-  const sliderTotalValue = useMemo(() => {
+  const sliderTotalValue = useDerivedValue(() => {
     'worklet';
-    return maximumValue.value + minimumValue.value;
-  }, [maximumValue.value, minimumValue.value]);
+    return maximumValue.value - minimumValue.value;
+  }, []);
 
   const progressToValue = (value: number) => {
     'worklet';
-    if (sliderTotalValue === 0) {
+    if (sliderTotalValue.value === 0) {
       return 0;
     }
-    return (value / sliderTotalValue) * (width.value - thumbWidth);
+    return ((value - minimumValue.value) / sliderTotalValue.value) * (width.value - thumbWidth);
   };
 
   const animatedSeekStyle = useAnimatedStyle(() => {
@@ -291,6 +292,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     } else {
       seekWidth = progressToValue(progress.value) + thumbWidth / 2;
     }
+    sliderTotalValue.value; // hack: force recompute styles when 'sliderTotalValue' changes
 
     return {
       width:
@@ -320,6 +322,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         width.value ? width.value - thumbWidth : 0,
       );
     }
+    sliderTotalValue.value; // hack: force recompute styles when 'sliderTotalValue' change
     return {
       transform: [
         {
@@ -374,7 +377,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
 
   const animatedCacheXStyle = useAnimatedStyle(() => {
     const cacheX = cache?.value
-      ? (cache?.value / sliderTotalValue) * width.value
+      ? (cache?.value / sliderTotalValue.value) * width.value
       : 0;
 
     return {
@@ -409,21 +412,19 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       );
     } else {
       const sliderPercent = clamp(
-        thumbValue.value / (width.value - thumbWidth) +
-          minimumValue.value / sliderTotalValue,
+        thumbValue.value / (width.value - thumbWidth),
         0,
         1,
       );
-      return clamp(
-        sliderPercent * sliderTotalValue,
-        minimumValue.value,
-        maximumValue.value,
+      return (
+        minimumValue.value +
+        clamp(sliderPercent * sliderTotalValue.value, 0, sliderTotalValue.value)
       );
     }
   }, [
     maximumValue.value,
     minimumValue.value,
-    sliderTotalValue,
+    sliderTotalValue.value,
     step,
     thumbIndex.value,
     thumbValue.value,
@@ -441,16 +442,20 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       if (snappingEnabled && markLeftArr.value.length >= step) {
         return markLeftArr.value[thumbIndex.value];
       } else {
-        return (x / (width.value - thumbWidth)) * sliderTotalValue;
+        return (
+          minimumValue.value +
+          (x / (width.value - thumbWidth)) * sliderTotalValue.value
+        );
       }
     },
     [
       markLeftArr.value,
-      sliderTotalValue,
+      sliderTotalValue.value,
       step,
       thumbIndex.value,
       thumbWidth,
       width.value,
+      minimumValue.value,
       snappingEnabled,
     ],
   );
