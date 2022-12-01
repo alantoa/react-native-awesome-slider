@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ScrollView,
@@ -49,7 +50,7 @@ export default function App() {
   const max110 = useSharedValue(110);
 
   const thumbLottieValue = useSharedValue<PanDirectionEnum>(
-    PanDirectionEnum.START,
+    PanDirectionEnum.START
   );
 
   useEffect(() => {
@@ -97,7 +98,8 @@ export default function App() {
       <View style={[styles.full]}>
         <ScrollView
           style={styles.view}
-          contentContainerStyle={styles.contentContainerStyle}>
+          contentContainerStyle={styles.contentContainerStyle}
+        >
           <StatusBar barStyle={'dark-content'} />
           <View style={[styles.card]}>
             <Text tx="Base" h3 style={TITLE} />
@@ -117,14 +119,16 @@ export default function App() {
                 onPress={() => {
                   setDisable(!disable);
                 }}
-                style={styles.btn}>
+                style={styles.btn}
+              >
                 <Text tx="disable" />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
                   thumbScaleValue.value = thumbScaleValue.value === 0 ? 1 : 0;
                 }}
-                style={styles.btn}>
+                style={styles.btn}
+              >
                 <Text tx="toggle thumb scale" />
               </TouchableOpacity>
 
@@ -132,14 +136,16 @@ export default function App() {
                 onPress={() => {
                   cache.value = 40;
                 }}
-                style={styles.btn}>
+                style={styles.btn}
+              >
                 <Text tx="show cache" />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
                   cache.value = 0;
                 }}
-                style={styles.btn}>
+                style={styles.btn}
+              >
                 <Text tx="hide cache" />
               </TouchableOpacity>
               <TouchableOpacity onPress={openTimer} style={styles.btn}>
@@ -200,7 +206,7 @@ export default function App() {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
               }}
               sliderHeight={8}
-              onSlidingComplete={e => {
+              onSlidingComplete={(e) => {
                 console.log(e);
               }}
               thumbWidth={24}

@@ -49,7 +49,7 @@ export const BubbleComponent = forwardRef<BubbleRef, BubbleProps>(
       textColor = palette.White,
       bubbleMaxWidth,
     },
-    ref,
+    ref
   ) => {
     const textRef = useRef<TextInput>(null);
 
@@ -65,7 +65,8 @@ export const BubbleComponent = forwardRef<BubbleRef, BubbleProps>(
             ...BUBBLE_STYLE,
             backgroundColor: color,
             maxWidth: bubbleMaxWidth,
-          }}>
+          }}
+        >
           <TextInput
             ref={textRef}
             textAlign="center"
@@ -84,7 +85,7 @@ export const BubbleComponent = forwardRef<BubbleRef, BubbleProps>(
         />
       </Animated.View>
     );
-  },
+  }
 );
 export const Bubble = memo(BubbleComponent);
 const styles = StyleSheet.create({

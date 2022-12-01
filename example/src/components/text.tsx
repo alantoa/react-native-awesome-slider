@@ -46,7 +46,7 @@ export const Text = React.forwardRef<NativeText, _TextProps>(function Text(
     paragraph,
     ...rest
   },
-  ref,
+  ref
 ) {
   return (
     <NativeText
@@ -118,7 +118,8 @@ export const Text = React.forwardRef<NativeText, _TextProps>(function Text(
           ]),
         style,
       ])}
-      {...rest}>
+      {...rest}
+    >
       {tx || children}
     </NativeText>
   );
