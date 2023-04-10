@@ -18,6 +18,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import type { WithTimingConfig } from 'react-native-reanimated';
 import { Bubble, BubbleRef } from './ballon';
 import { palette } from './theme/palette';
 import { clamp } from './utils';
@@ -183,7 +184,7 @@ export type AwesomeSliderProps = {
   /**
    * withTiming options when step is defined. if false, no animation will be used. default false.
    */
-  stepTimingOptions?: false | Animated.WithTimingConfig;
+  stepTimingOptions?: false | WithTimingConfig;
   markStyle?: StyleProp<ViewStyle>;
   markWidth?: number;
   onHapticFeedback?: () => void;
