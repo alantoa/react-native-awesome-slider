@@ -92,7 +92,7 @@ export default function App() {
     return {
       progress: withTiming(value, { duration: 600 }),
     };
-  }, [thumbLottieValue.value]);
+  });
   return (
     <SafeAreaView style={styles.full}>
       <View style={[styles.full]}>
