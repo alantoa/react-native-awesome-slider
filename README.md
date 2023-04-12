@@ -104,7 +104,7 @@ Use the Theme object.
 ## Features
 
 - 100% written in `TypeScript`.
-- 100% built upon `react-native-reanimated` and `react-native-gusture-handle`.
+- 100% built upon `react-native-reanimated` and `react-native-gesture-handler`.
 - Supports Tap & Pan triggering.
 - Support for discrete slider.
 - Support haptic feedback.
@@ -115,7 +115,7 @@ Use the Theme object.
 - ~~Support step props~~
 - ~~Optimize bubble & thumb~~
 - Add RTL support
-- Rewrite using `react-native-gesture-handle` v2
+- Rewrite using `react-native-gesture-handler` v2
 - Support marks props
 
 ## Configuration
