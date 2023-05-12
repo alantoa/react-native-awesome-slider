@@ -585,6 +585,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           onActiveSlider(x);
         })
         .onEnd(({ x }) => {
+          isScrubbingInner.value = false;
           if (disable) {
             return;
           }
