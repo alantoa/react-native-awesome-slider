@@ -15,7 +15,7 @@ import {
   PanDirectionEnum,
   Slider,
 } from 'react-native-awesome-slider';
-import 'react-native-gesture-handler';
+
 import Animated, {
   useAnimatedProps,
   useSharedValue,
@@ -24,6 +24,8 @@ import Animated, {
 import { Text } from './components';
 import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
 const TITLE: TextStyle = {
   marginBottom: 12,
@@ -94,222 +96,224 @@ export default function App() {
     };
   });
   return (
-    <SafeAreaView style={styles.full}>
-      <View style={[styles.full]}>
-        <ScrollView
-          style={styles.view}
-          contentContainerStyle={styles.contentContainerStyle}
-        >
-          <StatusBar barStyle={'dark-content'} />
-          <View style={[styles.card]}>
-            <Text tx="Base" h3 style={TITLE} />
-            <Slider
-              style={styles.container}
-              progress={progress1}
-              onSlidingComplete={onSlidingComplete}
-              onSlidingStart={onSlidingStart}
-              minimumValue={min}
-              maximumValue={max}
-              disable={disable}
-              cache={cache}
-              thumbScaleValue={thumbScaleValue}
-            />
-            <View style={styles.control}>
-              <TouchableOpacity
-                onPress={() => {
-                  setDisable(!disable);
-                }}
-                style={styles.btn}
-              >
-                <Text tx="disable" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  thumbScaleValue.value = thumbScaleValue.value === 0 ? 1 : 0;
-                }}
-                style={styles.btn}
-              >
-                <Text tx="toggle thumb scale" />
-              </TouchableOpacity>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.full}>
+        <View style={[styles.full]}>
+          <ScrollView
+            style={styles.view}
+            contentContainerStyle={styles.contentContainerStyle}
+          >
+            <StatusBar barStyle={'dark-content'} />
+            <View style={[styles.card]}>
+              <Text tx="Base" h3 style={TITLE} />
+              <Slider
+                style={styles.container}
+                progress={progress1}
+                onSlidingComplete={onSlidingComplete}
+                onSlidingStart={onSlidingStart}
+                minimumValue={min}
+                maximumValue={max}
+                disable={disable}
+                cache={cache}
+                thumbScaleValue={thumbScaleValue}
+              />
+              <View style={styles.control}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDisable(!disable);
+                  }}
+                  style={styles.btn}
+                >
+                  <Text tx="disable" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    thumbScaleValue.value = thumbScaleValue.value === 0 ? 1 : 0;
+                  }}
+                  style={styles.btn}
+                >
+                  <Text tx="toggle thumb scale" />
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                onPress={() => {
-                  cache.value = 40;
-                }}
-                style={styles.btn}
-              >
-                <Text tx="show cache" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  cache.value = 0;
-                }}
-                style={styles.btn}
-              >
-                <Text tx="hide cache" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={openTimer} style={styles.btn}>
-                <Text tx="🎬 cache" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={clearTimer} style={styles.btn}>
-                <Text tx="🛑 cache" />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    cache.value = 40;
+                  }}
+                  style={styles.btn}
+                >
+                  <Text tx="show cache" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    cache.value = 0;
+                  }}
+                  style={styles.btn}
+                >
+                  <Text tx="hide cache" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={openTimer} style={styles.btn}>
+                  <Text tx="🎬 cache" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={clearTimer} style={styles.btn}>
+                  <Text tx="🛑 cache" />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-          <View style={[styles.card]}>
-            <Text tx="Light & Dark theme" h3 style={TITLE} />
-            <Slider
-              style={styles.container}
-              progress={progress1}
-              onSlidingComplete={onSlidingComplete}
-              onSlidingStart={onSlidingStart}
-              minimumValue={min}
-              maximumValue={max}
-              disable={disable}
-              cache={cache}
-              thumbScaleValue={thumbScaleValue}
-            />
-          </View>
-          <View style={[styles.card]}>
-            <Text tx="Custom bubble & thumb" h3 style={TITLE} />
-            <Slider
-              progress={progress3}
-              style={styles.slider}
-              minimumValue={min}
-              maximumValue={max}
-              bubbleWidth={90}
-              bubbleTranslateY={-50}
-              renderThumb={() => (
-                <View style={styles.customThumb}>
-                  <Text tx="💰" h1 style={TITLE} />
-                </View>
-              )}
-              renderBubble={() => (
-                <View style={styles.customBubble}>
-                  <Image
-                    source={require('../assets/preview.png')}
-                    style={styles.bubbleImg}
-                  />
-                </View>
-              )}
-            />
-          </View>
-          <View style={[styles.card]}>
-            <Text tx="Range & Haptic step-mode" h3 style={TITLE} />
-            <Slider
-              progress={progress5}
-              minimumValue={min10}
-              style={styles.slider}
-              maximumValue={max110}
-              step={10}
-              onHapticFeedback={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-              }}
-              sliderHeight={8}
-              onSlidingComplete={(e) => {
-                console.log(e);
-              }}
-              thumbWidth={24}
-              hapticMode={HapticModeEnum.STEP}
-            />
-          </View>
+            <View style={[styles.card]}>
+              <Text tx="Light & Dark theme" h3 style={TITLE} />
+              <Slider
+                style={styles.container}
+                progress={progress1}
+                onSlidingComplete={onSlidingComplete}
+                onSlidingStart={onSlidingStart}
+                minimumValue={min}
+                maximumValue={max}
+                disable={disable}
+                cache={cache}
+                thumbScaleValue={thumbScaleValue}
+              />
+            </View>
+            <View style={[styles.card]}>
+              <Text tx="Custom bubble & thumb" h3 style={TITLE} />
+              <Slider
+                progress={progress3}
+                style={styles.slider}
+                minimumValue={min}
+                maximumValue={max}
+                bubbleWidth={90}
+                bubbleTranslateY={-50}
+                renderThumb={() => (
+                  <View style={styles.customThumb}>
+                    <Text tx="💰" h1 style={TITLE} />
+                  </View>
+                )}
+                renderBubble={() => (
+                  <View style={styles.customBubble}>
+                    <Image
+                      source={require('../assets/preview.png')}
+                      style={styles.bubbleImg}
+                    />
+                  </View>
+                )}
+              />
+            </View>
+            <View style={[styles.card]}>
+              <Text tx="Range & Haptic step-mode" h3 style={TITLE} />
+              <Slider
+                progress={progress5}
+                minimumValue={min10}
+                style={styles.slider}
+                maximumValue={max110}
+                step={10}
+                onHapticFeedback={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                }}
+                sliderHeight={8}
+                onSlidingComplete={(e) => {
+                  console.log(e);
+                }}
+                thumbWidth={24}
+                hapticMode={HapticModeEnum.STEP}
+              />
+            </View>
 
-          <View style={[styles.card]}>
-            <Text tx="Haptic both-mode" h3 style={TITLE} />
-            <Slider
-              progress={progress6}
-              style={styles.slider}
-              minimumValue={min10}
-              maximumValue={max110}
-              onHapticFeedback={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-              }}
-              hapticMode={HapticModeEnum.BOTH}
-            />
-          </View>
-          <View style={[styles.card]}>
-            <Text tx="Lottie thumb" h3 style={TITLE} />
-            <Slider
-              progress={progress7}
-              style={styles.slider}
-              minimumValue={min10}
-              maximumValue={max110}
-              theme={{
-                minimumTrackTintColor: '#fc8bab',
-                maximumTrackTintColor: 'rgba(0,0,0,.1)',
-              }}
-              panDirectionValue={thumbLottieValue}
-              renderBubble={() => null}
-              containerStyle={styles.borderRadius}
-              thumbWidth={60}
-              renderThumb={() => (
-                <View style={{ width: 60, height: 60, bottom: -4 }}>
-                  <AnimatedLottieView
-                    animatedProps={thumbAnimatedProps}
-                    source={require('../assets/rainbow.json')}
-                  />
-                </View>
-              )}
-            />
-          </View>
-          <View style={[styles.card]}>
-            <Text tx="Disable track follow" h3 style={TITLE} />
-            <Slider
-              progress={progress8}
-              style={styles.slider}
-              minimumValue={min}
-              theme={{
-                minimumTrackTintColor: '#fc8bab',
-                maximumTrackTintColor: 'rgba(0,0,0,.1)',
-              }}
-              renderBubble={() => null}
-              maximumValue={max}
-              disableTapEvent
-              disableTrackFollow
-              hapticMode={HapticModeEnum.BOTH}
-            />
-          </View>
-          <View style={[styles.card]}>
-            <Text tx="Disable step snapping" h3 style={TITLE} />
-            <Slider
-              step={10}
-              bubbleContainerStyle={{
-                marginBottom: 24,
-              }}
-              onSlidingStart={() => {
-                thumbScaleValue.value = 1.15;
-              }}
-              onSlidingComplete={() => {
-                thumbScaleValue.value = 1;
-              }}
-              markWidth={4}
-              renderMark={({ index }) => {
-                if ([0, 2, 3, 5, 6, 7, 8, 9, 10].includes(index)) {
-                  return <View key={index} />;
-                }
-                return (
-                  <View
-                    key={index}
-                    style={{
-                      width: 4,
-                      height: 10,
-                      backgroundColor: '#fff',
-                    }}
-                  />
-                );
-              }}
-              style={styles.slider}
-              snapToStep={false}
-              thumbWidth={26}
-              progress={progress9}
-              minimumValue={min}
-              maximumValue={max}
-              thumbScaleValue={thumbScaleValue}
-            />
-          </View>
-        </ScrollView>
-      </View>
-    </SafeAreaView>
+            <View style={[styles.card]}>
+              <Text tx="Haptic both-mode" h3 style={TITLE} />
+              <Slider
+                progress={progress6}
+                style={styles.slider}
+                minimumValue={min10}
+                maximumValue={max110}
+                onHapticFeedback={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                }}
+                hapticMode={HapticModeEnum.BOTH}
+              />
+            </View>
+            <View style={[styles.card]}>
+              <Text tx="Lottie thumb" h3 style={TITLE} />
+              <Slider
+                progress={progress7}
+                style={styles.slider}
+                minimumValue={min10}
+                maximumValue={max110}
+                theme={{
+                  minimumTrackTintColor: '#fc8bab',
+                  maximumTrackTintColor: 'rgba(0,0,0,.1)',
+                }}
+                panDirectionValue={thumbLottieValue}
+                renderBubble={() => null}
+                containerStyle={styles.borderRadius}
+                thumbWidth={60}
+                renderThumb={() => (
+                  <View style={{ width: 60, height: 60, bottom: -4 }}>
+                    <AnimatedLottieView
+                      animatedProps={thumbAnimatedProps}
+                      source={require('../assets/rainbow.json')}
+                    />
+                  </View>
+                )}
+              />
+            </View>
+            <View style={[styles.card]}>
+              <Text tx="Disable track follow" h3 style={TITLE} />
+              <Slider
+                progress={progress8}
+                style={styles.slider}
+                minimumValue={min}
+                theme={{
+                  minimumTrackTintColor: '#fc8bab',
+                  maximumTrackTintColor: 'rgba(0,0,0,.1)',
+                }}
+                renderBubble={() => null}
+                maximumValue={max}
+                disableTapEvent
+                disableTrackFollow
+                hapticMode={HapticModeEnum.BOTH}
+              />
+            </View>
+            <View style={[styles.card]}>
+              <Text tx="Disable step snapping" h3 style={TITLE} />
+              <Slider
+                step={10}
+                bubbleContainerStyle={{
+                  marginBottom: 24,
+                }}
+                onSlidingStart={() => {
+                  thumbScaleValue.value = 1.15;
+                }}
+                onSlidingComplete={() => {
+                  thumbScaleValue.value = 1;
+                }}
+                markWidth={4}
+                renderMark={({ index }) => {
+                  if ([0, 2, 3, 5, 6, 7, 8, 9, 10].includes(index)) {
+                    return <View key={index} />;
+                  }
+                  return (
+                    <View
+                      key={index}
+                      style={{
+                        width: 4,
+                        height: 10,
+                        backgroundColor: '#fff',
+                      }}
+                    />
+                  );
+                }}
+                style={styles.slider}
+                snapToStep={false}
+                thumbWidth={26}
+                progress={progress9}
+                minimumValue={min}
+                maximumValue={max}
+                thumbScaleValue={thumbScaleValue}
+              />
+            </View>
+          </ScrollView>
+        </View>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 const styles = StyleSheet.create({
