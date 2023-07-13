@@ -784,7 +784,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           />
         </Animated.View>
         {sliderWidth > 0 &&
-          step &&
+          step ?
           new Array(step + 1).fill(0).map((_, i) => {
             const left = sliderWidth * (i / step) - (i / step) * markWidth;
             return renderMark ? (
@@ -814,7 +814,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
                 ]}
               />
             );
-          })}
+          }): null}
         <Animated.View style={[styles.thumb, animatedThumbStyle]}>
           {renderThumb ? (
             renderThumb()
