@@ -209,7 +209,7 @@ export type AwesomeSliderProps = {
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,
   maximumTrackTintColor: palette.Gray,
-  cacheTrackTintColor: palette.Gray,
+  cacheTrackTintColor: palette.DeepGray,
   bubbleBackgroundColor: palette.Main,
   bubbleTextColor: palette.White,
 };
@@ -683,40 +683,6 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     [thumbWidth, markWidth, step, progress, width]
   );
 
-  // setting thumbIndex
-  useAnimatedReaction(
-    () => {
-      if (isScrubbingInner.value) {
-        return undefined;
-      }
-
-      if (snappingEnabled) {
-        const marksLeft = new Array(step + 1)
-          .fill(0)
-          .map((_, i) => Math.round(width.value * (i / step)));
-
-        // current positon width
-        const currentWidth = Math.round(
-          ((progress.value - minimumValue.value) /
-            (maximumValue.value - minimumValue.value)) *
-            width.value
-        );
-
-        const currentIndex = marksLeft.findIndex(
-          (value) => value >= currentWidth
-        );
-        return clamp(currentIndex, 0, step);
-      }
-
-      return undefined;
-    },
-    (data) => {
-      if (data !== undefined) {
-        thumbIndex.value = data;
-      }
-    },
-    [isScrubbing, maximumValue, minimumValue, step, progress, width]
-  );
   // setting thumbValue
   useAnimatedReaction(
     () => {
@@ -783,38 +749,38 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
             ]}
           />
         </Animated.View>
-        {sliderWidth > 0 &&
-          step ?
-          new Array(step + 1).fill(0).map((_, i) => {
-            const left = sliderWidth * (i / step) - (i / step) * markWidth;
-            return renderMark ? (
-              <View
-                key={i}
-                style={[
-                  styles.customMarkContainer,
-                  {
-                    left,
-                    width: markWidth,
-                  },
-                ]}
-              >
-                {renderMark({ index: i })}
-              </View>
-            ) : (
-              <View
-                key={i}
-                style={[
-                  styles.mark,
-                  {
-                    width: markWidth,
-                    borderRadius: markWidth,
-                    left,
-                  },
-                  markStyle,
-                ]}
-              />
-            );
-          }): null}
+        {sliderWidth > 0 && step
+          ? new Array(step + 1).fill(0).map((_, i) => {
+              const left = sliderWidth * (i / step) - (i / step) * markWidth;
+              return renderMark ? (
+                <View
+                  key={i}
+                  style={[
+                    styles.customMarkContainer,
+                    {
+                      left,
+                      width: markWidth,
+                    },
+                  ]}
+                >
+                  {renderMark({ index: i })}
+                </View>
+              ) : (
+                <View
+                  key={i}
+                  style={[
+                    styles.mark,
+                    {
+                      width: markWidth,
+                      borderRadius: markWidth,
+                      left,
+                    },
+                    markStyle,
+                  ]}
+                />
+              );
+            })
+          : null}
         <Animated.View style={[styles.thumb, animatedThumbStyle]}>
           {renderThumb ? (
             renderThumb()

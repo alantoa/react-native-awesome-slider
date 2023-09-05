@@ -309,6 +309,25 @@ export default function App() {
                 maximumValue={max}
                 thumbScaleValue={thumbScaleValue}
               />
+              <Slider
+                style={styles.container}
+                containerStyle={{ borderRadius: 8 }}
+                progress={progress9}
+                minimumValue={min}
+                maximumValue={max}
+                renderBubble={() => null}
+                // onValueChange={(value) => {
+                //   setValue(Math.round(value));
+                // }}
+                sliderHeight={12}
+                // renderThumb={() => <View style={styles.knob} />}
+                // theme={{
+                //   maximumTrackTintColor: mainTheme.colors.lightGrey,
+                //   minimumTrackTintColor: mainTheme.colors.primary,
+                // }}
+                step={6}
+                snapToStep={true}
+              />
             </View>
           </ScrollView>
         </View>
