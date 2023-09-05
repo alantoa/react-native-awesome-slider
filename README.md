@@ -1,10 +1,9 @@
 <div align="center">
-  <blockquote><i>`JSThread` to `JSThread`, `UIThread` to `UIThread`.</i></blockquote>
   <h1 align="center">React Native Awesome Slider</h1>
 
-[![Reanimated v2 version](https://img.shields.io/github/package-json/v/alantoa/react-native-awesome-slider/master?label=Reanimated%20v2&style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider)  [![npm](https://img.shields.io/npm/l/react-native-awesome-slider?style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![npm](https://img.shields.io/badge/types-included-blue?style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![runs with expo](https://img.shields.io/badge/Runs%20with%20Expo-4630EB.svg?style=flat-square&logo=EXPO&labelColor=f3f3f3&logoColor=000)](https://expo.io/)
+[![Reanimated v2 version](https://img.shields.io/github/package-json/v/alantoa/react-native-awesome-slider/master?label=Reanimated%20v2&style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![npm](https://img.shields.io/npm/l/react-native-awesome-slider?style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![npm](https://img.shields.io/badge/types-included-blue?style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![runs with expo](https://img.shields.io/badge/Runs%20with%20Expo-4630EB.svg?style=flat-square&logo=EXPO&labelColor=f3f3f3&logoColor=000)](https://expo.io/)
 
-  <h3 align="center">Typescript Slider component powered by Reanimated v2 and react-native-gesture-handler.</h3>
+  <h3 align="center">An awesome React Native Slider component powered by Reanimated v2 and react-native-gesture-handler.</h3>
 </div>
 
 <div align="center">
@@ -106,7 +105,7 @@ Use the Theme object.
 - 100% written in `TypeScript`.
 - 100% built upon `react-native-reanimated` and `react-native-gesture-handler`.
 - Supports Tap & Pan triggering.
-- Support for discrete slider.
+- Support for a discrete slider.
 - Support haptic feedback.
 - and more...
 
@@ -114,9 +113,9 @@ Use the Theme object.
 
 - ~~Support step props~~
 - ~~Optimize bubble & thumb~~
-- Add RTL support
-- Rewrite using `react-native-gesture-handler` v2
-- Support marks props
+- ~~Rewrite using `react-native-gesture-handler` v2~~
+- ~~Support marks props~~
+- Web Support
 
 ## Configuration
 
