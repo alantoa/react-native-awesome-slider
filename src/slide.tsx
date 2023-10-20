@@ -263,7 +263,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   const thumbValue = useSharedValue(0);
   const bubbleOpacity = useSharedValue(0);
   const markLeftArr = useSharedValue<number[]>([]);
-  const thumbIndex = useSharedValue(0);
+  const thumbIndex = useSharedValue(snapToStep && step ? progress.value - 1 : 0);  
   const isTriggedHaptic = useSharedValue(false);
   const _theme = {
     ...defaultTheme,
