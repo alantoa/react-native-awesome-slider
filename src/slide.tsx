@@ -254,23 +254,37 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   snapToStep = true,
 }) {
   const bubbleRef = useRef<BubbleRef>(null);
-
+  const snappingEnabled = snapToStep && step;
   const isScrubbingInner = useSharedValue(false);
   const prevX = useSharedValue(0);
-
+  const defaultThumbIndex = useMemo(() => {
+    if (!snappingEnabled) {
+      return 0;
+    }
+    const index = Math.round(
+      ((progress.value - minimumValue.value) /
+        (maximumValue.value - minimumValue.value)) *
+        step
+    );
+    return clamp(index, 0, step);
+  }, [
+    maximumValue.value,
+    minimumValue.value,
+    progress.value,
+    snappingEnabled,
+    step,
+  ]);
+  const thumbIndex = useSharedValue(defaultThumbIndex);
   const [sliderWidth, setSliderWidth] = useState(0);
   const width = useSharedValue(0);
   const thumbValue = useSharedValue(0);
   const bubbleOpacity = useSharedValue(0);
   const markLeftArr = useSharedValue<number[]>([]);
-  const thumbIndex = useSharedValue(0);
   const isTriggedHaptic = useSharedValue(false);
   const _theme = {
     ...defaultTheme,
     ...theme,
   };
-
-  const snappingEnabled = snapToStep && step;
 
   const sliderTotalValue = useDerivedValue(() => {
     'worklet';
@@ -679,6 +693,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     },
     (data) => {
       markLeftArr.value = data;
+      // thumbIndex.value = ;
     },
     [thumbWidth, markWidth, step, progress, width]
   );
