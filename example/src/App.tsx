@@ -319,13 +319,16 @@ export default function App() {
                 // onValueChange={(value) => {
                 //   setValue(Math.round(value));
                 // }}
+                onSlidingComplete={(e) => {
+                  console.log(e);
+                }}
                 sliderHeight={12}
                 // renderThumb={() => <View style={styles.knob} />}
                 // theme={{
                 //   maximumTrackTintColor: mainTheme.colors.lightGrey,
                 //   minimumTrackTintColor: mainTheme.colors.primary,
                 // }}
-                step={6}
+                step={20}
                 snapToStep={true}
               />
             </View>
