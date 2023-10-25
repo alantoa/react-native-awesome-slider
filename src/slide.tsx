@@ -253,8 +253,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   thumbWidth = 15,
   snapToStep = true,
 }) {
-  const bubbleRef = useRef<BubbleRef>(null);
   const snappingEnabled = snapToStep && step;
+  const bubbleRef = useRef<BubbleRef>(null);
   const isScrubbingInner = useSharedValue(false);
   const prevX = useSharedValue(0);
   const defaultThumbIndex = useMemo(() => {
