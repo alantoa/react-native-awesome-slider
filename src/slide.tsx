@@ -394,7 +394,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   });
 
   const animatedCacheXStyle = useAnimatedStyle(() => {
-    const cacheX = cache?.value
+    const cacheX = cache?.value && sliderTotalValue.value
       ? (cache?.value / sliderTotalValue.value) * width.value
       : 0;
 
