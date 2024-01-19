@@ -599,7 +599,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     const gesture = Gesture.Pan()
       .hitSlop(panHitSlop)
       .onStart(() => {
-        // e.absoluteX
+
         if (disable) {
           return;
         }
@@ -607,7 +607,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         if (isScrubbing) {
           isScrubbing.value = true;
         }
-        // ctx.isTriggedHaptic = false;
+
         if (panDirectionValue) {
           panDirectionValue.value = PanDirectionEnum.START;
           prevX.value = 0;
@@ -747,7 +747,6 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     },
     (data) => {
       markLeftArr.value = data;
-      // thumbIndex.value = ;
     },
     [thumbWidth, markWidth, step, progress, width],
   );
