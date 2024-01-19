@@ -211,30 +211,30 @@ export type AwesomeSliderProps = {
    *
    * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#activeoffsetxvalue-number--number
    */
-  activeOffsetX?: number[];
+  activeOffsetX?: number | number[];
   /**
    * Range along Y axis (in points) where fingers travels without activation of
    * gesture. Moving outside of this range implies activation of gesture.
    *
    * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#activeoffsetyvalue-number--number
    */
-  activeOffsetY?: number[];
+  activeOffsetY?: number | number[];
   /**
-   * When the finger moves outside this range (in points) along Y axis and
+   * When the finger moves outside this range (in points) along X axis and
    * gesture hasn't yet activated it will fail recognizing the gesture. Range
    * can be given as an array or a single number.
    *
    * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#failoffsetyvalue-number--number
    */
-  failOffsetX?: number[];
+  failOffsetX?: number | number[];
   /**
-   * When the finger moves outside this range (in points) along X axis and
+   * When the finger moves outside this range (in points) along Y axis and
    * gesture hasn't yet activated it will fail recognizing the gesture. Range
    * can be given as an array or a single number
    *
    * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#failoffsetxvalue-number--number
    */
-  failOffsetY?: number[];
+  failOffsetY?: number | number[];
 };
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,

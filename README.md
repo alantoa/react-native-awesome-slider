@@ -405,4 +405,32 @@ The `<Slider/>` component has the following configuration properties:
     <td>❌</td>
     <td>0</td>
   </tr>
+  <tr>
+    <td>activeOffsetX</td>
+    <td>number | number[]</td>
+    <td>Range along X axis (in points) where fingers travels without activation of gesture. Moving outside of this range implies activation of gesture.</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>activeOffsetY</td>
+    <td>number | number[]</td>
+    <td>Range along Y axis (in points) where fingers travels without activation of gesture. Moving outside of this range implies activation of gesture.</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>failOffsetX</td>
+    <td>number | number[]</td>
+    <td>When the finger moves outside this range (in points) along X axis and gesture hasn't yet activated it will fail recognizing the gesture. Range can be given as an array or a single number</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>failOffsetY</td>
+    <td>number | number[]</td>
+    <td>When the finger moves outside this range (in points) along Y axis and gesture hasn't yet activated it will fail recognizing the gesture. Range can be given as an array or a single number</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
 </table>
