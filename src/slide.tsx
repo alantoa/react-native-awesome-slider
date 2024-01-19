@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState, useMemo, memo, useCallback } from 'react';
+import React, { FC, memo, useCallback, useMemo, useRef, useState } from 'react';
 import {
   Insets,
   LayoutChangeEvent,
@@ -8,7 +8,8 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import type { WithTimingConfig } from 'react-native-reanimated';
 import Animated, {
   runOnJS,
   useAnimatedReaction,
@@ -18,7 +19,6 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import type { WithTimingConfig } from 'react-native-reanimated';
 import { Bubble, BubbleRef } from './ballon';
 import { palette } from './theme/palette';
 import { clamp } from './utils';
@@ -205,6 +205,36 @@ export type AwesomeSliderProps = {
   bubbleWidth?: number;
   testID?: string;
   snapToStep?: boolean;
+  /**
+   * Range along X axis (in points) where fingers travels without activation of
+   * gesture. Moving outside of this range implies activation of gesture.
+   *
+   * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#activeoffsetxvalue-number--number
+   */
+  activeOffsetX?: number[];
+  /**
+   * Range along Y axis (in points) where fingers travels without activation of
+   * gesture. Moving outside of this range implies activation of gesture.
+   *
+   * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#activeoffsetyvalue-number--number
+   */
+  activeOffsetY?: number[];
+  /**
+   * When the finger moves outside this range (in points) along Y axis and
+   * gesture hasn't yet activated it will fail recognizing the gesture. Range
+   * can be given as an array or a single number.
+   *
+   * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#failoffsetyvalue-number--number
+   */
+  failOffsetX?: number[];
+  /**
+   * When the finger moves outside this range (in points) along X axis and
+   * gesture hasn't yet activated it will fail recognizing the gesture. Range
+   * can be given as an array or a single number
+   *
+   * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#failoffsetxvalue-number--number
+   */
+  failOffsetY?: number[];
 };
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,
@@ -252,6 +282,10 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   thumbScaleValue,
   thumbWidth = 15,
   snapToStep = true,
+  activeOffsetX,
+  activeOffsetY,
+  failOffsetX,
+  failOffsetY,
 }) {
   const snappingEnabled = snapToStep && step;
   const bubbleRef = useRef<BubbleRef>(null);
@@ -264,7 +298,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     const index = Math.round(
       ((progress.value - minimumValue.value) /
         (maximumValue.value - minimumValue.value)) *
-        step
+        step,
     );
     return clamp(index, 0, step);
   }, [
@@ -331,13 +365,13 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       translateX = clamp(
         thumbValue.value,
         0,
-        width.value ? width.value - thumbWidth : 0
+        width.value ? width.value - thumbWidth : 0,
       );
     } else {
       translateX = clamp(
         progressToValue(progress.value),
         0,
-        width.value ? width.value - thumbWidth : 0
+        width.value ? width.value - thumbWidth : 0,
       );
     }
     sliderTotalValue.value; // hack: force recompute styles when 'sliderTotalValue' change
@@ -376,14 +410,14 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
                   clamp(
                     translateX,
                     bubbleWidth / 2,
-                    width.value - bubbleWidth / 2
+                    width.value - bubbleWidth / 2,
                   ),
-                  stepTimingOptions
+                  stepTimingOptions,
                 )
               : clamp(
                   translateX,
                   bubbleWidth / 2,
-                  width.value - bubbleWidth / 2
+                  width.value - bubbleWidth / 2,
                 ),
         },
         {
@@ -412,7 +446,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         ? setBubbleText(bubbleText)
         : bubbleRef.current?.setText(bubbleText);
     },
-    [bubble, onValueChange, setBubbleText]
+    [bubble, onValueChange, setBubbleText],
   );
 
   /**
@@ -426,13 +460,13 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         minimumValue.value +
           (thumbIndex.value / step) * (maximumValue.value - minimumValue.value),
         minimumValue.value,
-        maximumValue.value
+        maximumValue.value,
       );
     } else {
       const sliderPercent = clamp(
         thumbValue.value / (width.value - thumbWidth),
         0,
-        1
+        1,
       );
       return (
         minimumValue.value +
@@ -475,7 +509,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       width.value,
       minimumValue.value,
       snappingEnabled,
-    ]
+    ],
   );
 
   /**
@@ -558,83 +592,103 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       width.value,
       xToProgress,
       snappingEnabled,
-    ]
+    ],
   );
 
-  const onGestureEvent = useMemo(
-    () =>
-      Gesture.Pan()
-        .hitSlop(panHitSlop)
-        .onStart(() => {
-          // e.absoluteX
-          if (disable) {
-            return;
-          }
-          isScrubbingInner.value = false;
-          if (isScrubbing) {
-            isScrubbing.value = true;
-          }
-          // ctx.isTriggedHaptic = false;
-          if (panDirectionValue) {
-            panDirectionValue.value = PanDirectionEnum.START;
-            prevX.value = 0;
-          }
-          if (onSlidingStart) {
-            runOnJS(onSlidingStart)();
-          }
-        })
-        .onUpdate(({ x }) => {
-          if (disable) {
-            return;
-          }
-          if (panDirectionValue) {
-            panDirectionValue.value =
-              prevX.value - x > 0
-                ? PanDirectionEnum.LEFT
-                : PanDirectionEnum.RIGHT;
-            prevX.value = x;
-          }
-          bubbleOpacity.value = withSpring(1);
+  const onGestureEvent = useMemo(() => {
+    const gesture = Gesture.Pan()
+      .hitSlop(panHitSlop)
+      .onStart(() => {
+        // e.absoluteX
+        if (disable) {
+          return;
+        }
+        isScrubbingInner.value = false;
+        if (isScrubbing) {
+          isScrubbing.value = true;
+        }
+        // ctx.isTriggedHaptic = false;
+        if (panDirectionValue) {
+          panDirectionValue.value = PanDirectionEnum.START;
+          prevX.value = 0;
+        }
+        if (onSlidingStart) {
+          runOnJS(onSlidingStart)();
+        }
+      })
+      .onUpdate(({ x }) => {
+        if (disable) {
+          return;
+        }
+        if (panDirectionValue) {
+          panDirectionValue.value =
+            prevX.value - x > 0
+              ? PanDirectionEnum.LEFT
+              : PanDirectionEnum.RIGHT;
+          prevX.value = x;
+        }
+        bubbleOpacity.value = withSpring(1);
 
-          onActiveSlider(x);
-        })
-        .onEnd(({ x }) => {
-          isScrubbingInner.value = false;
-          if (disable) {
-            return;
-          }
-          if (isScrubbing) {
-            isScrubbing.value = false;
-          }
-          if (panDirectionValue) {
-            panDirectionValue.value = PanDirectionEnum.END;
-          }
-          bubbleOpacity.value = withSpring(0);
+        onActiveSlider(x);
+      })
+      .onEnd(({ x }) => {
+        isScrubbingInner.value = false;
+        if (disable) {
+          return;
+        }
+        if (isScrubbing) {
+          isScrubbing.value = false;
+        }
+        if (panDirectionValue) {
+          panDirectionValue.value = PanDirectionEnum.END;
+        }
+        bubbleOpacity.value = withSpring(0);
 
-          if (disableTrackFollow) {
-            progress.value = xToProgress(x);
-          }
-          if (onSlidingComplete) {
-            runOnJS(onSlidingComplete)(shareValueToSeconds());
-          }
-        }),
-    [
-      bubbleOpacity,
-      disable,
-      disableTrackFollow,
-      isScrubbing,
-      isScrubbingInner,
-      onActiveSlider,
-      onSlidingComplete,
-      onSlidingStart,
-      panDirectionValue,
-      panHitSlop,
-      prevX,
-      progress,
-      shareValueToSeconds,
-      xToProgress,
-    ]
-  );
+        if (disableTrackFollow) {
+          progress.value = xToProgress(x);
+        }
+        if (onSlidingComplete) {
+          runOnJS(onSlidingComplete)(shareValueToSeconds());
+        }
+      });
+
+    if (activeOffsetX) {
+      gesture.activeOffsetX(activeOffsetX);
+    }
+
+    if (activeOffsetY) {
+      gesture.activeOffsetY(activeOffsetY);
+    }
+
+    if (failOffsetX) {
+      gesture.failOffsetX(failOffsetX);
+    }
+
+    if (failOffsetY) {
+      gesture.failOffsetY(failOffsetY);
+    }
+
+    return gesture;
+  }, [
+    activeOffsetX,
+    activeOffsetY,
+    bubbleOpacity,
+    disable,
+    disableTrackFollow,
+    failOffsetX,
+    failOffsetY,
+    isScrubbing,
+    isScrubbingInner,
+    onActiveSlider,
+    onSlidingComplete,
+    onSlidingStart,
+    panDirectionValue,
+    panHitSlop,
+    prevX,
+    progress,
+    shareValueToSeconds,
+    xToProgress,
+  ]);
   const onSingleTapEvent = useMemo(
     () =>
       Gesture.Tap()
@@ -669,12 +723,12 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       onTap,
       panHitSlop,
       shareValueToSeconds,
-    ]
+    ],
   );
 
   const gesture = useMemo(
     () => Gesture.Race(onSingleTapEvent, onGestureEvent),
-    [onGestureEvent, onSingleTapEvent]
+    [onGestureEvent, onSingleTapEvent],
   );
 
   // setting markLeftArr
@@ -695,7 +749,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       markLeftArr.value = data;
       // thumbIndex.value = ;
     },
-    [thumbWidth, markWidth, step, progress, width]
+    [thumbWidth, markWidth, step, progress, width],
   );
 
   // setting thumbValue
@@ -717,7 +771,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         thumbValue.value = data;
       }
     },
-    [thumbWidth, maximumValue, minimumValue, step, progress, width]
+    [thumbWidth, maximumValue, minimumValue, step, progress, width],
   );
   const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
     const layoutWidth = nativeEvent.layout.width;
