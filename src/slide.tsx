@@ -18,6 +18,8 @@ import Animated, {
   useSharedValue,
   withSpring,
   withTiming,
+  withRepeat,
+  withSequence,
 } from 'react-native-reanimated';
 import { Bubble, BubbleRef } from './ballon';
 import { palette } from './theme/palette';
@@ -64,6 +66,10 @@ export type SliderThemeType =
        * Disabled color to fill the progress in the seekbar
        */
       disableMinTrackTintColor?: string;
+      /**
+       * Color to fill the heartbeat animation in the seekbar
+       */
+      heartbeatColor?: string;
     }
   | null
   | undefined;
@@ -235,6 +241,10 @@ export type AwesomeSliderProps = {
    * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#failoffsetxvalue-number--number
    */
   failOffsetY?: number | number[];
+  /**
+   * When 'heartbeat' is set to true, the progress bar color will animate back and forth between its current color and the color specified for the heartbeat.
+   */
+  heartbeat?: boolean;
 };
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,
@@ -242,6 +252,7 @@ const defaultTheme: SliderThemeType = {
   cacheTrackTintColor: palette.DeepGray,
   bubbleBackgroundColor: palette.Main,
   bubbleTextColor: palette.White,
+  heartbeatColor: palette.LightGray,
 };
 export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   bubble,
@@ -286,6 +297,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   activeOffsetY,
   failOffsetX,
   failOffsetY,
+  heartbeat = false,
 }) {
   const snappingEnabled = snapToStep && step;
   const bubbleRef = useRef<BubbleRef>(null);
@@ -298,7 +310,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     const index = Math.round(
       ((progress.value - minimumValue.value) /
         (maximumValue.value - minimumValue.value)) *
-        step,
+        step
     );
     return clamp(index, 0, step);
   }, [
@@ -365,13 +377,13 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       translateX = clamp(
         thumbValue.value,
         0,
-        width.value ? width.value - thumbWidth : 0,
+        width.value ? width.value - thumbWidth : 0
       );
     } else {
       translateX = clamp(
         progressToValue(progress.value),
         0,
-        width.value ? width.value - thumbWidth : 0,
+        width.value ? width.value - thumbWidth : 0
       );
     }
     sliderTotalValue.value; // hack: force recompute styles when 'sliderTotalValue' change
@@ -410,14 +422,14 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
                   clamp(
                     translateX,
                     bubbleWidth / 2,
-                    width.value - bubbleWidth / 2,
+                    width.value - bubbleWidth / 2
                   ),
-                  stepTimingOptions,
+                  stepTimingOptions
                 )
               : clamp(
                   translateX,
                   bubbleWidth / 2,
-                  width.value - bubbleWidth / 2,
+                  width.value - bubbleWidth / 2
                 ),
         },
         {
@@ -428,12 +440,34 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   });
 
   const animatedCacheXStyle = useAnimatedStyle(() => {
-    const cacheX = cache?.value && sliderTotalValue.value
-      ? (cache?.value / sliderTotalValue.value) * width.value
-      : 0;
+    const cacheX =
+      cache?.value && sliderTotalValue.value
+        ? (cache?.value / sliderTotalValue.value) * width.value
+        : 0;
 
     return {
       width: cacheX,
+    };
+  });
+
+  const animatedHeartbeatStyle = useAnimatedStyle(() => {
+    // Goes to one and zero continuously
+    const opacity = heartbeat
+      ? withSequence(
+          withTiming(1, { duration: 1000 }),
+          withRepeat(
+            withTiming(0, {
+              duration: 1000,
+            }),
+            -1,
+            true
+          )
+        )
+      : withTiming(0, { duration: 500 });
+
+    return {
+      width: sliderWidth,
+      opacity,
     };
   });
 
@@ -446,7 +480,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         ? setBubbleText(bubbleText)
         : bubbleRef.current?.setText(bubbleText);
     },
-    [bubble, onValueChange, setBubbleText],
+    [bubble, onValueChange, setBubbleText]
   );
 
   /**
@@ -460,13 +494,13 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         minimumValue.value +
           (thumbIndex.value / step) * (maximumValue.value - minimumValue.value),
         minimumValue.value,
-        maximumValue.value,
+        maximumValue.value
       );
     } else {
       const sliderPercent = clamp(
         thumbValue.value / (width.value - thumbWidth),
         0,
-        1,
+        1
       );
       return (
         minimumValue.value +
@@ -509,7 +543,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       width.value,
       minimumValue.value,
       snappingEnabled,
-    ],
+    ]
   );
 
   /**
@@ -592,14 +626,13 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       width.value,
       xToProgress,
       snappingEnabled,
-    ],
+    ]
   );
 
   const onGestureEvent = useMemo(() => {
     const gesture = Gesture.Pan()
       .hitSlop(panHitSlop)
       .onStart(() => {
-
         if (disable) {
           return;
         }
@@ -723,12 +756,12 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       onTap,
       panHitSlop,
       shareValueToSeconds,
-    ],
+    ]
   );
 
   const gesture = useMemo(
     () => Gesture.Race(onSingleTapEvent, onGestureEvent),
-    [onGestureEvent, onSingleTapEvent],
+    [onGestureEvent, onSingleTapEvent]
   );
 
   // setting markLeftArr
@@ -748,7 +781,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     (data) => {
       markLeftArr.value = data;
     },
-    [thumbWidth, markWidth, step, progress, width],
+    [thumbWidth, markWidth, step, progress, width]
   );
 
   // setting thumbValue
@@ -770,7 +803,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         thumbValue.value = data;
       }
     },
-    [thumbWidth, maximumValue, minimumValue, step, progress, width],
+    [thumbWidth, maximumValue, minimumValue, step, progress, width]
   );
   const onLayout = ({ nativeEvent }: LayoutChangeEvent) => {
     const layoutWidth = nativeEvent.layout.width;
@@ -803,6 +836,15 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
                 backgroundColor: _theme.cacheTrackTintColor,
               },
               animatedCacheXStyle,
+            ]}
+          />
+          <Animated.View
+            style={[
+              styles.heartbeat,
+              {
+                backgroundColor: _theme.heartbeatColor,
+              },
+              animatedHeartbeatStyle,
             ]}
           />
           <Animated.View
@@ -902,6 +944,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cache: {
+    height: '100%',
+    left: 0,
+    position: 'absolute',
+  },
+  heartbeat: {
     height: '100%',
     left: 0,
     position: 'absolute',
