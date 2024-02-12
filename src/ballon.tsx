@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef, memo } from 'react';
+import { forwardRef, useImperativeHandle, useRef, memo } from 'react';
 import {
   StyleProp,
   TextInput,

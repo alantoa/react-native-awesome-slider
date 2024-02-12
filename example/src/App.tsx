@@ -245,12 +245,11 @@ export default function App() {
                 containerStyle={styles.borderRadius}
                 thumbWidth={60}
                 renderThumb={() => (
-                  <View style={{ width: 60, height: 60, bottom: -4 }}>
-                    <AnimatedLottieView
-                      animatedProps={thumbAnimatedProps}
-                      source={require('../assets/rainbow.json')}
-                    />
-                  </View>
+                  <AnimatedLottieView
+                    animatedProps={thumbAnimatedProps}
+                    source={require('../assets/rainbow.json')}
+                    style={{ width: 60, height: 60, bottom: -4 }}
+                  />
                 )}
               />
             </View>

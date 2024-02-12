@@ -352,7 +352,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     let seekWidth = 0;
     // when you set step
     if (snappingEnabled && markLeftArr.value.length >= step) {
-      seekWidth = markLeftArr.value[thumbIndex.value] + thumbWidth / 2;
+      seekWidth = markLeftArr.value[thumbIndex.value]! + thumbWidth / 2;
     } else {
       seekWidth = progressToValue(progress.value) + thumbWidth / 2;
     }
@@ -371,8 +371,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     // when you set step
     if (snappingEnabled && markLeftArr.value.length >= step) {
       translateX = stepTimingOptions
-        ? withTiming(markLeftArr.value[thumbIndex.value], stepTimingOptions)
-        : markLeftArr.value[thumbIndex.value];
+        ? withTiming(markLeftArr.value[thumbIndex.value]!, stepTimingOptions)
+        : markLeftArr.value[thumbIndex.value]!;
     } else if (disableTrackFollow && isScrubbingInner.value) {
       translateX = clamp(
         thumbValue.value,
@@ -405,7 +405,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     let translateX = 0;
     // when set step
     if (snappingEnabled && markLeftArr.value.length >= step) {
-      translateX = markLeftArr.value[thumbIndex.value] + thumbWidth / 2;
+      translateX = markLeftArr.value[thumbIndex.value]! + thumbWidth / 2;
     } else {
       translateX = thumbValue.value + thumbWidth / 2;
     }
@@ -523,10 +523,10 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
    * @returns number
    */
   const xToProgress = useCallback(
-    (x: number) => {
+    (x: number): number => {
       'worklet';
       if (snappingEnabled && markLeftArr.value.length >= step) {
-        return markLeftArr.value[thumbIndex.value];
+        return markLeftArr.value[thumbIndex.value]!;
       } else {
         return (
           minimumValue.value +
@@ -558,8 +558,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       }
       if (snappingEnabled) {
         const index = markLeftArr.value.findIndex((item) => item >= x);
-        const arrNext = markLeftArr.value[index];
-        const arrPrev = markLeftArr.value[index - 1];
+        const arrNext = markLeftArr.value[index]!;
+        const arrPrev = markLeftArr.value[index - 1]!;
         // Computing step boundaries
         const currentX = (arrNext + arrPrev) / 2;
         const thumbIndexPrev = thumbIndex.value;
