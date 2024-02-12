@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ScrollView,
