@@ -1,6 +1,6 @@
 {
   "name": "react-native-awesome-slider",
-  "version": "2.4.7",
+  "version": "2.5.0",
   "description": "Slider component written using Reanimated v2, high performance/fps, also be used for video/audio scrubber.  ",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -22,12 +22,12 @@
     "!**/__mocks__"
   ],
   "scripts": {
+    "example": "yarn workspace awesome-slider-example",
     "prepare": "bob build",
     "release": "release-it",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "fix": "eslint \"**/*.{js,ts,tsx}\" --fix",
     "test": "jest",
-    "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn install"
   },
   "keywords": [
@@ -51,12 +51,10 @@
   },
   "homepage": "https://github.com/alantoa/react-native-awesome-slider",
   "devDependencies": {
-    "@arkweid/lefthook": "^0.7.7",
-    "@commitlint/config-conventional": "^17.0.2",
-    "@react-native-community/eslint-config": "^3.0.2",
+    "@react-native/eslint-config": "^0.72.2",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",
-    "@types/react": "~17.0.21",
+    "@types/react": "~18.2.45",
     "@types/react-native": "0.70.0",
     "commitlint": "^17.0.2",
     "del-cli": "^5.0.0",
@@ -66,22 +64,30 @@
     "jest": "^28.1.1",
     "pod-install": "^0.1.0",
     "prettier": "^2.0.5",
-    "react": "18.1.0",
-    "react-native": "0.71.6",
-    "react-native-builder-bob": "^0.20.0",
+    "react": "18.2.0",
+    "react-native": "0.73.4",
+    "react-native-builder-bob": "^0.23.2",
+    "react-native-gesture-handler": "~2.14.0",
+    "react-native-reanimated": "~3.6.2",
     "release-it": "^15.0.0",
-    "typescript": "^4.5.2",
-    "react-native-gesture-handler": "^2.3.1",
-    "react-native-reanimated": "3.0.2"
+    "typescript": "^5.3.3"
   },
   "resolutions": {
-    "@types/react": "17.0.21"
+    "@types/react": "~18.2.45",
+    "typescript": "^5.3.3"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
     "react-native-gesture-handler": ">=2.0.0",
     "react-native-reanimated": ">=3.0.0"
+  },
+  "workspaces": [
+    "example"
+  ],
+  "packageManager": "yarn@3.6.1",
+  "engines": {
+    "node": ">= 18.0.0"
   },
   "jest": {
     "preset": "react-native",
@@ -119,6 +125,34 @@
     "trailingComma": "es5",
     "useTabs": false
   },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@react-native",
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": [
+        "error",
+        {
+          "quoteProps": "consistent",
+          "singleQuote": true,
+          "tabWidth": 2,
+          "trailingComma": "es5",
+          "useTabs": false
+        }
+      ],
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-uses-react": "off",
+      "react-native/no-inline-styles": "off",
+      "no-unused-vars": "off",
+      "react/no-unstable-nested-components": "off"
+    }
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
   "react-native-builder-bob": {
     "source": "src",
     "output": "lib",
