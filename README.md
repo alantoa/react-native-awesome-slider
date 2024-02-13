@@ -63,6 +63,7 @@ Use the Theme object.
     minimumTrackTintColor: '#000',
     cacheTrackTintColor: '#333',
     bubbleBackgroundColor: '#666',
+    heartbeatColor: '#999',
   }}
 />
 ```
@@ -146,6 +147,8 @@ The `<Slider/>` component has the following configuration properties:
         disableMinTrackTintColor: string,
         // Disabled color to fill the progress in the seekbar
         bubbleBackgroundColor: string
+        // Color to fill the heartbeat animation in the seekbar
+        heartbeatColor: string
       }
     </td>
   </tr>
@@ -430,6 +433,13 @@ The `<Slider/>` component has the following configuration properties:
     <td>failOffsetY</td>
     <td>number | number[]</td>
     <td>When the finger moves outside this range (in points) along Y axis and gesture hasn't yet activated it will fail recognizing the gesture. Range can be given as an array or a single number</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+  <tr>
+    <td>heartbeat</td>
+    <td>boolean</td>
+    <td>When 'heartbeat' is set to true, the progress bar color will animate back and forth between its current color and the color specified for the heartbeat. useful for loading state</td>
     <td>❌</td>
     <td>undefined</td>
   </tr>
