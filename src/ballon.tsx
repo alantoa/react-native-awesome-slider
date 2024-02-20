@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef, memo } from 'react';
+import React, { useImperativeHandle, useRef, memo } from 'react';
 import {
   StyleProp,
   TextInput,
@@ -40,7 +40,7 @@ export type BubbleProps = {
 export type BubbleRef = {
   setText: (text: string) => void;
 };
-export const BubbleComponent = forwardRef<BubbleRef, BubbleProps>(
+export const BubbleComponent = React.forwardRef<BubbleRef, BubbleProps>(
   (
     {
       containerStyle,
