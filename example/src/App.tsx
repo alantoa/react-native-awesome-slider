@@ -8,6 +8,7 @@ import {
   TextStyle,
   Image,
   SafeAreaView,
+  Platform,
 } from 'react-native';
 import {
   HapticModeEnum,
@@ -229,30 +230,32 @@ export default function App() {
                 hapticMode={HapticModeEnum.BOTH}
               />
             </View>
-            <View style={[styles.card]}>
-              <Text tx="Lottie thumb" h3 style={TITLE} />
-              <Slider
-                progress={progress7}
-                style={styles.slider}
-                minimumValue={min10}
-                maximumValue={max110}
-                theme={{
-                  minimumTrackTintColor: '#fc8bab',
-                  maximumTrackTintColor: 'rgba(0,0,0,.1)',
-                }}
-                panDirectionValue={thumbLottieValue}
-                renderBubble={() => null}
-                containerStyle={styles.borderRadius}
-                thumbWidth={60}
-                renderThumb={() => (
-                  <AnimatedLottieView
-                    animatedProps={thumbAnimatedProps}
-                    source={require('../assets/rainbow.json')}
-                    style={{ width: 60, height: 60, bottom: -4 }}
-                  />
-                )}
-              />
-            </View>
+            {Platform.OS !== 'web' && (
+              <View style={[styles.card]}>
+                <Text tx="Lottie thumb" h3 style={TITLE} />
+                <Slider
+                  progress={progress7}
+                  style={styles.slider}
+                  minimumValue={min10}
+                  maximumValue={max110}
+                  theme={{
+                    minimumTrackTintColor: '#fc8bab',
+                    maximumTrackTintColor: 'rgba(0,0,0,.1)',
+                  }}
+                  panDirectionValue={thumbLottieValue}
+                  renderBubble={() => null}
+                  containerStyle={styles.borderRadius}
+                  thumbWidth={60}
+                  renderThumb={() => (
+                    <AnimatedLottieView
+                      animatedProps={thumbAnimatedProps}
+                      source={require('../assets/rainbow.json')}
+                      style={{ width: 60, height: 60, bottom: -4 }}
+                    />
+                  )}
+                />
+              </View>
+            )}
             <View style={[styles.card]}>
               <Text tx="Disable track follow" h3 style={TITLE} />
               <Slider
