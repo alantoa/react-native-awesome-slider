@@ -24,28 +24,33 @@ import Animated, {
 import { Bubble, BubbleRef } from './ballon';
 import { palette } from './theme/palette';
 import { clamp } from './utils';
+
 const formatSeconds = (second: number) => `${Math.round(second * 100) / 100}`;
 const hitSlop = {
   top: 12,
   bottom: 12,
 };
+
 export enum HapticModeEnum {
   NONE = 'none',
   STEP = 'step',
   BOTH = 'both',
 }
+
 export enum PanDirectionEnum {
   START = 0,
   LEFT = 1,
   RIGHT = 2,
   END = 3,
 }
+
 export type SliderThemeType =
   | {
       /**
        * Color to fill the progress in the seekbar
        */
       minimumTrackTintColor?: string;
+      minimumTrackBorderColor?: string;
       /**
        * Color to fill the background in the seekbar
        */
@@ -80,6 +85,8 @@ export type AwesomeSliderProps = {
    */
   style?: StyleProp<ViewStyle>;
 
+  sliderText?: string;
+  sliderTextStyle?: StyleProp<TextStyle>;
   sliderHeight?: number;
   containerStyle?: StyleProp<ViewStyle>;
   /**
@@ -116,6 +123,7 @@ export type AwesomeSliderProps = {
    * Callback called when the users starts sliding
    */
   onSlidingStart?: () => void;
+  onSlidingTouchBegin?: () => void;
 
   /**
    * Callback called when slide value change
@@ -209,6 +217,14 @@ export type AwesomeSliderProps = {
    * Bubble width, If you set this value, bubble positioning left & right will be clamp.
    */
   bubbleWidth?: number;
+  bubbleAlwaysShow?: boolean;
+  bubbleUseThumbTranslateX?: boolean;
+  minimumTrackBorderWidth?: number;
+  minimumTrackBorderRadius?: number;
+  /**
+   * set minimum track container outside if true, default false
+   */
+  minimumTrackContainerOutside?: boolean;
   testID?: string;
   snapToStep?: boolean;
   /**
@@ -248,6 +264,7 @@ export type AwesomeSliderProps = {
 };
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,
+  minimumTrackBorderColor: palette.Main,
   maximumTrackTintColor: palette.Gray,
   cacheTrackTintColor: palette.DeepGray,
   bubbleBackgroundColor: palette.Main,
@@ -261,6 +278,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   bubbleTextStyle,
   bubbleTranslateY = -25,
   bubbleWidth = 0,
+  bubbleAlwaysShow = false,
+  bubbleUseThumbTranslateX = false,
   cache,
   containerStyle,
   disable = false,
@@ -275,6 +294,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   onHapticFeedback,
   onSlidingComplete,
   onSlidingStart,
+  onSlidingTouchBegin,
   onTap,
   onValueChange,
   panDirectionValue,
@@ -285,6 +305,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   renderMark,
   setBubbleText,
   sliderHeight = 5,
+  sliderText,
+  sliderTextStyle,
   step,
   stepTimingOptions = false,
   style,
@@ -298,6 +320,9 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   failOffsetX,
   failOffsetY,
   heartbeat = false,
+  minimumTrackContainerOutside = false,
+  minimumTrackBorderWidth = 0,
+  minimumTrackBorderRadius = 0,
 }) {
   const snappingEnabled = snapToStep && step;
   const bubbleRef = useRef<BubbleRef>(null);
@@ -326,6 +351,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   const thumbValue = useSharedValue(0);
   const bubbleOpacity = useSharedValue(0);
   const markLeftArr = useSharedValue<number[]>([]);
+  const thumbTranslateX = useSharedValue(0);
   const isTriggedHaptic = useSharedValue(false);
   const _theme = {
     ...defaultTheme,
@@ -386,6 +412,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         width.value ? width.value - thumbWidth : 0
       );
     }
+    thumbTranslateX.value = translateX;
     sliderTotalValue.value; // hack: force recompute styles when 'sliderTotalValue' change
     return {
       transform: [
@@ -407,10 +434,13 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     if (snappingEnabled && markLeftArr.value.length >= step) {
       translateX = markLeftArr.value[thumbIndex.value]! + thumbWidth / 2;
     } else {
-      translateX = thumbValue.value + thumbWidth / 2;
+      translateX =
+        bubbleUseThumbTranslateX ?? false
+          ? thumbTranslateX.value + thumbWidth / 2
+          : thumbValue.value + thumbWidth / 2;
     }
     return {
-      opacity: bubbleOpacity.value,
+      opacity: bubbleAlwaysShow ? 1 : bubbleOpacity.value,
       transform: [
         {
           translateY: bubbleTranslateY,
@@ -433,7 +463,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
                 ),
         },
         {
-          scale: bubbleOpacity.value,
+          scale: bubbleAlwaysShow ? 1 : bubbleOpacity.value,
         },
       ],
     };
@@ -632,6 +662,14 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   const onGestureEvent = useMemo(() => {
     const gesture = Gesture.Pan()
       .hitSlop(panHitSlop)
+      .onBegin(() => {
+        if (disable) {
+          return;
+        }
+        if (onSlidingTouchBegin) {
+          runOnJS(onSlidingTouchBegin)();
+        }
+      })
       .onStart(() => {
         if (disable) {
           return;
@@ -715,6 +753,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     onActiveSlider,
     onSlidingComplete,
     onSlidingStart,
+    onSlidingTouchBegin,
     panDirectionValue,
     panHitSlop,
     prevX,
@@ -811,6 +850,34 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     setSliderWidth(layoutWidth);
   };
 
+  const minimumTrackView = () => {
+    return (
+      <Animated.View style={styles.seekContainer}>
+        {!!sliderText?.length && (
+          <Animated.Text style={[styles.text, sliderTextStyle]}>
+            {sliderText}
+          </Animated.Text>
+        )}
+        <Animated.View
+          style={[
+            styles.seek,
+            {
+              backgroundColor: disable
+                ? _theme.disableMinTrackTintColor
+                : _theme.minimumTrackTintColor,
+              borderColor: disable
+                ? _theme.disableMinTrackTintColor
+                : _theme.minimumTrackBorderColor,
+              borderWidth: minimumTrackBorderWidth,
+              borderRadius: minimumTrackBorderRadius,
+            },
+            animatedSeekStyle,
+          ]}
+        />
+      </Animated.View>
+    );
+  };
+
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View
@@ -847,18 +914,12 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
               animatedHeartbeatStyle,
             ]}
           />
-          <Animated.View
-            style={[
-              styles.seek,
-              {
-                backgroundColor: disable
-                  ? _theme.disableMinTrackTintColor
-                  : _theme.minimumTrackTintColor,
-              },
-              animatedSeekStyle,
-            ]}
-          />
+
+          {!minimumTrackContainerOutside && minimumTrackView()}
         </Animated.View>
+
+        {minimumTrackContainerOutside && minimumTrackView()}
+
         {sliderWidth > 0 && step
           ? new Array(step + 1).fill(0).map((_, i) => {
               const left = sliderWidth * (i / step) - (i / step) * markWidth;
@@ -952,6 +1013,20 @@ const styles = StyleSheet.create({
     height: '100%',
     left: 0,
     position: 'absolute',
+  },
+  seekContainer: {
+    height: '100%',
+    width: '100%',
+    left: 0,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    fontSize: 14,
+    lineHeight: 16,
+    color: '#333',
+    textAlign: 'center',
   },
   seek: {
     height: '100%',
