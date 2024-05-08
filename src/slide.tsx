@@ -910,7 +910,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           style={[
             styles.bubble,
             {
-              left: -bubbleMaxWidth / 2 - thumbWidth / 2,
+              left: -bubbleMaxWidth / 2,
               width: bubbleMaxWidth,
             },
             animatedBubbleStyle,
