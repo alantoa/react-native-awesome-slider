@@ -799,7 +799,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       return clamp(currentValue, 0, width.value - thumbWidth);
     },
     (data) => {
-      if (data !== undefined && !isNaN(data) {
+      if (data !== undefined && !isNaN(data)) {
         thumbValue.value = data;
       }
     },
