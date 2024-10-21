@@ -204,7 +204,7 @@ export default function App() {
                 minimumValue={min10}
                 style={styles.slider}
                 maximumValue={max110}
-                step={10}
+                steps={10}
                 onHapticFeedback={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                 }}

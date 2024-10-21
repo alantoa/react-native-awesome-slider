@@ -9,16 +9,16 @@
   },
   "dependencies": {
     "@expo/webpack-config": "~19.0.1",
-    "expo": "^51.0.5",
+    "expo": "^51.0.38",
     "expo-haptics": "~13.0.1",
-    "expo-splash-screen": "~0.27.4",
+    "expo-splash-screen": "~0.27.6",
     "expo-status-bar": "~1.12.1",
     "lottie-react-native": "6.7.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.74.1",
-    "react-native-gesture-handler": "~2.16.1",
-    "react-native-reanimated": "3.11.0",
+    "react-native": "0.74.5",
+    "react-native-gesture-handler": "~2.20.0",
+    "react-native-reanimated": "3.16.1",
     "react-native-web": "~0.19.6"
   },
   "devDependencies": {
