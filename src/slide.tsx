@@ -20,17 +20,11 @@ import Animated, {
   withTiming,
   withRepeat,
   withSequence,
-  configureReanimatedLogger,
-  ReanimatedLogLevel,
 } from 'react-native-reanimated';
 import { Bubble, BubbleRef } from './ballon';
 import { palette } from './theme/palette';
 import { clamp } from './utils';
 
-configureReanimatedLogger({
-  level: ReanimatedLogLevel.warn,
-  strict: false,
-});
 const formatSeconds = (second: number) => `${Math.round(second * 100) / 100}`;
 const hitSlop = {
   top: 12,
