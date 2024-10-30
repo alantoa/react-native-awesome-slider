@@ -24,6 +24,7 @@ import Animated, {
 import { Bubble, BubbleRef } from './ballon';
 import { palette } from './theme/palette';
 import { clamp } from './utils';
+
 const formatSeconds = (second: number) => `${Math.round(second * 100) / 100}`;
 const hitSlop = {
   top: 12,
@@ -185,8 +186,14 @@ export type AwesomeSliderProps = {
    */
   thumbScaleValue?: Animated.SharedValue<number>;
   panHitSlop?: Insets;
-
+  /**
+   * @deprecated use `steps` instead.
+   */
   step?: number;
+  /**
+   * Count of segmented sliders.
+   */
+  steps?: number;
   /**
    * withTiming options when step is defined. if false, no animation will be used. default false.
    */
@@ -217,14 +224,18 @@ export type AwesomeSliderProps = {
    *
    * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#activeoffsetxvalue-number--number
    */
-  activeOffsetX?: number | number[];
+  activeOffsetX?:
+    | number
+    | [activeOffsetXStart: number, activeOffsetXEnd: number];
   /**
    * Range along Y axis (in points) where fingers travels without activation of
    * gesture. Moving outside of this range implies activation of gesture.
    *
    * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#activeoffsetyvalue-number--number
    */
-  activeOffsetY?: number | number[];
+  activeOffsetY?:
+    | number
+    | [activeOffsetYStart: number, activeOffsetYEnd: number];
   /**
    * When the finger moves outside this range (in points) along X axis and
    * gesture hasn't yet activated it will fail recognizing the gesture. Range
@@ -232,7 +243,7 @@ export type AwesomeSliderProps = {
    *
    * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#failoffsetyvalue-number--number
    */
-  failOffsetX?: number | number[];
+  failOffsetX?: number | [failOffsetXStart: number, failOffsetXEnd: number];
   /**
    * When the finger moves outside this range (in points) along Y axis and
    * gesture hasn't yet activated it will fail recognizing the gesture. Range
@@ -240,7 +251,7 @@ export type AwesomeSliderProps = {
    *
    * @see https://docs.swmansion.com/react-native-gesture-handler/docs/gestures/pan-gesture#failoffsetxvalue-number--number
    */
-  failOffsetY?: number | number[];
+  failOffsetY?: number | [failOffsetYStart: number, failOffsetYEnd: number];
   /**
    * When 'heartbeat' is set to true, the progress bar color will animate back and forth between its current color and the color specified for the heartbeat.
    */
@@ -285,7 +296,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   renderMark,
   setBubbleText,
   sliderHeight = 5,
-  step,
+  step: propsStep,
+  steps,
   stepTimingOptions = false,
   style,
   testID,
@@ -299,6 +311,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   failOffsetY,
   heartbeat = false,
 }) {
+  const step = propsStep || steps;
   const snappingEnabled = snapToStep && step;
   const bubbleRef = useRef<BubbleRef>(null);
   const isScrubbingInner = useSharedValue(false);
@@ -314,9 +327,9 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     );
     return clamp(index, 0, step);
   }, [
-    maximumValue.value,
-    minimumValue.value,
-    progress.value,
+    maximumValue,
+    minimumValue,
+    progress,
     snappingEnabled,
     step,
   ]);
@@ -399,7 +412,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         },
       ],
     };
-  }, [progress, minimumValue, maximumValue, width.value]);
+  }, [progress, minimumValue, maximumValue, width]);
 
   const animatedBubbleStyle = useAnimatedStyle(() => {
     let translateX = 0;
@@ -437,7 +450,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         },
       ],
     };
-  });
+  }, [bubbleTranslateY, bubbleWidth, width]);
 
   const animatedCacheXStyle = useAnimatedStyle(() => {
     const cacheX =
@@ -448,7 +461,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     return {
       width: cacheX,
     };
-  });
+  }, [cache, sliderTotalValue, width]);
 
   const animatedHeartbeatStyle = useAnimatedStyle(() => {
     // Goes to one and zero continuously
@@ -469,7 +482,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       width: sliderWidth,
       opacity,
     };
-  });
+  }, [sliderWidth, heartbeat]);
 
   const onSlideAcitve = useCallback(
     (seconds: number) => {
@@ -508,14 +521,14 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       );
     }
   }, [
-    maximumValue.value,
-    minimumValue.value,
-    sliderTotalValue.value,
+    maximumValue,
+    minimumValue,
+    sliderTotalValue,
     step,
-    thumbIndex.value,
-    thumbValue.value,
+    thumbIndex,
+    thumbValue,
     thumbWidth,
-    width.value,
+    width,
     snappingEnabled,
   ]);
   /**
@@ -535,13 +548,13 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       }
     },
     [
-      markLeftArr.value,
-      sliderTotalValue.value,
+      markLeftArr,
+      sliderTotalValue,
       step,
-      thumbIndex.value,
+      thumbIndex,
       thumbWidth,
-      width.value,
-      minimumValue.value,
+      width,
+      minimumValue,
       snappingEnabled,
     ]
   );
@@ -614,7 +627,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       isScrubbing,
       isScrubbingInner,
       isTriggedHaptic,
-      markLeftArr.value,
+      markLeftArr,
       onHapticFeedback,
       onSlideAcitve,
       progress,
@@ -623,7 +636,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       thumbIndex,
       thumbValue,
       thumbWidth,
-      width.value,
+      width,
       xToProgress,
       snappingEnabled,
     ]

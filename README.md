@@ -346,8 +346,15 @@ The `<Slider/>` component has the following configuration properties:
   </tr>
   <tr>
     <td>step</td>
-    <td>number</td>
+    <td>number(integer)</td>
     <td>Step value of the slider. The value should be between 0 and maximumValue - minimumValue)</td>
+    <td>❌</td>
+    <td>undefined</td>
+  </tr>
+    <tr>
+    <td>steps</td>
+    <td>number(integer)</td>
+    <td>Count of segmented sliders.</td>
     <td>❌</td>
     <td>undefined</td>
   </tr>
