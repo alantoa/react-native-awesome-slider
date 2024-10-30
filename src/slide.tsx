@@ -327,9 +327,9 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     );
     return clamp(index, 0, step);
   }, [
-    maximumValue.value,
-    minimumValue.value,
-    progress.value,
+    maximumValue,
+    minimumValue,
+    progress,
     snappingEnabled,
     step,
   ]);
@@ -412,7 +412,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         },
       ],
     };
-  }, [progress, minimumValue, maximumValue, width.value]);
+  }, [progress, minimumValue, maximumValue, width]);
 
   const animatedBubbleStyle = useAnimatedStyle(() => {
     let translateX = 0;
@@ -521,14 +521,14 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       );
     }
   }, [
-    maximumValue.value,
-    minimumValue.value,
-    sliderTotalValue.value,
+    maximumValue,
+    minimumValue,
+    sliderTotalValue,
     step,
-    thumbIndex.value,
-    thumbValue.value,
+    thumbIndex,
+    thumbValue,
     thumbWidth,
-    width.value,
+    width,
     snappingEnabled,
   ]);
   /**
@@ -548,13 +548,13 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       }
     },
     [
-      markLeftArr.value,
-      sliderTotalValue.value,
+      markLeftArr,
+      sliderTotalValue,
       step,
-      thumbIndex.value,
+      thumbIndex,
       thumbWidth,
-      width.value,
-      minimumValue.value,
+      width,
+      minimumValue,
       snappingEnabled,
     ]
   );
@@ -627,7 +627,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       isScrubbing,
       isScrubbingInner,
       isTriggedHaptic,
-      markLeftArr.value,
+      markLeftArr,
       onHapticFeedback,
       onSlideAcitve,
       progress,
@@ -636,7 +636,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       thumbIndex,
       thumbValue,
       thumbWidth,
-      width.value,
+      width,
       xToProgress,
       snappingEnabled,
     ]
