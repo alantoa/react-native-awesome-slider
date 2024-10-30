@@ -627,7 +627,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       isScrubbing,
       isScrubbingInner,
       isTriggedHaptic,
-      markLeftArr.value,
+      markLeftArr,
       onHapticFeedback,
       onSlideAcitve,
       progress,
