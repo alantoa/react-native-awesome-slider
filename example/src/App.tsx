@@ -25,6 +25,7 @@ import { Text } from './components';
 import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Sound } from 'iconsax-react-native';
 
 const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
 const TITLE: TextStyle = {
@@ -158,6 +159,60 @@ export default function App() {
                   <Text tx="🛑 cache" />
                 </TouchableOpacity>
               </View>
+            </View>
+            <View style={[styles.card]}>
+              <Text tx="Custom Container" h3 style={TITLE} />
+              <Slider
+                sliderHeight={48}
+                style={{
+                  alignItems: 'flex-start',
+                }}
+                renderThumb={() => null}
+                renderContainer={({ style, seekStyle }) => (
+                  <View
+                    style={{
+                      overflow: 'hidden',
+                      width: '100%',
+                    }}
+                  >
+                    <View
+                      style={[
+                        style,
+                        {
+                          flexDirection: 'row',
+                          backgroundColor: 'transparent',
+                        },
+                      ]}
+                    >
+                      {Array.from({ length: 10 }).map((_, index) => (
+                        <Sound key={index} size={48} />
+                      ))}
+                    </View>
+                    <Animated.View
+                      style={[
+                        seekStyle,
+                        {
+                          flexDirection: 'row',
+                          overflow: 'hidden',
+                          backgroundColor: 'transparent',
+                        },
+                      ]}
+                    >
+                      {Array.from({ length: 10 }).map((_, index) => (
+                        <Sound key={index} size={48} color="red" />
+                      ))}
+                    </Animated.View>
+                  </View>
+                )}
+                progress={progress1}
+                onSlidingComplete={onSlidingComplete}
+                onSlidingStart={onSlidingStart}
+                minimumValue={min}
+                maximumValue={max}
+                disable={disable}
+                cache={cache}
+                thumbScaleValue={thumbScaleValue}
+              />
             </View>
             <View style={[styles.card]}>
               <Text tx="Light & Dark theme" h3 style={TITLE} />

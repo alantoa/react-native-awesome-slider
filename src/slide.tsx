@@ -144,6 +144,17 @@ export type AwesomeSliderProps = {
   bubbleTranslateY?: number;
 
   /**
+   * Render custom container element.
+   */
+  renderContainer?: ({
+    style,
+    seekStyle,
+  }: {
+    style: StyleProp<ViewStyle>;
+    seekStyle: StyleProp<ViewStyle>;
+  }) => React.ReactNode;
+
+  /**
    * Render custom thumb image. if you need to customize thumb, you also need to set the `thumb width`
    */
   renderThumb?: () => React.ReactNode;
@@ -291,6 +302,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   panDirectionValue,
   panHitSlop = hitSlop,
   progress,
+  renderContainer,
   renderBubble,
   renderThumb,
   renderMark,
@@ -832,36 +844,17 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         hitSlop={panHitSlop}
         onLayout={onLayout}
       >
-        <Animated.View
-          style={StyleSheet.flatten([
-            styles.slider,
-            {
-              height: sliderHeight,
-              backgroundColor: _theme.maximumTrackTintColor,
-            },
-            containerStyle,
-          ])}
-        >
-          <Animated.View
-            style={[
-              styles.cache,
+        {renderContainer ? (
+          renderContainer({
+            style: StyleSheet.flatten([
+              styles.slider,
               {
-                backgroundColor: _theme.cacheTrackTintColor,
+                height: sliderHeight,
+                backgroundColor: _theme.maximumTrackTintColor,
               },
-              animatedCacheXStyle,
-            ]}
-          />
-          <Animated.View
-            style={[
-              styles.heartbeat,
-              {
-                backgroundColor: _theme.heartbeatColor,
-              },
-              animatedHeartbeatStyle,
-            ]}
-          />
-          <Animated.View
-            style={[
+              containerStyle,
+            ]),
+            seekStyle: [
               styles.seek,
               {
                 backgroundColor: disable
@@ -869,9 +862,50 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
                   : _theme.minimumTrackTintColor,
               },
               animatedSeekStyle,
-            ]}
-          />
-        </Animated.View>
+            ],
+          })
+        ) : (
+          <Animated.View
+            style={StyleSheet.flatten([
+              styles.slider,
+              {
+                height: sliderHeight,
+                backgroundColor: _theme.maximumTrackTintColor,
+              },
+              containerStyle,
+            ])}
+          >
+            <Animated.View
+              style={[
+                styles.cache,
+                {
+                  backgroundColor: _theme.cacheTrackTintColor,
+                },
+                animatedCacheXStyle,
+              ]}
+            />
+            <Animated.View
+              style={[
+                styles.heartbeat,
+                {
+                  backgroundColor: _theme.heartbeatColor,
+                },
+                animatedHeartbeatStyle,
+              ]}
+            />
+            <Animated.View
+              style={[
+                styles.seek,
+                {
+                  backgroundColor: disable
+                    ? _theme.disableMinTrackTintColor
+                    : _theme.minimumTrackTintColor,
+                },
+                animatedSeekStyle,
+              ]}
+            />
+          </Animated.View>
+        )}
         {sliderWidth > 0 && step
           ? new Array(step + 1).fill(0).map((_, i) => {
               const left = sliderWidth * (i / step) - (i / step) * markWidth;
