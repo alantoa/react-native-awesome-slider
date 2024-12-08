@@ -9,7 +9,7 @@ import { Text } from '../../components';
 import Animated from 'react-native-reanimated';
 import { useCallback } from 'react';
 
-const markWidth = 10;
+const markWidth = 8;
 const thumbWidth = markWidth + 4;
 const backgroundColor = '#202630';
 const markColor = '#EAECEF';
@@ -41,7 +41,9 @@ const Thumb = () => {
         width: thumbWidth + 2,
         height: thumbWidth + 2,
         transform: [{ rotate: '45deg' }],
-        backgroundColor: markColor,
+        backgroundColor: backgroundColor,
+        borderWidth: 1,
+        borderColor: markColor,
         borderRadius: 2,
       }}
     />
@@ -55,7 +57,7 @@ export function BinanceSlider() {
   const step = 4;
   return (
     <View style={styles.card}>
-      <Text tx="Binance Slider" h3 style={styles.title} />
+      <Text tx="Binance Slider" h4 style={styles.title} />
       <Slider
         steps={4}
         thumbWidth={thumbWidth}
@@ -70,7 +72,7 @@ export function BinanceSlider() {
         bubble={useCallback((s: number) => {
           return `${Math.round(s)}%`;
         }, [])}
-        snapThreshold={4}
+        snapThreshold={6}
         snapThresholdMode="absolute"
         markWidth={markWidth}
         renderMark={useCallback(

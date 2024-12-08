@@ -578,6 +578,16 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     return currentStep * stepSize;
   }, [thumbValue, width, thumbWidth, step]);
 
+  const thresholdDistance = useDerivedValue(() => {
+    'worklet';
+    if (!step) {
+      return 0;
+    }
+    const stepSize = (width.value - thumbWidth) / step;
+    return snapThresholdMode === 'percentage'
+      ? stepSize * snapThreshold
+      : snapThreshold;
+  }, [snapThreshold]);
   /**
    * change slide value
    */
@@ -623,14 +633,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         if (step && snapThreshold) {
           // calculate distance to nearest mark
           const distance = Math.abs(x - nearestMarkX.value);
-          const stepSize = (width.value - thumbWidth) / step;
-
-          const thresholdDistance =
-            snapThresholdMode === 'percentage'
-              ? stepSize * snapThreshold
-              : snapThreshold;
           // if distance <= snapThreshold, snap to nearest mark
-          if (distance <= thresholdDistance) {
+          if (distance <= thresholdDistance.value) {
             thumbValue.value = nearestMarkX.value;
           } else {
             thumbValue.value = clamp(x, 0, width.value - thumbWidth);
@@ -675,7 +679,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       disableTrackFollow,
       width,
       nearestMarkX,
-      snapThresholdMode,
+      thresholdDistance,
       thumbValue,
       progress,
       xToProgress,
@@ -729,7 +733,12 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           panDirectionValue.value = PanDirectionEnum.END;
         }
         if (step && snapThreshold) {
-          progress.value = xToProgress(nearestMarkX.value);
+          const distance = Math.abs(x - nearestMarkX.value);
+          // if distance <= snapThreshold, snap to nearest mark
+          if (distance <= thresholdDistance.value) {
+            progress.value = xToProgress(nearestMarkX.value);
+          } else {
+          }
         }
         bubbleOpacity.value = withSpring(0);
 
@@ -779,6 +788,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     shareValueToSeconds,
     snapThreshold,
     step,
+    thresholdDistance,
     xToProgress,
   ]);
   const onSingleTapEvent = useMemo(
