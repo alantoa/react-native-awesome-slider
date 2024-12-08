@@ -199,14 +199,30 @@ export type AwesomeSliderProps = {
    * withTiming options when step is defined. if false, no animation will be used. default false.
    */
   stepTimingOptions?: false | WithTimingConfig;
-  // Adsorption threshold, triggering adsorption when the distance between the slider and the stepping point is less than this value, which can be set to step/4 by default.
+  /**
+   * Controls the magnetic snapping behavior when thumb is near a step.
+   * A value of 0 disables snapping. In percentage mode, the value represents
+   * the percentage of total range (e.g., 5 means 5%). In absolute mode,
+   * represents actual units from steps.
+   *
+   * @default 0
+   */
   snapThreshold?: number;
+  /**
+   * Whether snapThreshold is interpreted as a percentage of the total range
+   * or as absolute units from steps.
+   * @default "absolute"
+   */
   snapThresholdMode?: 'percentage' | 'absolute';
   /**
    * @deprecated use `forceSnapToStep` instead.
    */
   snapToStep?: boolean;
-  // Whether to force adsorption to the stepping point, default false.
+  /**
+   * Forces the thumb to always snap to the nearest step.
+   * When true, snapThreshold is ignored.
+   * @default false
+   */
   forceSnapToStep?: boolean;
 
   markStyle?: StyleProp<ViewStyle>;
