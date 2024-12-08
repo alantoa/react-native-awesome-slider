@@ -61,7 +61,7 @@ export function WithLottie() {
         renderThumb={() => (
           <AnimatedLottieView
             animatedProps={thumbAnimatedProps}
-            source={require('../../assets/rainbow.json')}
+            source={require('../../../assets/rainbow.json')}
             style={styles.lottie}
           />
         )}

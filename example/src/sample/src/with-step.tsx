@@ -13,7 +13,7 @@ export function WithStep() {
     <View style={styles.card}>
       <Text tx="Disable step snapping" h3 style={styles.title} />
       <Slider
-        step={10}
+        steps={10}
         bubbleContainerStyle={{
           marginBottom: 24,
         }}
@@ -24,23 +24,23 @@ export function WithStep() {
           thumbScaleValue.value = 1;
         }}
         markWidth={4}
-        renderMark={({ index }) => {
-          if ([0, 2, 3, 5, 6, 7, 8, 9, 10].includes(index)) {
-            return <View key={index} />;
-          }
-          return (
-            <View
-              key={index}
-              style={{
-                width: 4,
-                height: 10,
-                backgroundColor: '#fff',
-              }}
-            />
-          );
-        }}
+        // renderMark={({ index }) => {
+        //   if ([0, 2, 3, 5, 6, 7, 8, 9, 10].includes(index)) {
+        //     return <View key={index} />;
+        //   }
+        //   return (
+        //     <View
+        //       key={index}
+        //       style={{
+        //         width: 4,
+        //         height: 10,
+        //         backgroundColor: '#fff',
+        //       }}
+        //     />
+        //   );
+        // }}
         style={styles.slider}
-        snapToStep={false}
+        forceSnapToStep={false}
         thumbWidth={26}
         progress={progress}
         minimumValue={min}
@@ -58,8 +58,8 @@ export function WithStep() {
           console.log(e);
         }}
         sliderHeight={12}
-        step={20}
-        snapToStep={true}
+        steps={20}
+        forceSnapToStep={true}
       />
     </View>
   );

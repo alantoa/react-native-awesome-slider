@@ -5,3 +5,4 @@ export * from './src/with-haptic';
 export * from './src/with-lottie';
 export * from './src/with-disable-track';
 export * from './src/with-step';
+export * from './src/binance-slider';

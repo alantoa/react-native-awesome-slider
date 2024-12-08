@@ -14,6 +14,7 @@ import {
   WithLottie,
   WithDisableTrack,
   WithStep,
+  BinanceSlider,
 } from './sample';
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
             contentContainerStyle={styles.contentContainerStyle}
           >
             <StatusBar barStyle={'dark-content'} />
+            <BinanceSlider />
             <Basic />
             <WithCache />
             <WithCustomBubble />

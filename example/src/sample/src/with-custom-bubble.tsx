@@ -26,7 +26,7 @@ export function WithCustomBubble() {
         renderBubble={() => (
           <View style={styles.customBubble}>
             <Image
-              source={require('../../assets/preview.png')}
+              source={require('../../../assets/preview.png')}
               style={styles.bubbleImg}
             />
           </View>

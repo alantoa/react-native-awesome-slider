@@ -186,6 +186,7 @@ export type AwesomeSliderProps = {
    */
   thumbScaleValue?: Animated.SharedValue<number>;
   panHitSlop?: Insets;
+
   /**
    * @deprecated use `steps` instead.
    */
@@ -198,6 +199,16 @@ export type AwesomeSliderProps = {
    * withTiming options when step is defined. if false, no animation will be used. default false.
    */
   stepTimingOptions?: false | WithTimingConfig;
+  // Adsorption threshold, triggering adsorption when the distance between the slider and the stepping point is less than this value, which can be set to step/4 by default.
+  snapThreshold?: number;
+  snapThresholdMode?: 'percentage' | 'absolute';
+  /**
+   * @deprecated use `forceSnapToStep` instead.
+   */
+  snapToStep?: boolean;
+  // Whether to force adsorption to the stepping point, default false.
+  forceSnapToStep?: boolean;
+
   markStyle?: StyleProp<ViewStyle>;
   markWidth?: number;
   onHapticFeedback?: () => void;
@@ -217,7 +228,6 @@ export type AwesomeSliderProps = {
    */
   bubbleWidth?: number;
   testID?: string;
-  snapToStep?: boolean;
   /**
    * Range along X axis (in points) where fingers travels without activation of
    * gesture. Moving outside of this range implies activation of gesture.
@@ -304,15 +314,19 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   theme,
   thumbScaleValue,
   thumbWidth = 15,
-  snapToStep = true,
+  snapToStep = false,
+  forceSnapToStep = false,
   activeOffsetX,
   activeOffsetY,
   failOffsetX,
   failOffsetY,
   heartbeat = false,
+  snapThreshold = 0,
+  snapThresholdMode = 'absolute',
 }) {
   const step = propsStep || steps;
-  const snappingEnabled = snapToStep && step;
+
+  const snappingEnabled = (snapToStep || forceSnapToStep) && step;
   const bubbleRef = useRef<BubbleRef>(null);
   const isScrubbingInner = useSharedValue(false);
   const prevX = useSharedValue(0);
@@ -326,13 +340,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         step
     );
     return clamp(index, 0, step);
-  }, [
-    maximumValue,
-    minimumValue,
-    progress,
-    snappingEnabled,
-    step,
-  ]);
+  }, [maximumValue, minimumValue, progress, snappingEnabled, step]);
   const thumbIndex = useSharedValue(defaultThumbIndex);
   const [sliderWidth, setSliderWidth] = useState(0);
   const width = useSharedValue(0);
@@ -559,6 +567,17 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     ]
   );
 
+  const nearestMarkX = useDerivedValue(() => {
+    'worklet';
+    if (!step) {
+      return 0;
+    }
+    const stepSize = (width.value - thumbWidth) / step;
+    const currentStep = Math.abs(Math.round(thumbValue.value / stepSize));
+    // calculate nearest mark position
+    return currentStep * stepSize;
+  }, [thumbValue, width, thumbWidth, step]);
+
   /**
    * change slide value
    */
@@ -601,10 +620,28 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
 
         runOnJS(onSlideAcitve)(shareValueToSeconds());
       } else {
-        thumbValue.value = clamp(x, 0, width.value - thumbWidth);
+        if (step && snapThreshold) {
+          // calculate distance to nearest mark
+          const distance = Math.abs(x - nearestMarkX.value);
+          const stepSize = (width.value - thumbWidth) / step;
+
+          const thresholdDistance =
+            snapThresholdMode === 'percentage'
+              ? stepSize * snapThreshold // 百分比情况:以步进大小的比例计算
+              : snapThreshold;
+          // if distance <= snapThreshold, snap to nearest mark
+          if (distance <= thresholdDistance) {
+            thumbValue.value = nearestMarkX.value;
+          } else {
+            thumbValue.value = clamp(x, 0, width.value - thumbWidth);
+          }
+        } else {
+          thumbValue.value = clamp(x, 0, width.value - thumbWidth);
+        }
         if (!disableTrackFollow) {
           progress.value = xToProgress(x);
         }
+
         // Determines whether the thumb slides to both ends
         if (x <= 0 || x >= width.value - thumbWidth) {
           if (
@@ -622,23 +659,26 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       }
     },
     [
-      disableTrackFollow,
-      hapticMode,
-      isScrubbing,
       isScrubbingInner,
-      isTriggedHaptic,
+      isScrubbing,
+      snappingEnabled,
       markLeftArr,
+      thumbIndex,
+      thumbWidth,
+      hapticMode,
       onHapticFeedback,
       onSlideAcitve,
-      progress,
       shareValueToSeconds,
       step,
-      thumbIndex,
-      thumbValue,
-      thumbWidth,
+      isTriggedHaptic,
+      snapThreshold,
+      disableTrackFollow,
       width,
+      nearestMarkX,
+      snapThresholdMode,
+      thumbValue,
+      progress,
       xToProgress,
-      snappingEnabled,
     ]
   );
 
@@ -688,6 +728,9 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         if (panDirectionValue) {
           panDirectionValue.value = PanDirectionEnum.END;
         }
+        if (step && snapThreshold) {
+          progress.value = xToProgress(nearestMarkX.value);
+        }
         bubbleOpacity.value = withSpring(0);
 
         if (disableTrackFollow) {
@@ -725,6 +768,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     failOffsetY,
     isScrubbing,
     isScrubbingInner,
+    nearestMarkX,
     onActiveSlider,
     onSlidingComplete,
     onSlidingStart,
@@ -733,6 +777,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     prevX,
     progress,
     shareValueToSeconds,
+    snapThreshold,
+    step,
     xToProgress,
   ]);
   const onSingleTapEvent = useMemo(
@@ -874,7 +920,10 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         </Animated.View>
         {sliderWidth > 0 && step
           ? new Array(step + 1).fill(0).map((_, i) => {
-              const left = sliderWidth * (i / step) - (i / step) * markWidth;
+              const left = Math.round(
+                sliderWidth * (i / step) - (i / step) * markWidth
+              );
+
               return renderMark ? (
                 <View
                   key={i}

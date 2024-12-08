@@ -21,6 +21,7 @@ export function WithHaptic() {
         onHapticFeedback={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
         }}
+        forceSnapToStep
         sliderHeight={8}
         onSlidingComplete={(e) => {
           console.log(e);
