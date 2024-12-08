@@ -627,7 +627,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
 
           const thresholdDistance =
             snapThresholdMode === 'percentage'
-              ? stepSize * snapThreshold // 百分比情况:以步进大小的比例计算
+              ? stepSize * snapThreshold
               : snapThreshold;
           // if distance <= snapThreshold, snap to nearest mark
           if (distance <= thresholdDistance) {
