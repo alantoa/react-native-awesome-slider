@@ -1,0 +1,86 @@
+---
+title: Getting Started
+---
+
+# Getting Started
+
+## Installation
+
+First, you need to follow the installation instructions for [Reanimated v2](https://docs.swmansion.com/react-native-reanimated/) and [react-native-gesture-handler](https://docs.swmansion.com/react-native-gesture-handler/).
+
+If you are using react-native-gesture-handler version >= 2:
+
+```bash
+yarn add react-native-awesome-slider
+```
+
+Otherwise:
+
+```bash
+yarn add react-native-awesome-slider@1
+```
+
+## Basic Usage
+
+```jsx
+import { useSharedValue } from 'react-native-reanimated';
+import { Slider } from 'react-native-awesome-slider';
+
+export const Example = () => {
+  const progress = useSharedValue(30);
+  const min = useSharedValue(0);
+  const max = useSharedValue(100);
+
+  return (
+    <Slider
+      style={styles.container}
+      progress={progress}
+      minimumValue={min}
+      maximumValue={max}
+    />
+  );
+};
+```
+
+## Change Theme
+
+Use the Theme object to customize colors:
+
+```jsx
+<Slider
+  theme={{
+    disableMinTrackTintColor: '#fff',
+    maximumTrackTintColor: '#fff',
+    minimumTrackTintColor: '#000',
+    cacheTrackTintColor: '#333',
+    bubbleBackgroundColor: '#666',
+    heartbeatColor: '#999',
+  }}
+/>
+```
+
+## Add Haptic Feedback
+
+1. Add haptics feedback library to your project:
+
+   - [Expo](https://docs.expo.dev/versions/latest/sdk/haptics/)
+   - [NON-Expo](https://github.com/junina-de/react-native-haptic-feedback)
+
+2. Add onHapticFeedback callback to your slider component:
+
+```jsx
+<Slider
+  onHapticFeedback={() => {
+    ReactNativeHapticFeedback.trigger('impactLight', {
+      enableVibrateFallback: true,
+      ignoreAndroidSystemSettings: false,
+    });
+  }}
+/>
+```
+
+3. Set haptic mode - use `HapticModeEnum.STEP` if you have enabled the 'step' prop, otherwise use `HapticModeEnum.BOTH`.
+
+4. ✅ Done!
+
+For more usage examples, please check out the [Example](https://github.com/alantoa/react-native-awesome-slider/tree/main/example) directory.

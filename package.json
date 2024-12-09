@@ -59,8 +59,8 @@
     "commitlint": "^17.0.2",
     "del-cli": "^5.0.0",
     "eslint": "^8.4.1",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "jest": "^28.1.1",
     "pod-install": "^0.1.0",
     "prettier": "^3.4.2",
@@ -83,7 +83,8 @@
     "react-native-reanimated": ">=3.0.0"
   },
   "workspaces": [
-    "example"
+    "example",
+    "docs"
   ],
   "packageManager": "yarn@3.6.1",
   "engines": {
@@ -119,11 +120,10 @@
     }
   },
   "prettier": {
-    "quoteProps": "consistent",
+    "semi": true,
     "singleQuote": true,
     "tabWidth": 2,
-    "trailingComma": "es5",
-    "useTabs": false
+    "trailingComma": "es5"
   },
   "eslintConfig": {
     "root": true,

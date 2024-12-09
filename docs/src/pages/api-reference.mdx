@@ -1,0 +1,118 @@
+---
+title: API Reference
+---
+
+# API Reference
+
+## Props
+
+### Core Props
+
+| Prop           | Type                           | Required | Default | Description                                                 |
+| -------------- | ------------------------------ | -------- | ------- | ----------------------------------------------------------- |
+| `progress`     | `Animated.SharedValue<number>` | ✓        | `0`     | Current value of the slider                                 |
+| `minimumValue` | `Animated.SharedValue<number>` | ✓        | -       | Minimum value of the slider                                 |
+| `maximumValue` | `Animated.SharedValue<number>` | ✓        | -       | Maximum value of the slider                                 |
+| `cache`        | `Animated.SharedValue<number>` | -        | `0`     | Cache value for the slider (useful for video/audio players) |
+
+### Callbacks
+
+| Prop                | Type                      | Required | Default | Description                          |
+| ------------------- | ------------------------- | -------- | ------- | ------------------------------------ |
+| `onSlidingStart`    | `() => void`              | -        | -       | Called when sliding starts           |
+| `onValueChange`     | `(value: number) => void` | -        | -       | Called when the slider value changes |
+| `onSlidingComplete` | `(value: number) => void` | -        | -       | Called when sliding completes        |
+| `onTap`             | `() => void`              | -        | -       | Called when the slider is tapped     |
+| `onHapticFeedback`  | `() => void`              | -        | -       | Called to trigger haptic feedback    |
+
+### Appearance
+
+| Prop                   | Type          | Required | Default   | Description                          |
+| ---------------------- | ------------- | -------- | --------- | ------------------------------------ |
+| `theme`                | `SliderTheme` | -        | See below | Theme configuration for the slider   |
+| `style`                | `ViewStyle`   | -        | -         | Style for the container view         |
+| `containerStyle`       | `ViewStyle`   | -        | See below | Style for the slider track container |
+| `bubbleContainerStyle` | `ViewStyle`   | -        | -         | Style for the bubble container       |
+| `bubbleTextStyle`      | `TextStyle`   | -        | -         | Style for the bubble text            |
+| `marksStyle`           | `ViewStyle`   | -        | See below | Style for step marks                 |
+
+### Custom Rendering
+
+| Prop           | Type                                     | Required | Default | Description             |
+| -------------- | ---------------------------------------- | -------- | ------- | ----------------------- |
+| `renderBubble` | `() => React.ReactNode`                  | -        | -       | Custom bubble component |
+| `renderThumb`  | `() => React.ReactNode`                  | -        | -       | Custom thumb component  |
+| `renderMark`   | `({ index: number }) => React.ReactNode` | -        | -       | Custom mark component   |
+
+### Behavior
+
+| Prop              | Type      | Required | Default | Description                    |
+| ----------------- | --------- | -------- | ------- | ------------------------------ |
+| `disable`         | `boolean` | -        | `false` | Disables all interactions      |
+| `disableTapEvent` | `boolean` | -        | `true`  | Disables tap-to-seek behavior  |
+| `step`            | `number`  | -        | -       | Step value for discrete slider |
+| `steps`           | `number`  | -        | -       | Number of steps                |
+| `snapToStep`      | `boolean` | -        | `true`  | Whether to snap to steps       |
+| `heartbeat`       | `boolean` | -        | `false` | Enables heartbeat animation    |
+
+### Gesture Configuration
+
+| Prop            | Type                 | Required | Default   | Description                          |
+| --------------- | -------------------- | -------- | --------- | ------------------------------------ |
+| `activeOffsetX` | `number \| number[]` | -        | -         | Active offset for horizontal gesture |
+| `activeOffsetY` | `number \| number[]` | -        | -         | Active offset for vertical gesture   |
+| `failOffsetX`   | `number \| number[]` | -        | -         | Fail offset for horizontal gesture   |
+| `failOffsetY`   | `number \| number[]` | -        | -         | Fail offset for vertical gesture     |
+| `panHitSlop`    | `object`             | -        | See below | Hit slop for pan gesture             |
+
+## Default Values
+
+### Default Theme
+
+```typescript
+{
+  minimumTrackTintColor: '#1890ff',
+  maximumTrackTintColor: '#e5e5e5',
+  cacheTrackTintColor: '#cacaca',
+  disableMinTrackTintColor: '#999999',
+  bubbleBackgroundColor: '#ffffff',
+  heartbeatColor: '#1890ff'
+}
+```
+
+### Default Container Style
+
+```typescript
+{
+  width: '100%',
+  height: 5,
+  borderRadius: 2,
+  borderColor: 'transparent',
+  overflow: 'hidden',
+  borderWidth: 1,
+  backgroundColor: maximumTrackTintColor
+}
+```
+
+### Default Pan Hit Slop
+
+```typescript
+{
+  top: 8,
+  left: 0,
+  bottom: 8,
+  right: 0
+}
+```
+
+### Default Marks Style
+
+```typescript
+{
+  width: 4,
+  height: 4,
+  backgroundColor: '#fff',
+  position: 'absolute',
+  top: 2
+}
+```

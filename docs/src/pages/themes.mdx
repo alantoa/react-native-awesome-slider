@@ -1,0 +1,42 @@
+# Themes
+
+## Theme Configuration
+
+The slider can be themed using the `theme` prop:
+
+```typescript
+interface SliderTheme {
+  minimumTrackTintColor: string;    // Progress track color
+  maximumTrackTintColor: string;    // Background track color
+  cacheTrackTintColor: string;      // Cache track color
+  disableMinTrackTintColor: string; // Disabled track color
+  bubbleBackgroundColor: string;    // Bubble background color
+  heartbeatColor: string;           // Heartbeat animation color
+}
+```
+
+## Example Themes
+
+### Default Theme
+```jsx
+const defaultTheme = {
+  minimumTrackTintColor: '#1890ff',
+  maximumTrackTintColor: '#e5e5e5',
+  cacheTrackTintColor: '#cacaca',
+  disableMinTrackTintColor: '#999999',
+  bubbleBackgroundColor: '#ffffff',
+  heartbeatColor: '#1890ff',
+};
+```
+
+### Dark Theme
+```jsx
+const darkTheme = {
+  minimumTrackTintColor: '#177ddc',
+  maximumTrackTintColor: '#333333',
+  cacheTrackTintColor: '#404040',
+  disableMinTrackTintColor: '#595959',
+  bubbleBackgroundColor: '#1f1f1f',
+  heartbeatColor: '#177ddc',
+};
+``` 

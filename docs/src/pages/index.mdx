@@ -1,0 +1,28 @@
+import { Callout } from 'nextra/components'
+
+# React Native Awesome Slider
+
+<div className="flex justify-center">
+  <img src="/assets/slider.gif" width="300" />
+</div>
+
+A powerful React Native Slider component powered by Reanimated v2 and react-native-gesture-handler.
+
+## Why this library?
+
+- Pure javascript slider implementations usually rely on `react-native`'s gesture events which may inadvertently trigger 'swipe to go back' events as you pan the slider. ❌
+- Native sliders rely on state updates, which can cause performance issues. ❌
+- This library uses Reanimated's ShareValue to run code directly in the UIThread for better performance, and react-native-gesture-handler won't interfere with your swiping gestures. ✨
+
+## Features
+
+- 100% written in TypeScript
+- Built upon react-native-reanimated and react-native-gesture-handler
+- Supports Tap & Pan triggering
+- Support for discrete slider
+- Support haptic feedback
+- and more...
+
+<Callout type="info">
+  Check out the [Examples](https://github.com/alantoa/react-native-awesome-slider/tree/main/example) for more usage details.
+</Callout>
