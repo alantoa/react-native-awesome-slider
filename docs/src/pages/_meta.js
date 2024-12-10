@@ -3,6 +3,5 @@ export default {
   'getting-started': 'Getting Started',
   usage: 'Usage',
   'api-reference': 'API Reference',
-  themes: 'Themes',
   examples: 'Examples',
 };

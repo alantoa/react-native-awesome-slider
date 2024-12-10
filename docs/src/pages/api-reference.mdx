@@ -116,3 +116,18 @@ title: API Reference
   top: 2
 }
 ```
+
+### Theme Configuration
+
+The slider can be themed using the `theme` prop:
+
+```typescript
+interface SliderTheme {
+  minimumTrackTintColor: string; // Progress track color
+  maximumTrackTintColor: string; // Background track color
+  cacheTrackTintColor: string; // Cache track color
+  disableMinTrackTintColor: string; // Disabled track color
+  bubbleBackgroundColor: string; // Bubble background color
+  heartbeatColor: string; // Heartbeat animation color
+}
+```

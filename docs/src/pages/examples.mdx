@@ -1,6 +1,8 @@
+import { Callout } from 'nextra/components';
+
 ---
-title: Examples
----
+
+## title: Examples
 
 # Examples
 
@@ -42,7 +44,7 @@ function VideoPlayerSlider() {
       minimumValue={useSharedValue(0)}
       maximumValue={duration}
       // Format time for bubble display
-      bubble={value => formatTime(value)}
+      bubble={(value) => formatTime(value)}
       // Disable track follow for video player
       disableTrackFollow
       // Custom styles
@@ -89,9 +91,7 @@ function CustomBubbleSlider() {
       // ... other props
       renderBubble={({ value }) => (
         <View style={styles.customBubble}>
-          <Text style={styles.bubbleText}>
-            {Math.round(value)}%
-          </Text>
+          <Text style={styles.bubbleText}>{Math.round(value)}%</Text>
         </View>
       )}
       bubbleTranslateY={-30}
@@ -137,4 +137,4 @@ function ThemedSlider() {
     />
   );
 };
-``` 
+```

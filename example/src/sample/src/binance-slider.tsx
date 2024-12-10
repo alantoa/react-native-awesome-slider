@@ -34,6 +34,7 @@ const Mark = ({ slideOver }: { slideOver?: boolean }) => {
     />
   );
 };
+
 const Thumb = () => {
   return (
     <View
