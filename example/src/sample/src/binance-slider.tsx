@@ -1,13 +1,14 @@
 import { Slider } from 'react-native-awesome-slider';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import {
   SharedValue,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
 import { Text } from '../../components';
 import Animated from 'react-native-reanimated';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 const markWidth = 8;
 const thumbWidth = markWidth + 4;
@@ -51,14 +52,40 @@ const Thumb = () => {
   );
 };
 export function BinanceSlider() {
+  const [value, setValue] = useState(0);
   const progress = useSharedValue(25);
   const min = useSharedValue(0);
   const max = useSharedValue(100);
   const thumbScaleValue = useSharedValue(1);
   const step = 4;
+
+  useAnimatedReaction(
+    () => {
+      return value;
+    },
+    (data) => {
+      if (data !== undefined && !isNaN(data)) {
+        progress.value = data;
+      }
+    },
+    [value]
+  );
   return (
     <View style={styles.card}>
       <Text tx="Binance Slider" h4 style={styles.title} />
+      <TextInput
+        style={{
+          backgroundColor: 'grey',
+          color: 'blue',
+          marginBottom: 4,
+          height: 40,
+          width: 200,
+        }}
+        placeholder="Enter value"
+        onChangeText={(text) => {
+          setValue(Number(text));
+        }}
+      />
       <Slider
         steps={4}
         thumbWidth={thumbWidth}
