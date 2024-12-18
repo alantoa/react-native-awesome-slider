@@ -832,8 +832,12 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           if (onSlidingComplete) {
             runOnJS(onSlidingComplete)(shareValueToSeconds());
           }
+        })
+        .onFinalize(() => {
+          if (isScrubbing) {
+            isScrubbing.value = false;
+          }
         }),
-
     [
       bubbleOpacity,
       disable,
