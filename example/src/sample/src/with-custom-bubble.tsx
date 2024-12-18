@@ -2,7 +2,8 @@ import { Slider } from 'react-native-awesome-slider';
 import { StyleSheet, View, Image } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import { Text } from '../../components';
-
+const thumbWidth = 15;
+const bubbleWidth = 90;
 export function WithCustomBubble() {
   const progress = useSharedValue(30);
   const min = useSharedValue(0);
@@ -16,13 +17,11 @@ export function WithCustomBubble() {
         style={styles.slider}
         minimumValue={min}
         maximumValue={max}
-        bubbleWidth={90}
+        bubbleWidth={bubbleWidth}
         bubbleTranslateY={-50}
-        renderThumb={() => (
-          <View style={styles.customThumb}>
-            <Text tx="💰" h1 style={styles.title} />
-          </View>
-        )}
+        bubbleOffsetX={5}
+        thumbWidth={thumbWidth}
+        renderThumb={() => <View style={styles.customThumb} />}
         renderBubble={() => (
           <View style={styles.customBubble}>
             <Image
@@ -58,13 +57,15 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   customThumb: {
-    width: 50,
-    height: 50,
-    borderRadius: 8,
+    width: thumbWidth,
+    height: thumbWidth + 10,
+    borderRadius: 2,
     overflow: 'hidden',
+    backgroundColor: '#000',
   },
   customBubble: {
     alignItems: 'center',
+    width: bubbleWidth,
   },
   bubbleImg: {
     width: 90,

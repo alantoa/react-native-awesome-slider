@@ -171,6 +171,7 @@ export type AwesomeSliderProps = {
    */
   bubbleMaxWidth?: number;
   bubbleTextStyle?: StyleProp<TextStyle>;
+  bubbleOffsetX?: number;
   bubbleContainerStyle?: StyleProp<ViewStyle>;
 
   /**
@@ -295,6 +296,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   bubble,
   bubbleContainerStyle,
   bubbleMaxWidth = 100,
+  bubbleOffsetX = 0,
   bubbleTextStyle,
   bubbleTranslateY = -25,
   bubbleWidth = 0,
@@ -831,6 +833,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
             runOnJS(onSlidingComplete)(shareValueToSeconds());
           }
         }),
+
     [
       bubbleOpacity,
       disable,
@@ -1051,7 +1054,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           style={[
             styles.bubble,
             {
-              left: -bubbleMaxWidth / 2,
+              left: -bubbleMaxWidth / 2 + bubbleOffsetX,
               width: bubbleMaxWidth,
             },
             animatedBubbleStyle,
