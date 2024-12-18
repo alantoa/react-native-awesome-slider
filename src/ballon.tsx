@@ -73,6 +73,7 @@ export const BubbleComponent = React.forwardRef<BubbleRef, BubbleProps>(
             style={[styles.textStyle, { color: textColor }, textStyle]}
             defaultValue=""
             caretHidden
+            editable={false}
           />
         </Animated.View>
         <View
