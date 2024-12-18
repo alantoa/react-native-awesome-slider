@@ -1,5 +1,5 @@
 import { Slider } from 'react-native-awesome-slider';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, Switch, TextInput, View } from 'react-native';
 import {
   SharedValue,
   useAnimatedReaction,
@@ -52,11 +52,13 @@ const Thumb = () => {
   );
 };
 export function BinanceSlider() {
-  const [value, setValue] = useState(0);
-  const progress = useSharedValue(25);
+  const [value, setValue] = useState(25);
+  const [forceSnapToStep, setForceSnapToStep] = useState(false);
+  const progress = useSharedValue(100);
   const min = useSharedValue(0);
   const max = useSharedValue(100);
   const thumbScaleValue = useSharedValue(1);
+  const isScrubbing = useSharedValue(false);
   const step = 4;
 
   useAnimatedReaction(
@@ -64,7 +66,7 @@ export function BinanceSlider() {
       return value;
     },
     (data) => {
-      if (data !== undefined && !isNaN(data)) {
+      if (data !== undefined && !isNaN(data) && !isScrubbing.value) {
         progress.value = data;
       }
     },
@@ -73,24 +75,36 @@ export function BinanceSlider() {
   return (
     <View style={styles.card}>
       <Text tx="Binance Slider" h4 style={styles.title} />
-      <TextInput
-        style={{
-          backgroundColor: 'grey',
-          color: 'blue',
-          marginBottom: 4,
-          height: 40,
-          width: 200,
-        }}
-        placeholder="Enter value"
-        onChangeText={(text) => {
-          setValue(Number(text));
-        }}
-      />
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <TextInput
+          style={{
+            backgroundColor: 'grey',
+            color: 'blue',
+            marginBottom: 4,
+            height: 40,
+            width: 200,
+          }}
+          defaultValue={value.toString()}
+          placeholder="Enter value"
+          onChangeText={(text) => {
+            setValue(Number(text));
+          }}
+        />
+        <View
+          style={{
+            transform: [{ scale: 0.6 }],
+          }}
+        >
+          <Text style={styles.desc} tx="forceSnapToStep" />
+          <Switch value={forceSnapToStep} onValueChange={setForceSnapToStep} />
+        </View>
+      </View>
       <Slider
-        steps={4}
+        steps={step}
         thumbWidth={thumbWidth}
         sliderHeight={2}
-        forceSnapToStep={false}
+        isScrubbing={isScrubbing}
+        forceSnapToStep={forceSnapToStep}
         onSlidingStart={() => {
           thumbScaleValue.value = 1.15;
         }}
@@ -125,6 +139,9 @@ export function BinanceSlider() {
           bubbleTextColor: bubbleTextColor,
         }}
         renderThumb={() => <Thumb />}
+        onValueChange={useCallback((value: number) => {
+          setValue(Math.round(value));
+        }, [])}
         style={styles.slider}
         progress={progress}
         minimumValue={min}
@@ -170,6 +187,10 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   title: {
+    marginBottom: 12,
+    color: markColor,
+  },
+  desc: {
     marginBottom: 12,
     color: markColor,
   },
