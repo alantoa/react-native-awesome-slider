@@ -1,11 +1,9 @@
 export const IndexPage = () => (
   <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-    {/* 渐变背景 */}
     <div className="absolute inset-0 bg-gradient-to-r from-orange-100 via-red-100 to-cyan-100">
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
     </div>
 
-    {/* 内容区域 */}
     <div className="relative z-10 text-center px-4">
       <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gray-900">
         React Native Awesome Slider
