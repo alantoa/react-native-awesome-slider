@@ -18,7 +18,7 @@ export const IndexPage = () => (
         href="/docs"
         className="inline-flex items-center px-6 py-3 text-base font-medium text-white bg-black rounded-full hover:bg-gray-800 transition-colors"
       >
-        Read Docs
+        Documentation
       </a>
     </div>
   </div>
