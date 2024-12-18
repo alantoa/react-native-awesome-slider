@@ -104,10 +104,13 @@ export function BinanceSlider() {
         thumbWidth={thumbWidth}
         sliderHeight={2}
         isScrubbing={isScrubbing}
+        disableTrackPress
+        // thumbTouchSize={thumbWidth * 2}
         forceSnapToStep={forceSnapToStep}
         onSlidingStart={() => {
           thumbScaleValue.value = 1.15;
         }}
+        // disableTapEvent={true}
         onSlidingComplete={() => {
           thumbScaleValue.value = 1;
         }}

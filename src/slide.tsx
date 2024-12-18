@@ -158,6 +158,12 @@ export type AwesomeSliderProps = {
    */
   thumbWidth?: number;
   /**
+   * Controls how far from the thumb (in pixels) a touch can start the drag.
+   * Only applies when disableTrackPress is true.
+   * @default thumbWidth
+   */
+  thumbTouchSize?: number;
+  /**
    * Disable slider
    */
   disable?: boolean;
@@ -238,8 +244,16 @@ export type AwesomeSliderProps = {
   panDirectionValue?: Animated.SharedValue<PanDirectionEnum>;
   /**
    * Disable track follow thumb.(Commonly used in video/audio players)
+   * @default false
    */
   disableTrackFollow?: boolean;
+  /**
+   * If true, only allows dragging when touching the thumb directly.
+   * If false, allows dragging from anywhere on the track.
+   * @default false
+   */
+  disableTrackPress?: boolean;
+
   /**
    * Bubble width, If you set this value, bubble positioning left & right will be clamp.
    */
@@ -305,6 +319,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   disable = false,
   disableTapEvent = false,
   disableTrackFollow = false,
+  disableTrackPress = false,
   hapticMode = 'none',
   isScrubbing,
   markStyle,
@@ -332,6 +347,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   theme,
   thumbScaleValue,
   thumbWidth = 15,
+  thumbTouchSize = thumbWidth,
   snapToStep = false,
   forceSnapToStep = false,
   activeOffsetX,
@@ -349,6 +365,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   const bubbleRef = useRef<BubbleRef>(null);
   const isScrubbingInner = useSharedValue(false);
   const prevX = useSharedValue(0);
+  const isTouchInThumbRange = useSharedValue(false);
 
   const thumbIndex = useSharedValue(0);
   const [sliderWidth, setSliderWidth] = useState(0);
@@ -705,13 +722,28 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     ]
   );
 
+  const thumbPosition = useDerivedValue(() => {
+    return (
+      (snappingEnabled && markLeftArr.value.length >= step
+        ? markLeftArr.value[thumbIndex.value]
+        : thumbValue.value) || 0
+    );
+  }, [thumbIndex, thumbValue, snappingEnabled, markLeftArr, step]);
+
   const onGestureEvent = useMemo(() => {
     const gesture = Gesture.Pan()
       .hitSlop(panHitSlop)
+      .onBegin(({ x }) => {
+        if (disableTrackPress) {
+          isTouchInThumbRange.value =
+            Math.abs(x - thumbPosition.value) <= thumbTouchSize;
+        }
+      })
       .onStart(() => {
         if (disable) {
           return;
         }
+
         isScrubbingInner.value = false;
         if (isScrubbing) {
           isScrubbing.value = true;
@@ -726,7 +758,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         }
       })
       .onUpdate(({ x }) => {
-        if (disable) {
+        if (disable || (!isTouchInThumbRange.value && disableTrackPress)) {
           return;
         }
         if (panDirectionValue) {
@@ -787,28 +819,32 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
 
     return gesture;
   }, [
+    panHitSlop,
     activeOffsetX,
     activeOffsetY,
-    bubbleOpacity,
-    disable,
-    disableTrackFollow,
     failOffsetX,
     failOffsetY,
-    isScrubbing,
+    isTouchInThumbRange,
+    thumbPosition,
+    thumbTouchSize,
+    disable,
     isScrubbingInner,
-    nearestMarkX,
-    onActiveSlider,
-    onSlidingComplete,
-    onSlidingStart,
+    isScrubbing,
     panDirectionValue,
-    panHitSlop,
+    onSlidingStart,
     prevX,
-    progress,
-    shareValueToSeconds,
-    snapThreshold,
+    bubbleOpacity,
+    onActiveSlider,
     step,
+    snapThreshold,
+    disableTrackFollow,
+    onSlidingComplete,
+    nearestMarkX,
     thresholdDistance,
+    progress,
     xToProgress,
+    shareValueToSeconds,
+    disableTrackPress,
   ]);
   const onSingleTapEvent = useMemo(
     () =>
@@ -1053,7 +1089,6 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
             />
           )}
         </Animated.View>
-
         <Animated.View
           style={[
             styles.bubble,
