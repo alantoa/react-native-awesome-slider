@@ -1,7 +1,14 @@
 export default {
-  index: 'Introduction',
-  'getting-started': 'Getting Started',
-  usage: 'Usage',
-  'api-reference': 'API Reference',
-  examples: 'Examples',
+  index: {
+    type: 'page',
+    title: 'Nextra',
+    display: 'hidden',
+    theme: {
+      layout: 'raw',
+    },
+  },
+  docs: {
+    type: 'page',
+    title: 'Documentation',
+  },
 };

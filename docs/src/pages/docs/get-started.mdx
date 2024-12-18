@@ -1,7 +1,3 @@
----
-title: Getting Started
----
-
 # Getting Started
 
 ## Installation
@@ -58,29 +54,3 @@ Use the Theme object to customize colors:
   }}
 />
 ```
-
-## Add Haptic Feedback
-
-1. Add haptics feedback library to your project:
-
-   - [Expo](https://docs.expo.dev/versions/latest/sdk/haptics/)
-   - [NON-Expo](https://github.com/junina-de/react-native-haptic-feedback)
-
-2. Add onHapticFeedback callback to your slider component:
-
-```jsx
-<Slider
-  onHapticFeedback={() => {
-    ReactNativeHapticFeedback.trigger('impactLight', {
-      enableVibrateFallback: true,
-      ignoreAndroidSystemSettings: false,
-    });
-  }}
-/>
-```
-
-3. Set haptic mode - use `HapticModeEnum.STEP` if you have enabled the 'step' prop, otherwise use `HapticModeEnum.BOTH`.
-
-4. ✅ Done!
-
-For more usage examples, please check out the [Example](https://github.com/alantoa/react-native-awesome-slider/tree/main/example) directory.

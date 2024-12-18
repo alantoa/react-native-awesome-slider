@@ -8,10 +8,13 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "^13.0.0",
-    "nextra": "^2.0.0",
-    "nextra-theme-docs": "^2.0.0",
+    "next": "^15.1.1",
+    "nextra": "^3.2.5",
+    "nextra-theme-docs": "^3.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
   }
 }
