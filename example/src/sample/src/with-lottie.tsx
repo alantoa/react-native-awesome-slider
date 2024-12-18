@@ -1,13 +1,14 @@
 import { Slider, PanDirectionEnum } from 'react-native-awesome-slider';
-import { StyleSheet, View, Platform } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import {
   useSharedValue,
   useAnimatedProps,
   withTiming,
 } from 'react-native-reanimated';
-import { Text } from '../../components';
 import LottieView from 'lottie-react-native';
 import Animated from 'react-native-reanimated';
+import { SliderCard } from './components/slider-card';
+import { COLORS } from './constants';
 
 const AnimatedLottieView = Animated.createAnimatedComponent(LottieView);
 
@@ -43,21 +44,16 @@ export function WithLottie() {
   }
 
   return (
-    <View style={styles.card}>
-      <Text tx="Lottie thumb" h3 style={styles.title} />
+    <SliderCard title="Lottie Animation">
       <Slider
         progress={progress}
         style={styles.slider}
         minimumValue={min}
         maximumValue={max}
-        theme={{
-          minimumTrackTintColor: '#fc8bab',
-          maximumTrackTintColor: 'rgba(0,0,0,.1)',
-        }}
-        panDirectionValue={thumbLottieValue}
-        renderBubble={() => null}
+        theme={COLORS.sliderTheme}
         containerStyle={styles.borderRadius}
-        thumbWidth={60}
+        panDirectionValue={thumbLottieValue}
+        thumbWidth={50}
         renderThumb={() => (
           <AnimatedLottieView
             animatedProps={thumbAnimatedProps}
@@ -66,7 +62,7 @@ export function WithLottie() {
           />
         )}
       />
-    </View>
+    </SliderCard>
   );
 }
 

@@ -6,35 +6,28 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import {
-  Basic,
-  WithCache,
-  WithCustomBubble,
-  WithHaptic,
-  WithLottie,
-  WithDisableTrack,
-  WithStep,
-  BinanceSlider,
-} from './sample';
+import { Examples } from './sample';
+
+import { COLORS } from './sample/src/constants';
 
 export default function App() {
   return (
     <GestureHandlerRootView style={styles.full}>
       <SafeAreaView style={styles.full}>
+        <StatusBar barStyle="light-content" />
         <View style={styles.full}>
           <ScrollView
             style={styles.view}
             contentContainerStyle={styles.contentContainerStyle}
           >
-            <StatusBar barStyle={'dark-content'} />
-            <BinanceSlider />
-            <Basic />
-            <WithCache />
-            <WithCustomBubble />
-            <WithHaptic />
-            <WithLottie />
-            <WithDisableTrack />
-            <WithStep />
+            <Examples.Basic />
+            <Examples.BinanceSlider />
+            <Examples.WithStep />
+            <Examples.WithCache />
+            <Examples.WithHaptic />
+            <Examples.WithLottie />
+            <Examples.WithCustomBubble />
+            <Examples.WithDisableTrack />
           </ScrollView>
         </View>
       </SafeAreaView>
@@ -45,7 +38,7 @@ export default function App() {
 const styles = StyleSheet.create({
   full: {
     flex: 1,
-    backgroundColor: '#E5E5E5',
+    backgroundColor: COLORS.backgroundColor,
   },
   view: {
     paddingHorizontal: 20,

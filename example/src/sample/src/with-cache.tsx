@@ -3,6 +3,8 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import { Text } from '../../components';
 import { useRef, useState } from 'react';
+import { COLORS } from './constants';
+import { SliderCard } from './components/slider-card';
 
 export function WithCache() {
   const [disable, setDisable] = useState(false);
@@ -25,8 +27,7 @@ export function WithCache() {
   };
 
   return (
-    <View style={styles.card}>
-      <Text tx="Cache Example" h3 style={styles.title} />
+    <SliderCard title="Cache Example">
       <Slider
         style={styles.container}
         progress={progress}
@@ -35,13 +36,14 @@ export function WithCache() {
         disable={disable}
         cache={cache}
         thumbScaleValue={thumbScaleValue}
+        theme={COLORS.sliderTheme}
       />
       <View style={styles.control}>
         <TouchableOpacity
           onPress={() => setDisable(!disable)}
           style={styles.btn}
         >
-          <Text tx="disable" />
+          <Text style={styles.btnText} tx="disable" />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
@@ -49,7 +51,7 @@ export function WithCache() {
           }}
           style={styles.btn}
         >
-          <Text tx="show cache" />
+          <Text style={styles.btnText} tx="show cache" />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
@@ -57,38 +59,22 @@ export function WithCache() {
           }}
           style={styles.btn}
         >
-          <Text tx="hide cache" />
+          <Text style={styles.btnText} tx="hide cache" />
         </TouchableOpacity>
         <TouchableOpacity onPress={openTimer} style={styles.btn}>
-          <Text tx="🎬 cache" />
+          <Text style={styles.btnText} tx="🎬 cache" />
         </TouchableOpacity>
         <TouchableOpacity onPress={clearTimer} style={styles.btn}>
-          <Text tx="🛑 cache" />
+          <Text style={styles.btnText} tx="🛑 cache" />
         </TouchableOpacity>
       </View>
-    </View>
+    </SliderCard>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: 16,
-    padding: 12,
-    marginTop: 20,
-    shadowColor: '#000',
-    backgroundColor: '#fff',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    elevation: 1,
-  },
   container: {
     flex: 1,
-  },
-  title: {
-    marginBottom: 12,
   },
   control: {
     flexDirection: 'row',
@@ -104,8 +90,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginRight: 12,
     marginTop: 12,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.inputBackgroundColor,
     borderWidth: 1,
-    borderColor: '#e2e2e2',
+    borderColor: COLORS.borderColor,
+  },
+  btnText: {
+    color: COLORS.textColor,
   },
 });

@@ -1,17 +1,19 @@
 import { Slider } from 'react-native-awesome-slider';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, Image, View } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
-import { Text } from '../../components';
+import { COLORS } from './constants';
+import { SliderCard } from './components/slider-card';
+
 const thumbWidth = 15;
 const bubbleWidth = 90;
+
 export function WithCustomBubble() {
   const progress = useSharedValue(30);
   const min = useSharedValue(0);
   const max = useSharedValue(100);
 
   return (
-    <View style={styles.card}>
-      <Text tx="Custom bubble & thumb" h3 style={styles.title} />
+    <SliderCard title="Custom bubble & thumb">
       <Slider
         progress={progress}
         style={styles.slider}
@@ -30,28 +32,13 @@ export function WithCustomBubble() {
             />
           </View>
         )}
+        theme={COLORS.sliderTheme}
       />
-    </View>
+    </SliderCard>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: 16,
-    padding: 12,
-    marginTop: 20,
-    shadowColor: '#000',
-    backgroundColor: '#fff',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    elevation: 1,
-  },
-  title: {
-    marginBottom: 12,
-  },
   slider: {
     marginBottom: 20,
     marginTop: 12,
@@ -61,7 +48,7 @@ const styles = StyleSheet.create({
     height: thumbWidth + 10,
     borderRadius: 2,
     overflow: 'hidden',
-    backgroundColor: '#000',
+    backgroundColor: COLORS.backgroundColor,
   },
   customBubble: {
     alignItems: 'center',

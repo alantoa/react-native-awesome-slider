@@ -1,5 +1,11 @@
 import { Slider } from 'react-native-awesome-slider';
-import { StyleSheet, Switch, TextInput, View } from 'react-native';
+import {
+  StyleSheet,
+  Switch,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {
   SharedValue,
   useAnimatedReaction,
@@ -9,14 +15,14 @@ import {
 import { Text } from '../../components';
 import Animated from 'react-native-reanimated';
 import { useCallback, useState } from 'react';
+import { COLORS } from './constants';
+import { SliderCard } from './components/slider-card';
 
 const markWidth = 8;
 const thumbWidth = markWidth + 4;
-const backgroundColor = '#202630';
-const markColor = '#EAECEF';
-const borderColor = '#343B47';
-const bubbleBackgroundColor = '#E0E2E5';
-const bubbleTextColor = '#262C36';
+const backgroundColor = COLORS.backgroundColor;
+const markColor = COLORS.markColor;
+const borderColor = COLORS.borderColor;
 
 const Mark = ({ slideOver }: { slideOver?: boolean }) => {
   return (
@@ -73,30 +79,67 @@ export function BinanceSlider() {
     [value]
   );
   return (
-    <View style={styles.card}>
-      <Text tx="Binance Slider" h4 style={styles.title} />
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <TextInput
-          style={{
-            backgroundColor: 'grey',
-            color: 'blue',
-            marginBottom: 4,
-            height: 40,
-            width: 200,
-          }}
-          defaultValue={value.toString()}
-          placeholder="Enter value"
-          onChangeText={(text) => {
-            setValue(Number(text));
-          }}
-        />
-        <View
-          style={{
-            transform: [{ scale: 0.6 }],
-          }}
-        >
-          <Text style={styles.desc} tx="forceSnapToStep" />
-          <Switch value={forceSnapToStep} onValueChange={setForceSnapToStep} />
+    <SliderCard title="Binance Slider">
+      <View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={{
+              color: markColor,
+              height: 38,
+              borderRadius: 8,
+              paddingHorizontal: 40,
+              fontWeight: '500',
+              fontSize: 14,
+              width: 120,
+            }}
+            focusable={false}
+            autoFocus={false}
+            keyboardType="numeric"
+            defaultValue={value.toString() ?? `0`}
+            placeholder="Enter value"
+            onChangeText={(text) => {
+              if (!isNaN(Number(text))) {
+                if (Number(text) > max.value) {
+                  setValue(max.value);
+                } else if (Number(text) < min.value) {
+                  setValue(min.value);
+                } else {
+                  setValue(Number(text));
+                }
+              }
+            }}
+          />
+
+          <TouchableOpacity
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              position: 'absolute',
+              left: 12,
+            }}
+            onPress={() => {
+              setValue(value - 1);
+            }}
+          >
+            <Text style={{ fontSize: 14, fontWeight: '500', color: markColor }}>
+              -
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              position: 'absolute',
+              right: 12,
+            }}
+            onPress={() => {
+              setValue(value + 1);
+            }}
+          >
+            <Text style={{ fontSize: 14, fontWeight: '500', color: markColor }}>
+              +
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
       <Slider
@@ -135,12 +178,7 @@ export function BinanceSlider() {
           },
           [progress]
         )}
-        theme={{
-          maximumTrackTintColor: borderColor,
-          minimumTrackTintColor: markColor,
-          bubbleBackgroundColor: bubbleBackgroundColor,
-          bubbleTextColor: bubbleTextColor,
-        }}
+        theme={COLORS.sliderTheme}
         renderThumb={() => <Thumb />}
         onValueChange={useCallback((value: number) => {
           setValue(Math.round(value));
@@ -151,7 +189,11 @@ export function BinanceSlider() {
         maximumValue={max}
         thumbScaleValue={thumbScaleValue}
       />
-    </View>
+      <View style={styles.switchContainer}>
+        <Text style={styles.desc} tx="forceSnapToStep" />
+        <Switch value={forceSnapToStep} onValueChange={setForceSnapToStep} />
+      </View>
+    </SliderCard>
   );
 }
 const MarkWithAnimatedView = ({
@@ -176,26 +218,13 @@ const MarkWithAnimatedView = ({
   );
 };
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: 8,
-    padding: 14,
-    marginTop: 20,
-    shadowColor: '#000',
-    backgroundColor,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    elevation: 1,
-  },
-  title: {
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.inputBackgroundColor,
+    height: 38,
+    justifyContent: 'center',
     marginBottom: 12,
-    color: markColor,
-  },
-  desc: {
-    marginBottom: 12,
-    color: markColor,
   },
   slider: {
     marginBottom: 20,
@@ -203,5 +232,14 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 38,
+  },
+  desc: {
+    color: COLORS.descriptionColor,
   },
 });
