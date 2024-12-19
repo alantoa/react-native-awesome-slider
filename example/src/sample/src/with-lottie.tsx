@@ -67,22 +67,6 @@ export function WithLottie() {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: 16,
-    padding: 12,
-    marginTop: 20,
-    shadowColor: '#000',
-    backgroundColor: '#fff',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.1,
-    elevation: 1,
-  },
-  title: {
-    marginBottom: 12,
-  },
   slider: {
     marginBottom: 20,
     marginTop: 12,

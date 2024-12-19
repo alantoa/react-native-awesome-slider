@@ -1,24 +1,18 @@
 import { Slider } from 'react-native-awesome-slider';
-import {
-  StyleSheet,
-  Switch,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Platform, StyleSheet, TextInput, Pressable, View } from 'react-native';
 import {
   SharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
 } from 'react-native-reanimated';
-import { Text } from '../../components';
 import Animated from 'react-native-reanimated';
 import { useCallback, useState } from 'react';
 import { COLORS } from './constants';
 import { SliderCard } from './components/slider-card';
+import { Text, Switch } from '../../components';
 
-const markWidth = 8;
+const markWidth = 10;
 const thumbWidth = markWidth + 4;
 const backgroundColor = COLORS.backgroundColor;
 const markColor = COLORS.markColor;
@@ -46,8 +40,8 @@ const Thumb = () => {
   return (
     <View
       style={{
-        width: thumbWidth + 2,
-        height: thumbWidth + 2,
+        width: thumbWidth,
+        height: thumbWidth,
         transform: [{ rotate: '45deg' }],
         backgroundColor: backgroundColor,
         borderWidth: 1,
@@ -60,6 +54,8 @@ const Thumb = () => {
 export function BinanceSlider() {
   const [value, setValue] = useState(25);
   const [forceSnapToStep, setForceSnapToStep] = useState(false);
+  const [snapThreshold, setSnapThreshold] = useState(6);
+
   const progress = useSharedValue(100);
   const min = useSharedValue(0);
   const max = useSharedValue(100);
@@ -92,10 +88,11 @@ export function BinanceSlider() {
               fontSize: 14,
               width: 120,
             }}
-            focusable={false}
             autoFocus={false}
-            keyboardType="numeric"
-            defaultValue={value.toString() ?? `0`}
+            inputMode="numeric"
+            {...(Platform.OS === 'web'
+              ? { value: value.toString() }
+              : { defaultValue: value.toString() })}
             placeholder="Enter value"
             onChangeText={(text) => {
               if (!isNaN(Number(text))) {
@@ -110,7 +107,7 @@ export function BinanceSlider() {
             }}
           />
 
-          <TouchableOpacity
+          <Pressable
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -124,8 +121,8 @@ export function BinanceSlider() {
             <Text style={{ fontSize: 14, fontWeight: '500', color: markColor }}>
               -
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          </Pressable>
+          <Pressable
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -139,13 +136,13 @@ export function BinanceSlider() {
             <Text style={{ fontSize: 14, fontWeight: '500', color: markColor }}>
               +
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
       <Slider
         steps={step}
         thumbWidth={thumbWidth}
-        sliderHeight={2}
+        sliderHeight={3}
         isScrubbing={isScrubbing}
         disableTrackPress
         // thumbTouchSize={thumbWidth * 2}
@@ -160,7 +157,7 @@ export function BinanceSlider() {
         bubble={useCallback((s: number) => {
           return `${Math.round(s)}%`;
         }, [])}
-        snapThreshold={6}
+        snapThreshold={snapThreshold}
         snapThresholdMode="absolute"
         markWidth={markWidth}
         renderMark={useCallback(
@@ -189,9 +186,32 @@ export function BinanceSlider() {
         maximumValue={max}
         thumbScaleValue={thumbScaleValue}
       />
-      <View style={styles.switchContainer}>
+      <View style={COLORS.optionStyle}>
         <Text style={styles.desc} tx="forceSnapToStep" />
         <Switch value={forceSnapToStep} onValueChange={setForceSnapToStep} />
+      </View>
+      <View style={COLORS.optionStyle}>
+        <Text style={styles.desc} tx="snapThreshold" />
+        <TextInput
+          style={{
+            color: markColor,
+            height: 32,
+            borderRadius: 8,
+            fontWeight: '500',
+            fontSize: 14,
+            width: 60,
+            borderWidth: 1,
+            borderColor: COLORS.borderColor,
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+          }}
+          inputMode="numeric"
+          value={snapThreshold.toString()}
+          onChangeText={(text) => {
+            setSnapThreshold(Number(text));
+          }}
+        />
       </View>
     </SliderCard>
   );
@@ -233,12 +253,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  switchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: 38,
-  },
+
   desc: {
     color: COLORS.descriptionColor,
   },

@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, useRef, memo } from 'react';
+import React, { useImperativeHandle, useRef, memo, useState } from 'react';
 import {
   StyleProp,
   TextInput,
@@ -6,9 +6,11 @@ import {
   View,
   ViewStyle,
   StyleSheet,
+  Platform,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { palette } from './theme/palette';
+import { Text } from 'react-native';
 
 const BUBBLE_STYLE: ViewStyle = {
   padding: 2,
@@ -52,10 +54,15 @@ export const BubbleComponent = React.forwardRef<BubbleRef, BubbleProps>(
     ref
   ) => {
     const textRef = useRef<TextInput>(null);
+    const [inputValue, setInputValue] = useState('');
 
     useImperativeHandle(ref, () => ({
       setText: (text: string) => {
-        textRef.current?.setNativeProps({ text });
+        if (Platform.OS === 'web') {
+          setInputValue(text);
+        } else {
+          textRef.current?.setNativeProps({ text });
+        }
       },
     }));
     return (
@@ -67,14 +74,20 @@ export const BubbleComponent = React.forwardRef<BubbleRef, BubbleProps>(
             maxWidth: bubbleMaxWidth,
           }}
         >
-          <TextInput
-            ref={textRef}
-            textAlign="center"
-            style={[styles.textStyle, { color: textColor }, textStyle]}
-            defaultValue=""
-            caretHidden
-            editable={false}
-          />
+          {Platform.OS !== 'web' ? (
+            <TextInput
+              ref={textRef}
+              textAlign="center"
+              style={[styles.textStyle, { color: textColor }, textStyle]}
+              caretHidden
+              defaultValue=""
+              editable={false}
+            />
+          ) : (
+            <Text style={[styles.textStyle, { color: textColor }, textStyle]}>
+              {inputValue}
+            </Text>
+          )}
         </Animated.View>
         <View
           style={[

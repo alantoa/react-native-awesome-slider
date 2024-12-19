@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     height: thumbWidth + 10,
     borderRadius: 2,
     overflow: 'hidden',
-    backgroundColor: COLORS.backgroundColor,
+    backgroundColor: COLORS.bubbleBackgroundColor,
   },
   customBubble: {
     alignItems: 'center',

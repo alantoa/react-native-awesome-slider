@@ -1,26 +1,31 @@
 import { Slider } from 'react-native-awesome-slider';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Pressable } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
-import { Text } from '../../components';
+import { Text, Switch } from '../../components';
 import { useRef, useState } from 'react';
 import { COLORS } from './constants';
 import { SliderCard } from './components/slider-card';
 
 export function WithCache() {
   const [disable, setDisable] = useState(false);
-  const progress = useSharedValue(30);
+  const progress = useSharedValue(35);
   const thumbScaleValue = useSharedValue(1);
   const min = useSharedValue(0);
   const max = useSharedValue(100);
-  const cache = useSharedValue(0);
+  const cache = useSharedValue(70);
   const timer = useRef<any>(null);
+  const [timerText, setTimerText] = useState('Play');
 
-  const openTimer = () => {
+  const toggleTimer = () => {
     if (!timer.current) {
       timer.current = setInterval(() => {
-        cache.value = cache.value + 1;
+        cache.value = cache.value + 0.8;
+        progress.value = progress.value + 0.2;
       }, 1000);
+    } else {
+      clearTimer();
     }
+    setTimerText(timer.current ? 'Stop' : 'Play');
   };
   const clearTimer = () => {
     timer.current = clearTimeout(timer.current);
@@ -39,34 +44,16 @@ export function WithCache() {
         theme={COLORS.sliderTheme}
       />
       <View style={styles.control}>
-        <TouchableOpacity
-          onPress={() => setDisable(!disable)}
-          style={styles.btn}
-        >
-          <Text style={styles.btnText} tx="disable" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            cache.value = 40;
-          }}
-          style={styles.btn}
-        >
-          <Text style={styles.btnText} tx="show cache" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            cache.value = 0;
-          }}
-          style={styles.btn}
-        >
-          <Text style={styles.btnText} tx="hide cache" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={openTimer} style={styles.btn}>
-          <Text style={styles.btnText} tx="🎬 cache" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={clearTimer} style={styles.btn}>
-          <Text style={styles.btnText} tx="🛑 cache" />
-        </TouchableOpacity>
+        <View style={COLORS.optionStyle}>
+          <Text style={COLORS.optionTextStyle} tx="disable" />
+          <Switch value={disable} onValueChange={setDisable} />
+        </View>
+        <View style={COLORS.optionStyle}>
+          <Text style={COLORS.optionTextStyle} tx="🎬 cache" />
+          <Pressable onPress={toggleTimer} style={styles.btn}>
+            <Text style={styles.btnText} tx={timerText} />
+          </Pressable>
+        </View>
       </View>
     </SliderCard>
   );
@@ -77,10 +64,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   control: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 12,
-    flexWrap: 'wrap',
+    paddingTop: 8,
   },
   btn: {
     alignItems: 'center',
@@ -88,8 +72,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 8,
     paddingHorizontal: 12,
-    marginRight: 12,
-    marginTop: 12,
     backgroundColor: COLORS.inputBackgroundColor,
     borderWidth: 1,
     borderColor: COLORS.borderColor,

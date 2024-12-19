@@ -18,6 +18,7 @@ export default function App() {
         <View style={styles.full}>
           <ScrollView
             style={styles.view}
+            centerContent
             contentContainerStyle={styles.contentContainerStyle}
           >
             <Examples.Basic />
@@ -25,9 +26,9 @@ export default function App() {
             <Examples.WithStep />
             <Examples.WithCache />
             <Examples.WithHaptic />
-            <Examples.WithLottie />
             <Examples.WithCustomBubble />
             <Examples.WithDisableTrack />
+            <Examples.WithLottie />
           </ScrollView>
         </View>
       </SafeAreaView>
@@ -43,6 +44,9 @@ const styles = StyleSheet.create({
   view: {
     paddingHorizontal: 20,
     paddingBottom: 40,
+    maxWidth: 800,
+    marginHorizontal: 'auto',
+    width: '100%',
   },
   contentContainerStyle: {
     paddingBottom: 100,

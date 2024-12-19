@@ -24,6 +24,7 @@ import Animated, {
 import { Bubble, BubbleRef } from './ballon';
 import { palette } from './theme/palette';
 import { clamp } from './utils';
+import { HitSlop } from './hit-slop';
 
 const formatSeconds = (second: number) => `${Math.round(second * 100) / 100}`;
 const hitSlop = {
@@ -963,9 +964,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       if (snappingEnabled) {
         return undefined;
       }
-      const currentValue =
-        (progress.value / (minimumValue.value + maximumValue.value)) *
-        (width.value - (disableTrackFollow ? thumbWidth : 0));
+      const currentValue = progressToValue(progress.value);
       return clamp(currentValue, 0, width.value - thumbWidth);
     },
     (data) => {
@@ -994,125 +993,127 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
 
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View
-        testID={testID}
-        style={[styles.view, { height: sliderHeight }, style]}
-        hitSlop={panHitSlop}
-        onLayout={onLayout}
-      >
+      <HitSlop {...panHitSlop}>
         <Animated.View
-          style={StyleSheet.flatten([
-            styles.slider,
-            {
-              height: sliderHeight,
-              backgroundColor: _theme.maximumTrackTintColor,
-            },
-            containerStyle,
-          ])}
+          testID={testID}
+          style={[styles.view, { height: sliderHeight }, style]}
+          hitSlop={panHitSlop}
+          onLayout={onLayout}
         >
           <Animated.View
-            style={[
-              styles.cache,
+            style={StyleSheet.flatten([
+              styles.slider,
               {
-                backgroundColor: _theme.cacheTrackTintColor,
+                height: sliderHeight,
+                backgroundColor: _theme.maximumTrackTintColor,
               },
-              animatedCacheXStyle,
-            ]}
-          />
-          <Animated.View
-            style={[
-              styles.heartbeat,
-              {
-                backgroundColor: _theme.heartbeatColor,
-              },
-              animatedHeartbeatStyle,
-            ]}
-          />
-          <Animated.View
-            style={[
-              styles.seek,
-              {
-                backgroundColor: disable
-                  ? _theme.disableMinTrackTintColor
-                  : _theme.minimumTrackTintColor,
-              },
-              animatedSeekStyle,
-            ]}
-          />
-        </Animated.View>
-        {sliderWidth > 0 && step
-          ? new Array(step + 1).fill(0).map((_, i) => {
-              const left = Math.round(
-                sliderWidth * (i / step) - (i / step) * markWidth
-              );
+              containerStyle,
+            ])}
+          >
+            <Animated.View
+              style={[
+                styles.cache,
+                {
+                  backgroundColor: _theme.cacheTrackTintColor,
+                },
+                animatedCacheXStyle,
+              ]}
+            />
+            <Animated.View
+              style={[
+                styles.heartbeat,
+                {
+                  backgroundColor: _theme.heartbeatColor,
+                },
+                animatedHeartbeatStyle,
+              ]}
+            />
+            <Animated.View
+              style={[
+                styles.seek,
+                {
+                  backgroundColor: disable
+                    ? _theme.disableMinTrackTintColor
+                    : _theme.minimumTrackTintColor,
+                },
+                animatedSeekStyle,
+              ]}
+            />
+          </Animated.View>
+          {sliderWidth > 0 && step
+            ? new Array(step + 1).fill(0).map((_, i) => {
+                const left = Math.round(
+                  sliderWidth * (i / step) - (i / step) * markWidth
+                );
 
-              return renderMark ? (
-                <View
-                  key={i}
-                  style={[
-                    styles.customMarkContainer,
-                    {
-                      left,
-                      width: markWidth,
-                    },
-                  ]}
-                >
-                  {renderMark({ index: i })}
-                </View>
-              ) : (
-                <View
-                  key={i}
-                  style={[
-                    styles.mark,
-                    {
-                      width: markWidth,
-                      borderRadius: markWidth,
-                      left,
-                    },
-                    markStyle,
-                  ]}
-                />
-              );
-            })
-          : null}
-        <Animated.View style={[styles.thumb, animatedThumbStyle]}>
-          {renderThumb ? (
-            renderThumb()
-          ) : (
-            <View
-              style={{
-                backgroundColor: _theme.minimumTrackTintColor,
-                height: thumbWidth,
-                width: thumbWidth,
-                borderRadius: thumbWidth,
-              }}
-            />
-          )}
+                return renderMark ? (
+                  <View
+                    key={i}
+                    style={[
+                      styles.customMarkContainer,
+                      {
+                        left,
+                        width: markWidth,
+                      },
+                    ]}
+                  >
+                    {renderMark({ index: i })}
+                  </View>
+                ) : (
+                  <View
+                    key={i}
+                    style={[
+                      styles.mark,
+                      {
+                        width: markWidth,
+                        borderRadius: markWidth,
+                        left,
+                      },
+                      markStyle,
+                    ]}
+                  />
+                );
+              })
+            : null}
+          <Animated.View style={[styles.thumb, animatedThumbStyle]}>
+            {renderThumb ? (
+              renderThumb()
+            ) : (
+              <View
+                style={{
+                  backgroundColor: _theme.minimumTrackTintColor,
+                  height: thumbWidth,
+                  width: thumbWidth,
+                  borderRadius: thumbWidth,
+                }}
+              />
+            )}
+          </Animated.View>
+          <Animated.View
+            style={[
+              styles.bubble,
+              {
+                left: -bubbleMaxWidth / 2 + bubbleOffsetX,
+                width: bubbleMaxWidth,
+              },
+              animatedBubbleStyle,
+            ]}
+          >
+            {renderBubble ? (
+              renderBubble()
+            ) : (
+              <Bubble
+                ref={bubbleRef}
+                color={_theme.bubbleBackgroundColor}
+                textColor={_theme.bubbleTextColor}
+                textStyle={bubbleTextStyle}
+                containerStyle={bubbleContainerStyle}
+                bubbleMaxWidth={bubbleMaxWidth}
+              />
+            )}
+          </Animated.View>
         </Animated.View>
-        <Animated.View
-          style={[
-            styles.bubble,
-            {
-              left: -bubbleMaxWidth / 2 + bubbleOffsetX,
-              width: bubbleMaxWidth,
-            },
-            animatedBubbleStyle,
-          ]}
-        >
-          {renderBubble ? (
-            renderBubble()
-          ) : (
-            <Bubble
-              ref={bubbleRef}
-              color={_theme.bubbleBackgroundColor}
-              textColor={_theme.bubbleTextColor}
-              textStyle={bubbleTextStyle}
-              containerStyle={bubbleContainerStyle}
-              bubbleMaxWidth={bubbleMaxWidth}
-            />
-          )}
-        </Animated.View>
-      </Animated.View>
+      </HitSlop>
     </GestureDetector>
   );
 });

@@ -9,21 +9,22 @@
   },
   "dependencies": {
     "@expo/webpack-config": "~19.0.1",
-    "expo": "^51.0.38",
-    "expo-haptics": "~13.0.1",
-    "expo-splash-screen": "~0.27.6",
-    "expo-status-bar": "~1.12.1",
-    "lottie-react-native": "6.7.0",
+    "expo": "^52.0.20",
+    "expo-haptics": "~14.0.0",
+    "expo-splash-screen": "~0.29.18",
+    "expo-status-bar": "~2.0.0",
+    "lottie-react-native": "7.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.74.5",
-    "react-native-gesture-handler": "~2.20.0",
+    "react-native": "0.76.5",
+    "react-native-gesture-handler": "~2.20.2",
     "react-native-reanimated": "3.16.1",
-    "react-native-web": "~0.19.6"
+    "react-native-web": "~0.19.13",
+    "react-native-web-lottie": "^1.4.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.0",
-    "@types/react": "~18.2.79",
+    "@babel/core": "^7.25.2",
+    "@types/react": "~18.3.12",
     "babel-loader": "^8.1.0",
     "babel-plugin-module-resolver": "^5.0.0",
     "typescript": "^5.3.3"
