@@ -1,17 +1,24 @@
-import nextra from 'nextra';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+// import { log } from 'console';
+// import nextra from 'nextra';
+// import { dirname, join } from 'path';
+// import { fileURLToPath } from 'url';
 
-const withNextra = nextra({
-  theme: 'nextra-theme-docs',
-  themeConfig: './theme.config.tsx',
-  latex: true,
-  search: {
-    codeblocks: false,
-  },
-});
+// const withNextra = nextra({
+//   theme: 'nextra-theme-docs',
+//   themeConfig: './theme.config.tsx',
+//   latex: true,
+//   search: {
+//     codeblocks: false,
+//   },
+// });
 
-export default withNextra({
+export default {
+  transpilePackages: [
+    'react-native-web',
+    'react-native-awesome-slider',
+    'react-native-gesture-handler',
+    'react-native-reanimated',
+  ],
   webpack(config, options) {
     if (!config.resolve) {
       config.resolve = {};
@@ -45,16 +52,4 @@ export default withNextra({
 
     return config;
   },
-  reactStrictMode: true,
-  transpilePackages: [
-    'react-native',
-    'react-native-web',
-    'expo',
-    'react-native-awesome-slider',
-    'react-native-reanimated',
-    'react-native-gesture-handler',
-  ],
-  experimental: {
-    forceSwcTransforms: true,
-  },
-});
+};

@@ -1,0 +1,8 @@
+{
+  "presets": ["next/babel"],
+  "plugins": [
+    ["@babel/plugin-transform-modules-commonjs"],
+    "@babel/plugin-proposal-do-expressions",
+    "react-native-reanimated/plugin"
+  ]
+}

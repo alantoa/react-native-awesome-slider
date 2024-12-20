@@ -85,5 +85,6 @@ example/android
 example/.expo
 
 # Docs
-docs/.next
-docs/node_modules
+.next
+node_modules
+.yarn

@@ -83,10 +83,9 @@
     "react-native-reanimated": ">=3.0.0"
   },
   "workspaces": [
-    "example",
-    "docs"
+    "example"
   ],
-  "packageManager": "yarn@3.6.1",
+  "packageManager": "yarn@4.5.3",
   "engines": {
     "node": ">= 18.0.0"
   },

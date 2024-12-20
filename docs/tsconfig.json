@@ -1,5 +1,4 @@
 {
-  "extends": "../tsconfig",
   "include": [
     "next-env.d.ts",
     "**/*.ts",
@@ -14,6 +13,18 @@
     "noEmit": false,
     "incremental": false,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "skipLibCheck": true,
+    "strict": false,
+    "module": "esnext",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true
   }
 }
