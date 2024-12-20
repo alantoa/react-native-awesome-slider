@@ -8,6 +8,8 @@ import { TABS, TabId } from './slider/tabs-config';
 const title = 'React Native Awesome Slider';
 const description =
   'A versatile, responsive react native abd web Slider component.';
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://slider.0xalt.xyz/';
+const ogImage = `${baseUrl}/og-image.png`;
 
 export const IndexPage = () => {
   const [activeTab, setActiveTab] = useState<TabId>(TABS[1].id);
@@ -25,13 +27,13 @@ export const IndexPage = () => {
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:image" content={ogImage} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content="/og-image.png" />
+        <meta name="twitter:image" content={ogImage} />
       </Head>
       <div className="flex flex-col items-center justify-center relative overflow-hidden min-h-screen bg-[#0A0A0A]">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0f_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0f_1px,transparent_1px)] bg-[size:24px_24px]" />
