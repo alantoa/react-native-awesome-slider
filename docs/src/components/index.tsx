@@ -1,7 +1,7 @@
 'use client';
 import { Slider } from 'react-native-awesome-slider';
 import { useSharedValue } from 'react-native-reanimated';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 export const IndexPage = () => {
   const progress = useSharedValue(30);
   const min = useSharedValue(0);
