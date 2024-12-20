@@ -1,4 +1,3 @@
-'use client';
 import Link from 'next/link';
 import Head from 'next/head';
 import { Tabs } from './tabs';
@@ -18,6 +17,7 @@ export const IndexPage = () => {
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
+        <link rel="icon" href="/favicon.ico" />
         <meta
           name="keywords"
           content="React Native, Slider, Reanimated, Gesture Handler"
@@ -25,9 +25,13 @@ export const IndexPage = () => {
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content="/og-image.png" />
       </Head>
       <div className="flex flex-col items-center justify-center relative overflow-hidden min-h-screen bg-[#0A0A0A]">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0f_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0f_1px,transparent_1px)] bg-[size:24px_24px]" />
