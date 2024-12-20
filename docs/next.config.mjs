@@ -1,55 +1,47 @@
-// import { log } from 'console';
-// import nextra from 'nextra';
-// import { dirname, join } from 'path';
-// import { fileURLToPath } from 'url';
+import nextra from 'nextra';
 
-// const withNextra = nextra({
-//   theme: 'nextra-theme-docs',
-//   themeConfig: './theme.config.tsx',
-//   latex: true,
-//   search: {
-//     codeblocks: false,
-//   },
-// });
+const withNextra = nextra({
+  theme: 'nextra-theme-docs',
+  themeConfig: './theme.config.tsx',
+  latex: true,
+  search: {
+    codeblocks: false,
+  },
+});
 
-export default {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   transpilePackages: [
     'react-native-web',
     'react-native-awesome-slider',
     'react-native-gesture-handler',
     'react-native-reanimated',
   ],
-  webpack(config, options) {
-    if (!config.resolve) {
-      config.resolve = {};
-    }
+  webpack: (config, { webpack }) => {
+    config.resolve = config.resolve || {};
+    config.module = config.module || {};
+    config.module.rules = config.module.rules || [];
 
     config.resolve.alias = Object.assign(config.resolve.alias || {}, {
       'react-native$': 'react-native-web',
-      'react-native/Libraries/EventEmitter/RCTDeviceEventEmitter$':
-        'react-native-web/dist/vendor/react-native/NativeEventEmitter/RCTDeviceEventEmitter',
-      'react-native/Libraries/vendor/emitter/EventEmitter$':
-        'react-native-web/dist/vendor/react-native/emitter/EventEmitter',
-      'react-native/Libraries/EventEmitter/NativeEventEmitter$':
-        'react-native-web/dist/vendor/react-native/NativeEventEmitter',
     });
-    config.plugins.push(
-      new options.webpack.DefinePlugin({
-        __DEV__: JSON.stringify(process.env.NODE_ENV !== 'production'),
-      })
-    );
+
     config.resolve.extensions = [
       '.web.js',
-      '.web.jsx',
       '.web.ts',
       '.web.tsx',
       ...(config.resolve.extensions || []),
     ];
 
-    if (!config.plugins) {
-      config.plugins = [];
-    }
+    config.plugins = config.plugins || [];
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        __DEV__: JSON.stringify(process.env.NODE_ENV !== 'production'),
+      })
+    );
 
     return config;
   },
 };
+
+export default withNextra(nextConfig);

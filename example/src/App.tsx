@@ -40,9 +40,9 @@ const styles = StyleSheet.create({
   full: {
     flex: 1,
     backgroundColor: COLORS.backgroundColor,
+    paddingHorizontal: 8,
   },
   view: {
-    paddingHorizontal: 20,
     paddingBottom: 40,
     maxWidth: 800,
     marginHorizontal: 'auto',

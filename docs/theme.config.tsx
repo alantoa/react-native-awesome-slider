@@ -1,7 +1,7 @@
 import { DocsThemeConfig, useConfig } from 'nextra-theme-docs';
 
 const themeConfig: DocsThemeConfig = {
-  logo: <span style={{ fontWeight: 'bold' }}>React Native Awesome Slider</span>,
+  logo: <span style={{ fontWeight: 'bold' }}>RNAS</span>,
   project: {
     link: 'https://github.com/alantoa/react-native-awesome-slider',
   },
