@@ -1,7 +1,7 @@
 {
   "name": "react-native-awesome-slider",
   "version": "2.7.1",
-  "description": "Slider component written using Reanimated v2, high performance/fps, also be used for video/audio scrubber.  ",
+  "description": "A versatile, responsive <Slider /> component for React Native and Web.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/src/index.d.ts",
@@ -44,19 +44,18 @@
     "type": "git",
     "url": "git+https://github.com/alantoa/react-native-awesome-slider.git"
   },
-  "author": "Toa <toacncom@gmail.com> (https://github.com/alantoa)",
+  "author": "Alan <toacncom@gmail.com> (https://github.com/alantoa)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/alantoa/react-native-awesome-slider/issues"
   },
-  "homepage": "https://github.com/alantoa/react-native-awesome-slider",
+  "homepage": "https://slider.0xalt.xyz",
   "devDependencies": {
     "@react-native/eslint-config": "^0.72.2",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",
     "@types/react": "~18.2.45",
     "@types/react-native": "0.70.0",
-    "commitlint": "^17.0.2",
     "del-cli": "^5.0.0",
     "eslint": "^8.4.1",
     "eslint-config-prettier": "^9.1.0",
@@ -94,11 +93,6 @@
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
-    ]
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
     ]
   },
   "release-it": {
@@ -150,7 +144,10 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "example/node_modules/",
+    "example/",
+    "docs/"
   ],
   "react-native-builder-bob": {
     "source": "src",
