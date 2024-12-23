@@ -79,6 +79,7 @@ export function WithCustomTrack() {
         maximumValue={max}
         steps={step}
         sliderHeight={sliderHeight}
+        renderBubble={() => <></>}
         renderMark={({ index }) => {
           if (index === 0 || index === step) return null;
           return (
