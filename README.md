@@ -10,8 +10,6 @@
   <br/>
 </div>
 
-## Features
-
 ### Core Features
 
 - Discrete sliding
