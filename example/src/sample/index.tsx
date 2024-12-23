@@ -6,6 +6,7 @@ import { WithDisableTrack } from './src/with-disable-track';
 import { WithHaptic } from './src/with-haptic';
 import { WithLottie } from './src/with-lottie';
 import { WithStep } from './src/with-step';
+import { WithCustomTrack } from './src/with-custom-track';
 
 export const Examples = {
   Basic,
@@ -16,6 +17,7 @@ export const Examples = {
   WithHaptic,
   WithLottie,
   WithStep,
+  WithCustomTrack,
 };
 
 export type ExampleType = keyof typeof Examples;

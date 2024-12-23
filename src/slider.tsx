@@ -153,7 +153,10 @@ export type AwesomeSliderProps = {
    * Render custom mark element. if you need to customize mark, you also need to set the `mark width`
    */
   renderMark?: ({ index }: { index: number }) => React.ReactNode;
-
+  /**
+   * Render custom track element. if you need to customize track, you also need to set the `mark width`
+   */
+  renderTrack?: ({ index }: { index: number }) => React.ReactNode;
   /**
    * Thumb elements width, default 15
    */
@@ -338,6 +341,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   renderBubble,
   renderThumb,
   renderMark,
+  renderTrack,
   setBubbleText,
   sliderHeight = 5,
   step: propsStep,
@@ -1042,36 +1046,52 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           </Animated.View>
           {sliderWidth > 0 && step
             ? new Array(step + 1).fill(0).map((_, i) => {
-                const left = Math.round(
-                  sliderWidth * (i / step) - (i / step) * markWidth
-                );
+                const markLeft =
+                  sliderWidth * (i / step) - (i / step) * markWidth;
+                const nextMarkLeft = sliderWidth * ((i + 1) / step);
 
-                return renderMark ? (
-                  <View
-                    key={i}
-                    style={[
-                      styles.customMarkContainer,
-                      {
-                        left,
-                        width: markWidth,
-                      },
-                    ]}
-                  >
-                    {renderMark({ index: i })}
-                  </View>
-                ) : (
-                  <View
-                    key={i}
-                    style={[
-                      styles.mark,
-                      {
-                        width: markWidth,
-                        borderRadius: markWidth,
-                        left,
-                      },
-                      markStyle,
-                    ]}
-                  />
+                return (
+                  <React.Fragment key={i}>
+                    {renderTrack && (
+                      <View
+                        style={[
+                          styles.customTrackContainer,
+                          {
+                            left: markLeft,
+                            width: nextMarkLeft - markLeft,
+                          },
+                        ]}
+                      >
+                        {renderTrack({ index: i })}
+                      </View>
+                    )}
+
+                    {renderMark ? (
+                      <View
+                        style={[
+                          styles.customMarkContainer,
+                          {
+                            left: markLeft,
+                            width: markWidth,
+                          },
+                        ]}
+                      >
+                        {renderMark({ index: i })}
+                      </View>
+                    ) : (
+                      <View
+                        style={[
+                          styles.mark,
+                          {
+                            width: markWidth,
+                            borderRadius: markWidth,
+                            left: markLeft,
+                          },
+                          markStyle,
+                        ]}
+                      />
+                    )}
+                  </React.Fragment>
                 );
               })
             : null}
@@ -1157,5 +1177,9 @@ const styles = StyleSheet.create({
   },
   bubble: {
     position: 'absolute',
+  },
+  customTrackContainer: {
+    position: 'absolute',
+    height: '100%',
   },
 });

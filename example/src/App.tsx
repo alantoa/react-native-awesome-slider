@@ -26,6 +26,7 @@ export default function App() {
             <Examples.WithStep />
             <Examples.WithCache />
             <Examples.WithHaptic />
+            <Examples.WithCustomTrack />
             <Examples.WithCustomBubble />
             <Examples.WithDisableTrack />
             <Examples.WithLottie />
