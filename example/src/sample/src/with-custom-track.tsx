@@ -40,7 +40,6 @@ const TrackSegment = ({
       opacity: index < progressStep ? 1 : 0,
     };
   });
-
   return (
     <View
       style={[
@@ -48,8 +47,8 @@ const TrackSegment = ({
         {
           borderTopLeftRadius: index === 0 ? 999 : 0,
           borderBottomLeftRadius: index === 0 ? 999 : 0,
-          borderTopRightRadius: index === step ? 999 : 0,
-          borderBottomRightRadius: index === step ? 999 : 0,
+          borderTopRightRadius: index === step - 1 ? 999 : 0,
+          borderBottomRightRadius: index === step - 1 ? 999 : 0,
           overflow: 'hidden',
         },
       ]}
