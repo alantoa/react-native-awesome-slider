@@ -132,9 +132,6 @@ export function SliderExample() {
           </Pressable>
           <Pressable
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              position: 'absolute',
               right: 0,
               ...styles.button,
             }}
