@@ -5671,6 +5671,7 @@ __metadata:
     babel-plugin-module-resolver: "npm:^5.0.0"
     expo: "npm:^52.0.20"
     expo-haptics: "npm:~14.0.0"
+    expo-localization: "npm:~16.0.0"
     expo-splash-screen: "npm:~0.29.18"
     expo-status-bar: "npm:~2.0.0"
     lottie-react-native: "npm:7.1.0"
@@ -8921,6 +8922,18 @@ __metadata:
     expo: "*"
     react: "*"
   checksum: 10/a4b72ab4c6c41f44c04f4146f3eda955941f2c7ee500a43da45baff6ca74d40ada8e253b38b4925802a4a003642b0dc0af15501712367b90ae606d5355f7f5f0
+  languageName: node
+  linkType: hard
+
+"expo-localization@npm:~16.0.0":
+  version: 16.0.0
+  resolution: "expo-localization@npm:16.0.0"
+  dependencies:
+    rtl-detect: "npm:^1.0.2"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+  checksum: 10/29c2fe136f8601aa1e4de07f02eac001bf75112946694fedf85fc6737f5806fc11dcdf00fb0b72902d8d364bc6bbfb0a7160cd4d970e4baf0be53d8c87cff670
   languageName: node
   linkType: hard
 
@@ -16186,6 +16199,13 @@ __metadata:
   bin:
     rimraf: ./bin.js
   checksum: 10/756419f2fa99aa119c46a9fc03e09d84ecf5421a80a72d1944c5088c9e4671e77128527a900a313ed9d3fdbdd37e2ae05486cd7e9116d5812d8c31f2399d7c86
+  languageName: node
+  linkType: hard
+
+"rtl-detect@npm:^1.0.2":
+  version: 1.1.2
+  resolution: "rtl-detect@npm:1.1.2"
+  checksum: 10/d19089c3b5f7a6fbabfa2c4724fcdf8694f313d196d44c8eee3625ba2e46418afe65b4da38e3e92822985291efd0656d85daa4b2ef296a46a65a702d0b156876
   languageName: node
   linkType: hard
 

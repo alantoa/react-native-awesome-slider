@@ -17,7 +17,6 @@ export function WithDisableTrack() {
         minimumValue={min}
         maximumValue={max}
         theme={COLORS.sliderTheme}
-        renderBubble={() => null}
         disableTapEvent
         disableTrackFollow
         hapticMode={HapticModeEnum.BOTH}

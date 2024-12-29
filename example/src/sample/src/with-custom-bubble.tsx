@@ -20,18 +20,12 @@ export function WithCustomBubble() {
         minimumValue={min}
         maximumValue={max}
         bubbleWidth={bubbleWidth}
+        bubbleMaxWidth={bubbleWidth}
         bubbleTranslateY={-50}
         bubbleOffsetX={5}
         thumbWidth={thumbWidth}
         renderThumb={() => <View style={styles.customThumb} />}
-        renderBubble={() => (
-          <View style={styles.customBubble}>
-            <Image
-              source={require('../../../assets/preview.png')}
-              style={styles.bubbleImg}
-            />
-          </View>
-        )}
+        renderBubble={() => <View style={styles.customBubble} />}
         theme={COLORS.sliderTheme}
       />
     </SliderCard>
@@ -53,6 +47,9 @@ const styles = StyleSheet.create({
   customBubble: {
     alignItems: 'center',
     width: bubbleWidth,
+    height: 60,
+    backgroundColor: '#fff',
+    borderRadius: 4,
   },
   bubbleImg: {
     width: 90,

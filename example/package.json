@@ -11,6 +11,7 @@
     "@expo/webpack-config": "~19.0.1",
     "expo": "^52.0.20",
     "expo-haptics": "~14.0.0",
+    "expo-localization": "~16.0.0",
     "expo-splash-screen": "~0.29.18",
     "expo-status-bar": "~2.0.0",
     "lottie-react-native": "7.1.0",

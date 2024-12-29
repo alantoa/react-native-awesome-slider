@@ -49,7 +49,7 @@ export function WithHaptic() {
         onSlidingComplete={(e) => {
           console.log(e);
         }}
-        thumbWidth={24}
+        thumbWidth={12}
         hapticMode={HapticModeEnum.STEP}
         theme={COLORS.sliderTheme}
       />

@@ -7,6 +7,7 @@ import {
   TextStyle,
   View,
   ViewStyle,
+  I18nManager,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import type { WithTimingConfig } from 'react-native-reanimated';
@@ -42,6 +43,7 @@ export enum PanDirectionEnum {
   RIGHT = 2,
   END = 3,
 }
+
 export type SliderThemeType =
   | {
       /**
@@ -301,6 +303,11 @@ export type AwesomeSliderProps = {
    * When 'heartbeat' is set to true, the progress bar color will animate back and forth between its current color and the color specified for the heartbeat.
    */
   heartbeat?: boolean;
+  /**
+   * Whether the slider is in RTL mode.
+   * @default true
+   */
+  isRTL?: boolean;
 };
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,
@@ -362,6 +369,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   heartbeat = false,
   snapThreshold = 0,
   snapThresholdMode = 'absolute',
+  isRTL = I18nManager.isRTL,
 }) {
   const step = propsStep || steps;
 
@@ -408,7 +416,6 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     } else {
       seekWidth = progressToValue(progress.value) + thumbWidth / 2;
     }
-    sliderTotalValue.value; // hack: force recompute styles when 'sliderTotalValue' changes
 
     return {
       width:
@@ -428,7 +435,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   const animatedThumbStyle = useAnimatedStyle(() => {
     let translateX = 0;
     // when you set step
-
+    const subtractedWidth = width.value - thumbWidth;
     if (snappingEnabled && markLeftArr.value.length >= step) {
       translateX = stepTimingOptions
         ? withTiming(markLeftArr.value[thumbIndex.value]!, stepTimingOptions)
@@ -437,21 +444,19 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       translateX = clamp(
         thumbValue.value,
         0,
-        width.value ? width.value - thumbWidth : 0
+        width.value ? subtractedWidth : 0
       );
     } else {
       translateX = clamp(
         progressToValue(progress.value),
         0,
-        width.value ? width.value - thumbWidth : 0
+        width.value ? subtractedWidth : 0
       );
     }
-
-    sliderTotalValue.value; // hack: force recompute styles when 'sliderTotalValue' change
     return {
       transform: [
         {
-          translateX,
+          translateX: isRTL ? subtractedWidth - translateX : translateX,
         },
         {
           scale: withTiming(thumbScaleValue ? thumbScaleValue.value : 1, {
@@ -460,7 +465,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         },
       ],
     };
-  }, [progress, minimumValue, maximumValue, width, snappingEnabled]);
+  }, [progress, minimumValue, maximumValue, width, snappingEnabled, isRTL]);
 
   const animatedBubbleStyle = useAnimatedStyle(() => {
     let translateX = 0;
@@ -470,6 +475,11 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     } else {
       translateX = thumbValue.value + thumbWidth / 2;
     }
+    translateX = isRTL ? width.value - translateX : translateX;
+
+    const minX = bubbleWidth / 2 - thumbWidth / 2;
+    const maxX = width.value - bubbleWidth / 2;
+
     return {
       opacity: bubbleOpacity.value,
       transform: [
@@ -479,26 +489,15 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         {
           translateX:
             snappingEnabled && stepTimingOptions
-              ? withTiming(
-                  clamp(
-                    translateX,
-                    bubbleWidth / 2,
-                    width.value - bubbleWidth / 2
-                  ),
-                  stepTimingOptions
-                )
-              : clamp(
-                  translateX,
-                  bubbleWidth / 2,
-                  width.value - bubbleWidth / 2
-                ),
+              ? withTiming(clamp(translateX, minX, maxX), stepTimingOptions)
+              : clamp(translateX, minX, maxX),
         },
         {
           scale: bubbleOpacity.value,
         },
       ],
     };
-  }, [bubbleTranslateY, bubbleWidth, width, snappingEnabled]);
+  }, [bubbleTranslateY, bubbleWidth, width, snappingEnabled, isRTL]);
 
   const animatedCacheXStyle = useAnimatedStyle(() => {
     const cacheX =
@@ -738,7 +737,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   const onGestureEvent = useMemo(() => {
     const gesture = Gesture.Pan()
       .hitSlop(panHitSlop)
-      .onBegin(({ x }) => {
+      .onBegin(({ x: xValue }) => {
+        const x = isRTL ? width.value - xValue : xValue;
         if (disableTrackPress) {
           isTouchInThumbRange.value =
             Math.abs(x - thumbPosition.value) <= thumbTouchSize;
@@ -762,7 +762,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           runOnJS(onSlidingStart)();
         }
       })
-      .onUpdate(({ x }) => {
+      .onUpdate(({ x: xValue }) => {
+        const x = isRTL ? width.value - xValue : xValue;
         if (disable || (!isTouchInThumbRange.value && disableTrackPress)) {
           return;
         }
@@ -777,7 +778,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
 
         onActiveSlider(x);
       })
-      .onEnd(({ x }) => {
+      .onEnd(({ x: xValue }) => {
+        const x = isRTL ? width.value - xValue : xValue;
         isScrubbingInner.value = false;
         if (disable) {
           return;
@@ -850,12 +852,15 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     xToProgress,
     shareValueToSeconds,
     disableTrackPress,
+    isRTL,
+    width,
   ]);
   const onSingleTapEvent = useMemo(
     () =>
       Gesture.Tap()
         .hitSlop(panHitSlop)
-        .onEnd(({ x }, isFinished) => {
+        .onEnd(({ x: xValue }, isFinished) => {
+          const x = isRTL ? width.value - xValue : xValue;
           if (onTap) {
             runOnJS(onTap)();
           }
@@ -890,6 +895,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       onTap,
       panHitSlop,
       shareValueToSeconds,
+      isRTL,
+      width,
     ]
   );
 
@@ -1095,7 +1102,13 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
                 );
               })
             : null}
-          <Animated.View style={[styles.thumb, animatedThumbStyle]}>
+          <Animated.View
+            style={[
+              styles.thumb,
+              animatedThumbStyle,
+              isRTL ? { right: 0 } : { left: 0 },
+            ]}
+          >
             {renderThumb ? (
               renderThumb()
             ) : (
@@ -1113,9 +1126,11 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
             style={[
               styles.bubble,
               {
-                left: -bubbleMaxWidth / 2 + bubbleOffsetX,
                 width: bubbleMaxWidth,
               },
+              isRTL
+                ? { right: -bubbleMaxWidth / 2 + bubbleOffsetX }
+                : { left: -bubbleMaxWidth / 2 + bubbleOffsetX },
               animatedBubbleStyle,
             ]}
           >
@@ -1173,7 +1188,6 @@ const styles = StyleSheet.create({
   },
   thumb: {
     position: 'absolute',
-    left: 0,
   },
   bubble: {
     position: 'absolute',
