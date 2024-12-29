@@ -1,6 +1,6 @@
 {
   "name": "react-native-awesome-slider",
-  "version": "2.7.2",
+  "version": "2.8.0",
   "description": "A versatile, responsive <Slider /> component for React Native and Web.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
