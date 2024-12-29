@@ -48,24 +48,26 @@
 | `renderBubble` | `() => React.ReactNode`                  | -        | -       | Custom bubble component |
 | `renderThumb`  | `() => React.ReactNode`                  | -        | -       | Custom thumb component  |
 | `renderMark`   | `({ index: number }) => React.ReactNode` | -        | -       | Custom mark component   |
+| `renderTrack`  | `({ index: number }) => React.ReactNode` | -        | -       | Custom track component  |
 
 ### Behavior
 
-| Prop                 | Type                         | Required | Default      | Description                     |
-| -------------------- | ---------------------------- | -------- | ------------ | ------------------------------- |
-| `disable`            | `boolean`                    | -        | `false`      | Disables all interactions       |
-| `disableTapEvent`    | `boolean`                    | -        | `true`       | Disables tap-to-seek behavior   |
-| `step`               | `number`                     | -        | -            | Step value for discrete slider  |
-| `steps`              | `number`                     | -        | -            | Number of steps                 |
-| `snapToStep`         | `boolean`                    | -        | `true`       | Whether to snap to steps        |
-| `heartbeat`          | `boolean`                    | -        | `false`      | Enables heartbeat animation     |
-| `disableTrackFollow` | `boolean`                    | -        | `false`      | Disable thumb following track   |
-| `disableTrackPress`  | `boolean`                    | -        | `false`      | Only allow dragging thumb       |
-| `stepTimingOptions`  | `WithTimingConfig \| false`  | -        | `false`      | Animation config for steps      |
-| `snapThreshold`      | `number`                     | -        | `0`          | Threshold for snapping to steps |
-| `snapThresholdMode`  | `'percentage' \| 'absolute'` | -        | `'absolute'` | Mode for snap threshold         |
-| `forceSnapToStep`    | `boolean`                    | -        | `false`      | Always snap to nearest step     |
-| `hapticMode`         | `'none' \| 'step' \| 'both'` | -        | `'none'`     | When to trigger haptics         |
+| Prop                 | Type                         | Required | Default             | Description                     |
+| -------------------- | ---------------------------- | -------- | ------------------- | ------------------------------- |
+| `disable`            | `boolean`                    | -        | `false`             | Disables all interactions       |
+| `disableTapEvent`    | `boolean`                    | -        | `true`              | Disables tap-to-seek behavior   |
+| `step`               | `number`                     | -        | -                   | Step value for discrete slider  |
+| `steps`              | `number`                     | -        | -                   | Number of steps                 |
+| `snapToStep`         | `boolean`                    | -        | `true`              | Whether to snap to steps        |
+| `heartbeat`          | `boolean`                    | -        | `false`             | Enables heartbeat animation     |
+| `disableTrackFollow` | `boolean`                    | -        | `false`             | Disable thumb following track   |
+| `disableTrackPress`  | `boolean`                    | -        | `false`             | Only allow dragging thumb       |
+| `stepTimingOptions`  | `WithTimingConfig \| false`  | -        | `false`             | Animation config for steps      |
+| `snapThreshold`      | `number`                     | -        | `0`                 | Threshold for snapping to steps |
+| `snapThresholdMode`  | `'percentage' \| 'absolute'` | -        | `'absolute'`        | Mode for snap threshold         |
+| `forceSnapToStep`    | `boolean`                    | -        | `false`             | Always snap to nearest step     |
+| `hapticMode`         | `'none' \| 'step' \| 'both'` | -        | `'none'`            | When to trigger haptics         |
+| `isRTL`              | `boolean`                    | -        | `I18nManager.isRTL` | Enable RTL (right-to-left) mode |
 
 ### Gesture Configuration
 
