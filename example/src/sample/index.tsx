@@ -7,7 +7,7 @@ import { WithHaptic } from './src/with-haptic';
 import { WithLottie } from './src/with-lottie';
 import { WithStep } from './src/with-step';
 import { WithCustomTrack } from './src/with-custom-track';
-
+import { WithSvg } from './src/with-svg';
 export const Examples = {
   Basic,
   BinanceSlider,
@@ -18,6 +18,7 @@ export const Examples = {
   WithLottie,
   WithStep,
   WithCustomTrack,
+  WithSvg,
 };
 
 export type ExampleType = keyof typeof Examples;

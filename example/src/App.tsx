@@ -23,6 +23,7 @@ export default function App() {
           >
             <Examples.Basic />
             <Examples.BinanceSlider />
+            <Examples.WithSvg />
             <Examples.WithStep />
             <Examples.WithCache />
             <Examples.WithHaptic />

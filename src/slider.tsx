@@ -149,13 +149,13 @@ export type AwesomeSliderProps = {
   /**
    * Render custom container element.
    */
-  renderContainer?: ({
-    style,
-    seekStyle,
-  }: {
-    style: StyleProp<ViewStyle>;
-    seekStyle: StyleProp<ViewStyle>;
-  }) => React.ReactNode;
+  renderContainer?: (
+    props: Pick<AwesomeSliderProps, 'style'> & {
+      seekStyle: StyleProp<ViewStyle>;
+      heartbeatStyle: StyleProp<ViewStyle>;
+      cacheXStyle: StyleProp<ViewStyle>;
+    }
+  ) => React.ReactNode;
 
   /**
    * Render custom thumb image. if you need to customize thumb, you also need to set the `thumb width`
@@ -1041,6 +1041,20 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
                     : _theme.minimumTrackTintColor,
                 },
                 animatedSeekStyle,
+              ],
+              cacheXStyle: [
+                styles.cache,
+                {
+                  backgroundColor: _theme.cacheTrackTintColor,
+                },
+                animatedCacheXStyle,
+              ],
+              heartbeatStyle: [
+                styles.heartbeat,
+                {
+                  backgroundColor: _theme.heartbeatColor,
+                },
+                animatedHeartbeatStyle,
               ],
             })
           ) : (
