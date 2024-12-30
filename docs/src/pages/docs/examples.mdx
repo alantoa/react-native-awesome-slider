@@ -1,0 +1,142 @@
+import { Callout } from 'nextra/components';
+
+# Examples
+
+<Callout type="info">
+  Check out the
+  [Examples](https://github.com/alantoa/react-native-awesome-slider/tree/main/example)
+  for more usage details.
+</Callout>
+
+## Basic Slider
+
+```jsx
+import { useSharedValue } from 'react-native-reanimated';
+import { Slider } from 'react-native-awesome-slider';
+
+function BasicSlider() {
+  const progress = useSharedValue(50);
+  const min = useSharedValue(0);
+  const max = useSharedValue(100);
+
+  return (
+    <Slider
+      progress={progress}
+      minimumValue={min}
+      maximumValue={max}
+      style={styles.slider}
+    />
+  );
+}
+```
+
+## Video Player Slider
+
+```jsx
+function VideoPlayerSlider() {
+  // Initialize values for video progress
+  const progress = useSharedValue(0);
+  const cache = useSharedValue(0);
+  const duration = useSharedValue(300);
+
+  return (
+    <Slider
+      progress={progress}
+      cache={cache}
+      minimumValue={useSharedValue(0)}
+      maximumValue={duration}
+      // Format time for bubble display
+      bubble={(value) => formatTime(value)}
+      // Disable track follow for video player
+      disableTrackFollow
+      // Custom styles
+      containerStyle={styles.videoSlider}
+    />
+  );
+}
+```
+
+## Discrete Slider
+
+```jsx
+function DiscreteSlider() {
+  const progress = useSharedValue(0);
+  const min = useSharedValue(0);
+  const max = useSharedValue(100);
+
+  return (
+    <Slider
+      progress={progress}
+      minimumValue={min}
+      maximumValue={max}
+      // Enable step mode
+      step={10}
+      steps={10}
+      snapToStep
+      // Custom mark rendering
+      renderMark={({ index }) => (
+        <View style={styles.mark}>
+          <Text>{index * 10}</Text>
+        </View>
+      )}
+    />
+  );
+}
+```
+
+## Custom Bubble
+
+```jsx
+function CustomBubbleSlider() {
+  return (
+    <Slider
+      // ... other props
+      renderBubble={({ value }) => (
+        <View style={styles.customBubble}>
+          <Text style={styles.bubbleText}>{Math.round(value)}%</Text>
+        </View>
+      )}
+      bubbleTranslateY={-30}
+      bubbleWidth={40}
+    />
+  );
+}
+```
+
+## With Haptic Feedback
+
+```jsx
+function HapticSlider() {
+  return (
+    <Slider
+      // ... other props
+      onHapticFeedback={() => {
+        HapticFeedback.trigger('selection');
+      }}
+      hapticMode="STEP"
+      step={20}
+      steps={5}
+    />
+  );
+}
+```
+
+## Custom Theme
+
+```jsx
+function ThemedSlider() {
+  return (
+    <Slider
+      // ... other props
+      theme={{
+        minimumTrackTintColor: '#007AFF',
+        maximumTrackTintColor: '#DEDEDE',
+        cacheTrackTintColor: '#F2F2F2',
+      // ...其他属性
+      step={10}
+      steps={10}
+      snapToStep={true}
+    />
+  );
+};
+```

@@ -1,10 +1,10 @@
 {
   "name": "react-native-awesome-slider",
-  "version": "2.5.6",
-  "description": "Slider component written using Reanimated v2, high performance/fps, also be used for video/audio scrubber.  ",
+  "version": "2.8.0",
+  "description": "A versatile, responsive <Slider /> component for React Native and Web.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
-  "types": "lib/typescript/index.d.ts",
+  "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
   "files": [
@@ -44,30 +44,29 @@
     "type": "git",
     "url": "git+https://github.com/alantoa/react-native-awesome-slider.git"
   },
-  "author": "Toa <toacncom@gmail.com> (https://github.com/alantoa)",
+  "author": "Alan <toacncom@gmail.com> (https://github.com/alantoa)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/alantoa/react-native-awesome-slider/issues"
   },
-  "homepage": "https://github.com/alantoa/react-native-awesome-slider",
+  "homepage": "https://slider.0xalt.xyz",
   "devDependencies": {
     "@react-native/eslint-config": "^0.72.2",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^28.1.2",
     "@types/react": "~18.2.45",
     "@types/react-native": "0.70.0",
-    "commitlint": "^17.0.2",
     "del-cli": "^5.0.0",
     "eslint": "^8.4.1",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
     "jest": "^28.1.1",
     "pod-install": "^0.1.0",
-    "prettier": "^2.0.5",
+    "prettier": "^3.4.2",
     "react": "18.2.0",
-    "react-native": "0.74.5",
+    "react-native": "0.76.5",
     "react-native-builder-bob": "^0.23.2",
-    "react-native-gesture-handler": "~2.20.0",
+    "react-native-gesture-handler": "~2.20.2",
     "react-native-reanimated": "3.16.1",
     "release-it": "^15.0.0",
     "typescript": "^5.3.3"
@@ -85,7 +84,7 @@
   "workspaces": [
     "example"
   ],
-  "packageManager": "yarn@3.6.1",
+  "packageManager": "yarn@4.5.3",
   "engines": {
     "node": ">= 18.0.0"
   },
@@ -94,11 +93,6 @@
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
-    ]
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
     ]
   },
   "release-it": {
@@ -119,11 +113,10 @@
     }
   },
   "prettier": {
-    "quoteProps": "consistent",
+    "semi": true,
     "singleQuote": true,
     "tabWidth": 2,
-    "trailingComma": "es5",
-    "useTabs": false
+    "trailingComma": "es5"
   },
   "eslintConfig": {
     "root": true,
@@ -151,7 +144,10 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "example/node_modules/",
+    "example/",
+    "docs/"
   ],
   "react-native-builder-bob": {
     "source": "src",

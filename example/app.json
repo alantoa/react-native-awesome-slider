@@ -28,6 +28,10 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "supportsRTL": true
+    },
+    "plugins": ["expo-localization"]
   }
 }

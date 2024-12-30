@@ -83,3 +83,7 @@ example/expo-env.d
 example/ios
 example/android
 example/.expo
+
+# Docs
+docs/.next
+docs/node_modules

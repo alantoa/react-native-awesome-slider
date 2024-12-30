@@ -5,6 +5,7 @@ import {
   Text as NativeText,
   TextProps,
 } from 'react-native';
+import { COLORS } from '../sample/src/constants';
 const normalize = (size: number) => size;
 export interface _TextProps extends TextProps {
   h1?: boolean;
@@ -14,7 +15,7 @@ export interface _TextProps extends TextProps {
   h5?: boolean;
   t1?: boolean;
   t2?: boolean;
-  tBold?: boolean;
+  bold?: boolean;
   t3?: boolean;
   t4?: boolean;
   t5?: boolean;
@@ -34,14 +35,14 @@ export const Text = React.forwardRef<NativeText, _TextProps>(function Text(
     h5 = false,
     t1 = false,
     t2 = false,
-    tBold = false,
+    bold = false,
     t3 = false,
     t4 = false,
     t5 = false,
     children = '',
     tx = '',
     verticalCenter = false,
-    color = '#111',
+    color = COLORS.textColor,
     isCenter,
     paragraph,
     ...rest
@@ -56,7 +57,7 @@ export const Text = React.forwardRef<NativeText, _TextProps>(function Text(
         { color },
         isCenter && styles.textCenter,
 
-        (t1 || t2 || t3 || t4 || t5) && tBold && styles.enTBold,
+        (t1 || t2 || t3 || t4 || t5) && bold && styles.enTBold,
         h1 &&
           StyleSheet.flatten([
             { fontSize: normalize(28) },

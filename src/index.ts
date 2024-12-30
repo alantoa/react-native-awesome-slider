@@ -1,2 +1,2 @@
 export * from './ballon';
-export * from './slide';
+export * from './slider';
