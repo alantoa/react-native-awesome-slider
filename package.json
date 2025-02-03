@@ -4,7 +4,7 @@
   "description": "A versatile, responsive <Slider /> component for React Native and Web.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
-  "types": "lib/typescript/src/index.d.ts",
+  "types": "lib/typescript/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
   "files": [
@@ -27,8 +27,9 @@
     "release": "release-it",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "fix": "eslint \"**/*.{js,ts,tsx}\" --fix",
-    "test": "jest",
-    "bootstrap": "yarn example && yarn install"
+    "test": "jest --passWithNoTests",
+    "bootstrap": "yarn example && yarn install",
+    "typecheck": "tsc --project tsconfig.build.json --noEmit"
   },
   "keywords": [
     "react-native",
@@ -84,7 +85,7 @@
   "workspaces": [
     "example"
   ],
-  "packageManager": "yarn@4.5.3",
+  "packageManager": "yarn@4.6.0",
   "engines": {
     "node": ">= 18.0.0"
   },

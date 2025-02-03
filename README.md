@@ -1,7 +1,7 @@
 <div align="center">
   <h1 align="center">React Native Awesome Slider</h1>
 
-[![Reanimated v2 version](https://img.shields.io/github/package-json/v/alantoa/react-native-awesome-slider/master?label=Reanimated%20v2&style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![npm](https://img.shields.io/npm/l/react-native-awesome-slider?style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![npm](https://img.shields.io/badge/types-included-blue?style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![Documentation](https://img.shields.io/badge/docs-slider.0xalt.xyz-blue?style=flat-square)](https://slider.0xalt.xyz/)
+[![Reanimated v3 version](https://img.shields.io/github/package-json/v/alantoa/react-native-awesome-slider/master?label=Reanimated%20v2&style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![npm](https://img.shields.io/npm/l/react-native-awesome-slider?style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![npm](https://img.shields.io/badge/types-included-blue?style=flat-square)](https://www.npmjs.com/package/react-native-awesome-slider) [![Documentation](https://img.shields.io/badge/docs-slider.0xalt.xyz-blue?style=flat-square)](https://slider.0xalt.xyz/)
 
   <p  align="center">A versatile, responsive react native and web slider component.</p>
     <img src="./assets/slider.png" width="400" alt="slider"  />
