@@ -198,11 +198,11 @@ export type AwesomeSliderProps = {
   bubbleContainerStyle?: StyleProp<ViewStyle>;
 
   /**
-   * By this, you know the slider status as quickly as possible.(This is useful when you doing video-palyer’s scrubber.)
+   * By this, you know the slider status as quickly as possible.(This is useful when you doing video-player's scrubber.)
    */
   isScrubbing?: Animated.SharedValue<boolean>;
   /**
-   * On tap slider event.(This is useful when you doing video-palyer’s scrubber.)
+   * On tap slider event.(This is useful when you doing video-player's scrubber.)
    */
   onTap?: () => void;
   /**
@@ -319,6 +319,16 @@ export type AwesomeSliderProps = {
    * @default true
    */
   isRTL?: boolean;
+
+  /**
+   * Callback called when the user touches the slider
+   */
+  onTouchStart?: () => void;
+  
+  /**
+   * Callback called when the user releases touch from the slider
+   */
+  onTouchEnd?: () => void;
 };
 const defaultTheme: SliderThemeType = {
   minimumTrackTintColor: palette.Main,
@@ -382,6 +392,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   snapThreshold = 0,
   snapThresholdMode = 'absolute',
   isRTL = I18nManager.isRTL,
+  onTouchStart,
+  onTouchEnd,
 }) {
   const step = propsStep || steps;
 
@@ -755,6 +767,9 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           isTouchInThumbRange.value =
             Math.abs(x - thumbPosition.value) <= thumbTouchSize;
         }
+        if (onTouchStart) {
+          runOnJS(onTouchStart)();
+        }
       })
       .onStart(() => {
         if (disable) {
@@ -818,6 +833,11 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         if (onSlidingComplete) {
           runOnJS(onSlidingComplete)(shareValueToSeconds());
         }
+      })
+      .onFinalize(() => {
+        if (onTouchEnd) {
+          runOnJS(onTouchEnd)();
+        }
       });
 
     if (activeOffsetX) {
@@ -866,6 +886,8 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     disableTrackPress,
     isRTL,
     width,
+    onTouchStart,
+    onTouchEnd,
   ]);
   const onSingleTapEvent = useMemo(
     () =>
