@@ -275,6 +275,10 @@ export type AwesomeSliderProps = {
    * Bubble width, If you set this value, bubble positioning left & right will be clamp.
    */
   bubbleWidth?: number;
+  /**
+   * When 'alwaysShowBubble' is set to true, bubble will be shown all the time.
+   */
+  alwaysShowBubble?: boolean;
   testID?: string;
   /**
    * Range along X axis (in points) where fingers travels without activation of
@@ -339,6 +343,7 @@ const defaultTheme: SliderThemeType = {
   heartbeatColor: palette.LightGray,
 };
 export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
+  alwaysShowBubble = false,
   bubble,
   bubbleContainerStyle,
   bubbleMaxWidth = 100,
@@ -392,8 +397,6 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
   snapThreshold = 0,
   snapThresholdMode = 'absolute',
   isRTL = I18nManager.isRTL,
-  onTouchStart,
-  onTouchEnd,
 }) {
   const step = propsStep || steps;
 
@@ -503,9 +506,10 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
 
     const minX = bubbleWidth / 2 - thumbWidth / 2;
     const maxX = width.value - bubbleWidth / 2;
-
+    const finalOpacity = alwaysShowBubble ? 1 : bubbleOpacity.value;
+    const finalScale = alwaysShowBubble ? 1 : bubbleOpacity.value;
     return {
-      opacity: bubbleOpacity.value,
+      opacity: finalOpacity,
       transform: [
         {
           translateY: bubbleTranslateY,
@@ -517,7 +521,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
               : clamp(translateX, minX, maxX),
         },
         {
-          scale: bubbleOpacity.value,
+          scale: finalScale,
         },
       ],
     };
@@ -767,9 +771,6 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           isTouchInThumbRange.value =
             Math.abs(x - thumbPosition.value) <= thumbTouchSize;
         }
-        if (onTouchStart) {
-          runOnJS(onTouchStart)();
-        }
       })
       .onStart(() => {
         if (disable) {
@@ -833,11 +834,6 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
         if (onSlidingComplete) {
           runOnJS(onSlidingComplete)(shareValueToSeconds());
         }
-      })
-      .onFinalize(() => {
-        if (onTouchEnd) {
-          runOnJS(onTouchEnd)();
-        }
       });
 
     if (activeOffsetX) {
@@ -886,8 +882,6 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
     disableTrackPress,
     isRTL,
     width,
-    onTouchStart,
-    onTouchEnd,
   ]);
   const onSingleTapEvent = useMemo(
     () =>
