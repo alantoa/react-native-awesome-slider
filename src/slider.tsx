@@ -904,9 +904,12 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           if (isFinished) {
             onActiveSlider(x);
           }
-          isScrubbingInner.value = true;
+          // Match the pan path: release internal scrubbing before notifying
+          // JS completion handlers, so controlled progress updates can sync
+          // snapped thumb state.
+          isScrubbingInner.value = false;
           if (isScrubbing) {
-            isScrubbing.value = true;
+            isScrubbing.value = false;
           }
           bubbleOpacity.value = withSpring(0);
           if (onSlidingComplete) {
@@ -914,6 +917,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           }
         })
         .onFinalize(() => {
+          isScrubbingInner.value = false;
           if (isScrubbing) {
             isScrubbing.value = false;
           }
