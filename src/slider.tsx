@@ -904,9 +904,14 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           if (isFinished) {
             onActiveSlider(x);
           }
-          isScrubbingInner.value = true;
+          isScrubbingInner.value = false;
           if (isScrubbing) {
-            isScrubbing.value = true;
+            isScrubbing.value = false;
+          }
+          if (isFinished && disableTrackFollow) {
+            progress.value = snappingEnabled
+              ? shareValueToSeconds()
+              : xToProgress(x);
           }
           bubbleOpacity.value = withSpring(0);
           if (onSlidingComplete) {
@@ -914,6 +919,7 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           }
         })
         .onFinalize(() => {
+          isScrubbingInner.value = false;
           if (isScrubbing) {
             isScrubbing.value = false;
           }
@@ -922,13 +928,17 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       bubbleOpacity,
       disable,
       disableTapEvent,
+      disableTrackFollow,
       isScrubbing,
       isScrubbingInner,
       onActiveSlider,
       onSlidingComplete,
       onTap,
       panHitSlop,
+      progress,
       shareValueToSeconds,
+      snappingEnabled,
+      xToProgress,
       isRTL,
       width,
     ]
