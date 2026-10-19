@@ -904,12 +904,14 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
           if (isFinished) {
             onActiveSlider(x);
           }
-          // Match the pan path: release internal scrubbing before notifying
-          // JS completion handlers, so controlled progress updates can sync
-          // snapped thumb state.
           isScrubbingInner.value = false;
           if (isScrubbing) {
             isScrubbing.value = false;
+          }
+          if (isFinished && disableTrackFollow) {
+            progress.value = snappingEnabled
+              ? shareValueToSeconds()
+              : xToProgress(x);
           }
           bubbleOpacity.value = withSpring(0);
           if (onSlidingComplete) {
@@ -926,13 +928,17 @@ export const Slider: FC<AwesomeSliderProps> = memo(function Slider({
       bubbleOpacity,
       disable,
       disableTapEvent,
+      disableTrackFollow,
       isScrubbing,
       isScrubbingInner,
       onActiveSlider,
       onSlidingComplete,
       onTap,
       panHitSlop,
+      progress,
       shareValueToSeconds,
+      snappingEnabled,
+      xToProgress,
       isRTL,
       width,
     ]
